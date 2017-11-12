@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import edu.princeton.cs.algs4.BinaryStdIn;
 import edu.princeton.cs.algs4.BinaryStdOut;
+import edu.princeton.cs.algs4.StdOut;
 
 public class BurrowsWheelerTest {
     private static int R = 256;
@@ -60,11 +61,9 @@ public class BurrowsWheelerTest {
     }
     @Test
     public void testDecode() {
-        StringBuffer sb = new StringBuffer();
-        Random r = new Random();
-        for (int i = 0; i < 10000; i++)
-            sb.append(r.nextInt(R-1));
-        String s = sb.toString();
+        
+        String s = "ABDBCABB";
+        StdOut.print(encode(s));
         assertEquals(s, decode(encode(s)));
     }
 
