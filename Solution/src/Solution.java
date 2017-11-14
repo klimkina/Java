@@ -1,35 +1,52 @@
+import java.io.*;
 import java.util.*;
+import java.text.*;
+import java.math.*;
+import java.util.regex.*;
 
 public class Solution {
-	static int[] solve(int[] grades){
-        // Complete this function
-		int[] res = new int[grades.length];
-		for(int i = 0; i < grades.length; i++)
-			res[i] = ((grades[i] > 38 && grades[i] < 100 && grades[i] % 5 > 2) ? (grades[i]/5 + 1) * 5 : grades[i]);
+	private static int count47(int n) {
+		int res = 0;
+		char[] charr = Integer.toString(n).toCharArray();
+		for(int i = 0; i < charr.length; i++) {
+			if(charr[i] == '4')
+				res++;
+			else if(charr[i] == '7')
+				res--;
+			else {
+				res = -1;
+				break;
+			}
+		}
 		return res;
-    }
-
+	}
     public static void main(String[] args) {
-        //int n = 100;
-        //int[] grades = new int[n];
-        //Random rand = new Random();
-        //for(int i = 0; i < n; i++)
-        //	grades[i] = rand.nextInt(100);
-    	Scanner in = new Scanner(System.in);
-    	System.out.println("Input number of grades:");
-        int n = in.nextInt();
-        int[] grades = new int[n];
-        System.out.println("Input grades:");
-        for(int grades_i=0; grades_i < n; grades_i++){
-            grades[grades_i] = in.nextInt();
-        }
-        int[] result = solve(grades);
-        System.out.println("Resulting grades:");
-        for (int i = 0; i < result.length; i++) {
-            System.out.print(result[i] + (i != result.length - 1 ? "\n" : ""));
+        //Scanner in = new Scanner(System.in);
+        //int n = in.nextInt();
+    	String[] input = {"4",
+    			"HackerBook 777444",
+    			"RankBook 3",
+    			"TheBook 777",
+    			"BestBook 47"};
+    	int n = Integer.parseInt(input[0]);
+    	int min = Integer.MAX_VALUE;
+    	String res = "";
+        for(int a0 = 1; a0 <= n; a0++){
+        	String next = input[a0];
+            String name = next.split(" ")[0];
+            String s = next.split(" ")[1];
+            int value = Integer.parseInt(next.split(" ")[1]);
+            if(count47(value) == 0)
+            	if(min > value) {
+            		min = value;
+            		res = name;
+            	}
         }
         
-        in.close();
-
+        if(res != "")
+        	System.out.println(res);
+        else
+        	System.out.println("-1");
+        //in.close();
     }
 }
