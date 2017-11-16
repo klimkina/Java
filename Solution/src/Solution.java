@@ -1,9 +1,8 @@
-//Madison, is a little girl who is fond of toys. 
-//Her friend Mason works in a toy manufacturing factory . 
-//Mason has a 2D board  of size  with  rows and  columns. 
-//The board is divided into cells of size  with each cell indicated by it's coordinate . 
-//The cell  has an integer  written on it. To create the toy Mason stacks number of cubes of size  on the cell .
-//Given the description of the board showing the values of  and that the price of the toy is equal to the 3d surface area find the price of the toy.
+/*You are playing a matrix-based game with the following setup and rules:
+
+You are given a matrix  with  rows and  columns. Each cell contains some points. When a player passes a cell their score increases by the number written in that cell and the number in the cell becomes . (If the cell number is positive their score increases, otherwise it decreases.)
+The player starts from any cell in the first row and can move left, right or down.
+The game is over when the player reaches the last row and stops moving.*/
 import java.io.*;
 import java.util.*;
 import java.text.*;
@@ -11,48 +10,68 @@ import java.math.*;
 import java.util.regex.*;
 
 public class Solution {
-
-    static int surfaceArea(int[][] A) {
+	static int matrixLand(int[][] A) {
         // Complete this function
     	if(A.length < 1)
     		return 0;
-    	int res = 0;
-    	for(int i = 0; i < A.length; i++)
-    		for(int j = 0; j < A[0].length; j++) {
-    			res += A[i][j] * 4 + 2 - neighbours(A, i, j);
-    		}
-    	return res;
-    }
-    static int neighbours(int[][] A, int i, int j) {
-    	int dx[] = {0, 0, -1, 1};
-		int dy[] = {-1, 1, 0, 0};
-		
+    	int[][] normal = normalize(A);
+    	int max = Integer.MIN_VALUE;
+    	for(int col = 0; col < A[0].length; col++)
+    		max = Math.max(max, sum(normal, col));
+    	return max;	
+    } 
+	
+	private static int sum(int[][] A, int col) {
 		int res = 0;
-		
-		for(int k = 0; k < 4; k++) {
-			int new_x = i + dx[k];
-			int new_y = j + dy[k];
-			if (new_x >= 0 && new_x < A.length
-					&& new_y >= 0 && new_y < A[0].length) 
-				res += Math.min(A[i][j], A[new_x][new_y]);			
-		}		  
-		
+		for(int i = 0; i < A.length; i++)
+			res += A[i][col];
 		return res;
-    }
+	}
+	private static int[][] normalize(int[][] A) {
+		int[][] res = new int[A.length][A[0].length];
+		for(int i = 0; i < A.length; i++) {
+			
+			for(int j = 0; j < A[0].length; j++) 
+				res[i][j] = findMax(A, i, j);
+		}
+		return res;
+	}	
+	private static int findMax(int[][] A,int row, int col) {
+		int max = Integer.MIN_VALUE;
+		int sum = 0;
+		int res = A[row][col];
+		for(int j = col-1; j >= 0; j--) {
+			sum += A[row][j];
+			if(sum > max)
+				max = sum;
+		}
+		res += Math.max(max, 0);
+		max = Integer.MIN_VALUE;
+		sum = 0;
+		for(int j = col+1; j < A[0].length; j++){
+			sum += A[row][j];
+			if(sum > max)
+				max = sum;
+		}
+		res += Math.max(max, 0);
+		return res;
+	}
+	
     public static void main(String[] args) {
         /*Scanner in = new Scanner(System.in);
-        int H = in.nextInt();
-        int W = in.nextInt();
-        int[][] A = new int[H][W];
-        for(int A_i = 0; A_i < H; A_i++){
-            for(int A_j = 0; A_j < W; A_j++){
+        int n = in.nextInt();
+        int m = in.nextInt();
+        int[][] A = new int[n][m];
+        for(int A_i = 0; A_i < n; A_i++){
+            for(int A_j = 0; A_j < m; A_j++){
                 A[A_i][A_j] = in.nextInt();
             }
         }*/
-    	int[][] A = {{1, 3, 4},
-    			{2, 2, 3},
-    			{1, 2, 4}};
-        int result = surfaceArea(A);
+    	int[][] A = {{2}};/*{{1, 2, 3, -1, -2},
+    		{-5, -8, -1, 2, -150},
+    		{1, 2, 3, -250, 100},
+    		{1, 1, 1, 1, 20}};*/
+    	int result = matrixLand(A);
         System.out.println(result);
         //in.close();
     }
