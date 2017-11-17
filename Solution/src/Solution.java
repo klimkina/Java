@@ -72,7 +72,7 @@ public class Solution {
 		int sum = 0;
 		for(int j = col-1; j >= 0; j--) {
 			sum += A[row][j];
-			max = Math.max(max, sum + distTo[row][j]);
+			max = Math.max(max, sum + distTo[row][j] + findLeftMax(A, row, j));
 		}
 		
 		return max;
@@ -84,7 +84,7 @@ public class Solution {
 		int sum = 0;
 		for(int j = col+1; j < A[0].length; j++){
 			sum += A[row][j];
-			max = Math.max(max, sum + distTo[row][j]);
+			max = Math.max(max, sum + distTo[row][j] + findRightMax(A, row, j));
 		}
 		return max;
 	}
@@ -99,10 +99,12 @@ public class Solution {
                 A[A_i][A_j] = in.nextInt();
             }
         }*/
-    	int[][] A = {{1, 2, 3, -1, -2},
+    	int[][] A = {{1, 2, 3, -8},{ 5, 2, -1, 4}};
+    	
+    			/*{{1, 2, 3, -1, -2},
     		{-5, -8, -1, 2, -150},
-    		{1, 2, 3, -250, 100},
-    		{1, 1, 1, 1, 20}};
+    		{1, 2, 3, -250, -1100},
+    		{1, 1, 1, -500, 2000}};*/
     	int result = matrixLand(A);
         System.out.println(result);
         //in.close();
