@@ -15,76 +15,80 @@ public class Solution {
         // Complete this function
     	if(A.length < 1)
     		return 0;
-    	int[][] distTo = new int[A.length + 1][A[0].length];
-    	
+    	int[][] distTo = new int[2][A[0].length];   	
     	Arrays.fill(distTo[0], 0);
     	
-    	for(int row = 0; row < A.length; row++)//find alternative paths
+    	int[] leftMaxes = new int[A[0].length];
+    	int[] rightMaxes = new int[A[0].length];
+    	for(int row = 0; row < A.length; row++) { //find alternative paths
+    		initLeft(A[row], leftMaxes);
+			initRight(A[row], rightMaxes);
     		for(int col = 0; col < A[0].length; col++) {
-    			int leftSum = findLeftMax(A, row, col);
-    			int rightSum = findRightMax(A, row, col);
-    			int leftPath = findLeftPath(A, distTo, row, col);
-    			int rightPath = findRightPath(A, distTo, row, col);
-    			if(distTo[row][col] + leftSum + rightSum >= Math.max(leftPath, rightPath))
-    				distTo[row+1][col] = distTo[row][col] + A[row][col] + leftSum + rightSum;
+    			int leftSum = findLeftMax(leftMaxes, col);
+    			int rightSum = findRightMax(rightMaxes, col);
+    			int leftPath = findLeftPath(A[row], leftMaxes, distTo[row&1], col);
+    			int rightPath = findRightPath(A[row], rightMaxes, distTo[row&1], col);
+    			if(distTo[row&1][col] + leftSum + rightSum >= Math.max(leftPath, rightPath))
+    				distTo[row&1^1][col] = distTo[row&1][col] + A[row][col] + leftSum + rightSum;
     			else if(leftPath == rightPath)
-    				distTo[row+1][col] = leftPath + A[row][col] + Math.max(leftSum, rightSum);
+    				distTo[row&1^1][col] = leftPath + A[row][col] + Math.max(leftSum, rightSum);
     			else if(leftPath > rightPath)
-    				distTo[row+1][col] = leftPath + A[row][col] + rightSum;
+    				distTo[row&1^1][col] = leftPath + A[row][col] + rightSum;
     			else
-    				distTo[row+1][col] = rightPath + A[row][col] + leftSum;
+    				distTo[row&1^1][col] = rightPath + A[row][col] + leftSum;
     		}
+    	}
     	int max = Integer.MIN_VALUE;
     	for(int col = 0; col < A[0].length; col++)
-    		max = Math.max(max, distTo[A.length][col]);
+    		max = Math.max(max, distTo[A.length&1][col]);
     	return max;	
     } 
+	private static int findLeftMax(int[] maxes, int col) {
+		if(col < 1)
+			return 0;
+		return maxes[col-1];
+	}
+	private static int findRightMax(int[] maxes, int col) {
+		if(col > maxes.length - 2)
+			return 0;
+		return maxes[col+1];
+	}
+	private static void initLeft(int[] a, int[] maxes) {
+		maxes[0] = a[0];
+		for(int j = 1; j < a.length; j++) {
+			if(maxes[j-1] > 0)
+				maxes[j] = a[j] + maxes[j-1];
+			else
+				maxes[j] = a[j];
+		}
+	}
+	private static void initRight(int[] a, int[] maxes) {
+		maxes[a.length-1] = a[a.length-1];
+		for(int j = a.length-2; j >= 0; j--) {
+			if(maxes[j+1] > 0)
+				maxes[j] = a[j] + maxes[j+1];
+			else
+				maxes[j] = a[j];
+		}
+	}
 	
-	private static int findLeftMax(int[][] A, int row, int col) {
-		if(row < 0)
-			return 0;
-		
+	
+	private static int findLeftPath(int[] a, int[] maxes, int[]distTo, int col) {
 		int max = Integer.MIN_VALUE;
 		int sum = 0;
 		for(int j = col-1; j >= 0; j--) {
-			sum += A[row][j];
-			max = Math.max(max, sum);
-		}
-		
-		return Math.max(max, 0);
-	}
-	private static int findRightMax(int[][] A, int row, int col) {
-		if(row < 0)
-			return 0;
-		int max = Integer.MIN_VALUE;
-		int sum = 0;
-		for(int j = col+1; j < A[0].length; j++){
-			sum += A[row][j];
-			max = Math.max(max, sum);
-		}
-		return Math.max(max, 0);
-	}
-	private static int findLeftPath(int[][] A, int[][]distTo, int row, int col) {
-		if(row < 0)
-			return 0;
-		
-		int max = Integer.MIN_VALUE;
-		int sum = 0;
-		for(int j = col-1; j >= 0; j--) {
-			sum += A[row][j];
-			max = Math.max(max, sum + distTo[row][j] + findLeftMax(A, row, j));
+			sum += a[col];
+			max = Math.max(max, distTo[j] + maxes[j] + sum);
 		}
 		
 		return max;
 	}
-	private static int findRightPath(int[][] A, int[][]distTo, int row, int col) {
-		if(row < 0)
-			return 0;
+	private static int findRightPath(int[] a, int[] maxes, int[]distTo, int col) {
 		int max = Integer.MIN_VALUE;
 		int sum = 0;
-		for(int j = col+1; j < A[0].length; j++){
-			sum += A[row][j];
-			max = Math.max(max, sum + distTo[row][j] + findRightMax(A, row, j));
+		for(int j = col+1; j < maxes.length; j++){
+			sum += a[col];
+			max = Math.max(max, distTo[j] + maxes[j] + sum);
 		}
 		return max;
 	}
@@ -99,12 +103,12 @@ public class Solution {
                 A[A_i][A_j] = in.nextInt();
             }
         }*/
-    	int[][] A = {{1, 2, 3, -8},{ 5, 2, -1, 4}};
+    	int[][] A = //{{1, 2, 3, -8},{ 5, 2, -1, 4}};
     	
-    			/*{{1, 2, 3, -1, -2},
+    			{{1, 2, 3, -1, -2},
     		{-5, -8, -1, 2, -150},
-    		{1, 2, 3, -250, -1100},
-    		{1, 1, 1, -500, 2000}};*/
+    		{1, 2, 3, -250, 100},
+    		{1, 1, 1, 1, 20}};
     	int result = matrixLand(A);
         System.out.println(result);
         //in.close();
