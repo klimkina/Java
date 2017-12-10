@@ -8,22 +8,22 @@ import java.util.Queue;
 import java.util.LinkedList;;
 
 public class Tree {
-	private Node root;
-	public class Node {
+	private TreeNode root;
+	public class TreeNode {
 		int val;
-		Node left;
-		Node right;
-		public Node(int val) {
+		TreeNode left;
+		TreeNode right;
+		public TreeNode(int val) {
 			this.val = val;
 			left = null;
 			right = null;
 		}
 	}
-	public Node getRoot() {
+	public TreeNode getRoot() {
 		return root;
 	}
-	public Node insert(Node node, int val, boolean toLeft) {
-		Node to = new Node(val);
+	public TreeNode insert(TreeNode node, int val, boolean toLeft) {
+		TreeNode to = new TreeNode(val);
 		if (node != null) {
 			if(toLeft)
 				node.left = to;
@@ -34,18 +34,44 @@ public class Tree {
 			root = to;
 		return to;	
 	}
+	public TreeNode init(String tree) {
+		Queue<TreeNode> nodesQueue = new LinkedList<>();
+        boolean toLeft = false;
+        boolean first = true;
+        
+        String[] strs = tree.split(",");
+        for(String str:strs){
+            if(!str.isEmpty() && !str.equals("")) {
+            	int val = Integer.parseInt(str);
+            	TreeNode node;
+            	if(nodesQueue.isEmpty())
+            		node = this.insert(null, val, toLeft);
+            	else
+            		node = this.insert(nodesQueue.peek(), val, toLeft);
+            	nodesQueue.add(node);
+            }    
+            if(!toLeft) {
+            	if(!first)
+            		nodesQueue.remove();
+            	else
+            		first = false;
+            }
+            toLeft = !toLeft;
+        }
+        return root;
+	}
 	public Tree readFile(String fileName) throws FileNotFoundException {
         Scanner scanner = new Scanner(new File(fileName));
         scanner.useDelimiter(",");
         
-        Queue<Node> nodesQueue = new LinkedList<>();
+        Queue<TreeNode> nodesQueue = new LinkedList<>();
         boolean toLeft = false;
         
         while(scanner.hasNext()){
             String str = scanner.next().trim();
             if(!str.isEmpty() && !str.equals("null")) {
             	int val = Integer.parseInt(str);
-            	Node node;
+            	TreeNode node;
             	if(nodesQueue.isEmpty())
             		node = this.insert(null, val, toLeft);
             	else
@@ -64,10 +90,10 @@ public class Tree {
 	
 	public void writeFile(String fileName) throws IOException{
 		Writer wr = new FileWriter(fileName);
-		LinkedList<Node> nodesQueue = new LinkedList<>();
+		LinkedList<TreeNode> nodesQueue = new LinkedList<>();
 		nodesQueue.add(root);
 		while(!nodesQueue.isEmpty()) {
-			Node node = nodesQueue.remove();
+			TreeNode node = nodesQueue.remove();
 			String last = isLast(nodesQueue) && (node == null || (node.left == null && node.right == null)) ? "" : ",";
 			if(node == null)
 				wr.write(" " + last);
@@ -80,9 +106,9 @@ public class Tree {
 		wr.flush();
 		wr.close();
 	}
-	private boolean isLast(LinkedList<Node> nodesQueue) {
+	private boolean isLast(LinkedList<TreeNode> nodesQueue) {
 		if(!nodesQueue.isEmpty())
-			for (Node node : nodesQueue) {
+			for (TreeNode node : nodesQueue) {
 				if (node != null)
 					return false;
 			}
