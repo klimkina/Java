@@ -1,39 +1,49 @@
-import java.util.HashMap;
 
 class Solution {
-	public double findMedianSortedArrays(int[] nums1, int[] nums2) {
-        double res = 0;
-        int idx = (nums1.length + nums2.length)>>1;
-        int count = (nums1.length + nums2.length + 1)&1;
-        int l = 0;
-        int r = 0;
-        int curr = 0;
-        for(; curr <= idx - count; curr++) {
-        	if(l >= nums1.length)        	res = nums2[r++];
-        	else if (r >= nums2.length)     res = nums1[l++];
-        	else if(nums2[r] < nums1[l])   	res = nums2[r++];
-	        else							res = nums1[l++];
-        }
-        if(count > 0){
-        	if(l >= nums1.length)        	res += nums2[r++];
-        	else if (r >= nums2.length)     res += nums1[l++];
-        	else if(nums2[r] < nums1[l])   	res += nums2[r++];
-	        else							res += nums1[l++];
-        	res = res/2;
-        }
-        return res;
+	public static class ListNode {
+	      int val;
+	      ListNode next;
+	      ListNode(int x) { val = x; }
+	      ListNode(int[] x) {
+	    	  val = x[0];
+		  if(x.length == 1)
+	    		  return;
+	    	  ListNode prev = new ListNode(x[1]);
+	    	  next = prev;
+	    	  for(int i = 2; i < x.length; i++) {
+	    		  ListNode temp = new ListNode(x[i]);
+	    		  prev.next = temp;
+	    		  prev = temp;
+	    	  }
+	      }
+	      public String toString() { 
+	    	  StringBuilder res = new StringBuilder();
+	    	  res.append(val);
+	    	  ListNode temp = next;
+	    	  while(temp != null) {
+	    		  res.append(temp.val);
+	    		  temp = temp.next;
+	    	  }
+	    	  return res.toString();
+	    	} 
+	  }
+	public ListNode reverseList(ListNode list) {
+		ListNode prev = null;
+		ListNode curr = list;
+		ListNode next;
+		while(curr != null) {
+			next = curr.next;
+			curr.next = prev;
+			prev = curr;
+			curr = next;
+		}
+        return prev;
     }
     public static void main(String[] args) {
     	Solution obj = new Solution();
-    	int[] nums1 = {1,3};
-    	int[] nums2 = {2};
-    	//System.out.println(obj.findMedianSortedArrays(nums1, nums2));
-    	int[] nums3 = {1,2};
-    	int[] nums4 = {3,4};
-    	//System.out.println(obj.findMedianSortedArrays(nums3, nums4));
-    	int[] nums5 = {3,4};
-    	int[] nums6 = {};
-    	System.out.println(obj.findMedianSortedArrays(nums5, nums6));
+    	int[] x = {1,2,3,4,5};
+    	ListNode list = new ListNode(x);
+    	System.out.println(obj.reverseList(list));
     	
     }
 }
