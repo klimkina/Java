@@ -1,49 +1,42 @@
 
 class Solution {
-	public static class ListNode {
-	      int val;
-	      ListNode next;
-	      ListNode(int x) { val = x; }
-	      ListNode(int[] x) {
-	    	  val = x[0];
-		  if(x.length == 1)
-	    		  return;
-	    	  ListNode prev = new ListNode(x[1]);
-	    	  next = prev;
-	    	  for(int i = 2; i < x.length; i++) {
-	    		  ListNode temp = new ListNode(x[i]);
-	    		  prev.next = temp;
-	    		  prev = temp;
-	    	  }
-	      }
-	      public String toString() { 
-	    	  StringBuilder res = new StringBuilder();
-	    	  res.append(val);
-	    	  ListNode temp = next;
-	    	  while(temp != null) {
-	    		  res.append(temp.val);
-	    		  temp = temp.next;
-	    	  }
-	    	  return res.toString();
-	    	} 
-	  }
-	public ListNode reverseList(ListNode list) {
-		ListNode prev = null;
-		ListNode curr = list;
-		ListNode next;
-		while(curr != null) {
-			next = curr.next;
-			curr.next = prev;
-			prev = curr;
-			curr = next;
+	public String longestPalindrome(String s) {
+		if(s.isEmpty())
+			return s;
+		char[] chars = s.toCharArray();
+		boolean[][] memo = new boolean[s.length()][s.length()];
+		int l = 0, r = 0;
+		for(int i = 0; i < s.length()-1; i++) {
+			memo[i][i] = true;
+			memo[i][i+1] = chars[i]==chars[i+1];
+			if(memo[i][i+1]) {
+				l = i; r = i+1;
+			}
 		}
-        return prev;
+		
+		memo[s.length()-1][s.length()-1] = true;
+		for(int k = 2; k < s.length(); k++) 
+			for(int i = 0; i < s.length()-k; i++) {
+				memo[i][i+k] = (chars[i]==chars[i+k]) && memo[i+1][i+k-1];
+				if(memo[i][i+k]) {
+					l = i; r = i+k;
+				}
+			}
+		
+		printMatrix(memo, s.length());
+        return s.substring(l, r+1);
     }
+	private void printMatrix(boolean[][] memo, int n) {
+		for(int i = 0; i < n; i++) {
+			for(int j = 0; j < n; j++)
+				System.out.print(memo[i][j]==true ? 1:0);
+			System.out.println();
+		}
+	}
     public static void main(String[] args) {
     	Solution obj = new Solution();
-    	int[] x = {1,2,3,4,5};
-    	ListNode list = new ListNode(x);
-    	System.out.println(obj.reverseList(list));
+    	String s = "cbbdb";
+    	System.out.println(obj.longestPalindrome(s));
     	
     }
 }
