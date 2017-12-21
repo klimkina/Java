@@ -1,42 +1,32 @@
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 class Solution {
-	public String longestPalindrome(String s) {
-		if(s.isEmpty())
+	public String convert(String s, int numRows) {
+		if(numRows <= 1)
 			return s;
 		char[] chars = s.toCharArray();
-		boolean[][] memo = new boolean[s.length()][s.length()];
-		int l = 0, r = 0;
-		for(int i = 0; i < s.length()-1; i++) {
-			memo[i][i] = true;
-			memo[i][i+1] = chars[i]==chars[i+1];
-			if(memo[i][i+1]) {
-				l = i; r = i+1;
+		char[] res = new char[chars.length];
+		int idx = 0;
+		int period = numRows+numRows - 2;
+		int tail = chars.length%period;
+		for(int row = 0; row < numRows; row++) {			
+			for(int i = 0; i < chars.length/period + (tail > 0 ? 1:0); i++) {
+				if(row + (period)*i <chars.length)
+					res[idx++] = chars[row + (period)*i];
+				if(row > 0 && row < numRows-1)
+					if((period)*(i+1) - row < chars.length)
+						res[idx++] = chars[(period)*(i+1) - row];
 			}
+			
 		}
-		
-		memo[s.length()-1][s.length()-1] = true;
-		for(int k = 2; k < s.length(); k++) 
-			for(int i = 0; i < s.length()-k; i++) {
-				memo[i][i+k] = (chars[i]==chars[i+k]) && memo[i+1][i+k-1];
-				if(memo[i][i+k]) {
-					l = i; r = i+k;
-				}
-			}
-		
-		//printMatrix(memo, s.length());
-        return s.substring(l, r+1);
+        return String.valueOf(res);
     }
-	private void printMatrix(boolean[][] memo, int n) {
-		for(int i = 0; i < n; i++) {
-			for(int j = 0; j < n; j++)
-				System.out.print(memo[i][j]==true ? 1:0);
-			System.out.println();
-		}
-	}
     public static void main(String[] args) {
     	Solution obj = new Solution();
-    	String s = "cbbdb";
-    	System.out.println(obj.longestPalindrome(s));
+    	String s = "PAYPALISHIRING";
+    	int num = 5;
+    	System.out.println(obj.convert(s, num));
     	
     }
 }
