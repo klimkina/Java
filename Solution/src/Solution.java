@@ -23,7 +23,7 @@ class Solution {
 				}
 			}
 		
-		printMatrix(memo, s.length());
+		//printMatrix(memo, s.length());
         return s.substring(l, r+1);
     }
 	private void printMatrix(boolean[][] memo, int n) {
