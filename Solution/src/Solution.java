@@ -13,7 +13,7 @@ class Solution {
 		for(; start < chars.length; start++) {
 			if(chars[start] < '0' || chars[start] > '9')
 				break;
-			temp = ((long)res)*10 + (chars[start] - '0');
+			temp = temp*10 + (chars[start] - '0');
 			if(temp > Integer.MAX_VALUE) //operation overflows
 				return isNeg ? Integer.MIN_VALUE : Integer.MAX_VALUE;
 			res = (int)temp;
