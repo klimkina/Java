@@ -1,32 +1,20 @@
-import java.lang.reflect.Array;
-import java.util.ArrayList;
+
 
 class Solution {
-	public String convert(String s, int numRows) {
-		if(numRows <= 1)
-			return s;
-		char[] chars = s.toCharArray();
+	public int reverse(int x) {
+		char[] chars = String.valueOf(x).toCharArray();
 		char[] res = new char[chars.length];
 		int idx = 0;
-		int period = numRows+numRows - 2;
-		int tail = chars.length%period;
-		for(int row = 0; row < numRows; row++) {			
-			for(int i = 0; i < chars.length/period + (tail > 0 ? 1:0); i++) {
-				if(row + (period)*i <chars.length)
-					res[idx++] = chars[row + (period)*i];
-				if(row > 0 && row < numRows-1)
-					if((period)*(i+1) - row < chars.length)
-						res[idx++] = chars[(period)*(i+1) - row];
-			}
-			
-		}
-        return String.valueOf(res);
+		if(chars[0] == '-')
+			res[idx++] = '-';
+		for(int i = chars.length-1; i >= idx; i--)
+			res[chars.length - i + idx-1] = chars[i];
+		return Integer.valueOf(String.valueOf(res));        
     }
     public static void main(String[] args) {
     	Solution obj = new Solution();
-    	String s = "PAYPALISHIRING";
-    	int num = 5;
-    	System.out.println(obj.convert(s, num));
+    	int num = -527;
+    	System.out.println(obj.reverse(num));
     	
     }
 }
