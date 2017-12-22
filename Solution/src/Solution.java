@@ -25,23 +25,37 @@ class Solution {
 		}
 	}
 	public int kthSmallest(TreeNode root, int k) {
-		Stack<TreeNode> stack = new Stack<>();
-		
-		int visited = 1;
-		while(!(stack.isEmpty() && root == null)) {
-			if(root != null) {
-				stack.push(root);
-				root = root.left;
+		int visited = 0;
+		TreeNode node;
+		int res = 0;
+		while(root != null) {
+			if(root.left != null) {
+				node = findRightest(root);
+				if(node.right == null) {
+					node.right = root;
+					root = root.left;
+				}
+				else {					
+					node.right = null;
+					if(++visited == k)
+						return root.val;
+					root = root.right;
+				}
 			}
 			else {
-				root = stack.pop();
-				if(visited++ == k)
+				if(++visited == k)
 					return root.val;
 				root = root.right;
 			}
 		} 
-        return 0;
+        return res;
     }
+	private TreeNode findRightest(TreeNode root) {
+		TreeNode prev = root.left;
+		while(prev.right != null && prev.right != root)
+			prev = prev.right;
+		return prev;
+	}
     public static void main(String[] args) {
     	Solution obj = new Solution();
     	int[] arr = {5, 2, 7, 1, 3, 6, 8 };
