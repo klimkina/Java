@@ -2,7 +2,9 @@
 public class BinaryCalc {
 	double convert(String s) {
 		s = s.trim();
-		String fraction = s.split("\\.")[1];
+		String fraction = "";
+		if(s.split("[.]").length > 1)
+			fraction = s.split("[.]")[1];
 		s = s.split("\\.")[0];
 		
 		double res = 0;
@@ -65,7 +67,7 @@ public class BinaryCalc {
 		/*String[] s = {"1", "10", "11", "100", "101", "110", "111", "1000", "1001", "1010", "1011", "1100", "1101", "1110", "1111", "10000", "10001", "10010", "10011", "10100", "10101", "10110", "10111", "11000", "11001"};
 		for(int i = 0; i < s.length; i++)
 			System.out.println(obj.convert(s[i]));*/
-		System.out.println(obj.convert(22.33));
+		System.out.println(obj.convert("11111111000000000000000000000111"));
 	}
 
 }
