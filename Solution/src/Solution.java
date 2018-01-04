@@ -1,25 +1,22 @@
-import java.util.ArrayList;
-
 class Solution {
-	public int maxArea(int[] height) {
-		if ( (height == null) || (height.length <= 1) )
-			return 0;
-		int res = 0;
-		int low = 0, high = height.length - 1;
-		while(low < high) {
-			int area = (high - low) * Math.min(height[low], height[high]);
-			if(area > res)
-				res = area;
-			if(height[low] < height[high])
-				low++;
-			else
-				high--;
-		}
-        return res;
+	public String intToRoman(int num) {
+		int[] values = {1000,900,500,400,100,90,50,40,10,9,5,4,1};
+	    String[] strs = {"M","CM","D","CD","C","XC","L","XL","X","IX","V","IV","I"};
+	    
+	    StringBuilder sb = new StringBuilder();
+	    
+	    for(int i=0;i<values.length;i++) {
+	        while(num >= values[i]) {
+	            num -= values[i];
+	            sb.append(strs[i]);
+	        }
+	    }
+	    return sb.toString();
     }
+	
     public static void main(String[] args) {
-    	int[] height = {1,2,3,5,2};
+    	int num = 1235;
     	Solution obj = new Solution();
-    	System.out.println(obj.maxArea(height));
+    	System.out.println(obj.intToRoman(num));
     }
 }
