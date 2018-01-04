@@ -2,7 +2,7 @@ import java.io.FileNotFoundException;
 
 public class LongestUnivaluePath {
 	
-	public int longestUnivaluePath(Tree.Node root) {
+	public int longestUnivaluePath(Tree.TreeNode root) {
 		if(root == null)
 			return 0;
 		int left_path = 0;
@@ -23,7 +23,7 @@ public class LongestUnivaluePath {
 		res = left_same + right_same;
         return Math.max(res, Math.max(left_path, right_path));
     }
-	private int longestUnivaluePath(Tree.Node root, int val) {		
+	private int longestUnivaluePath(Tree.TreeNode root, int val) {		
 		if(root.val == val) {
 			int left = 0;
 			int right = 0;
