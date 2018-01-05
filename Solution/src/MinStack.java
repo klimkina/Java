@@ -1,39 +1,37 @@
-import java.util.ArrayList;
-import java.util.PriorityQueue;
+import java.util.Stack;
 
 public class MinStack {
-	PriorityQueue<Integer> my_pq;
-	private ArrayList<Integer> my_list;
+	Stack<Integer> stack;
+	int min;
 
-	    /** initialize your data structure here. */
-	    public MinStack() {
-	    	my_list = new ArrayList<Integer>();
-	    	my_pq = new PriorityQueue<Integer>(100, new Comparator<Integer>() {
-				@Override
-				public int compare(Integer n1, Integer n2) {
-					return Integer.compare(my_list.get(n1), my_list.get(n2));
-				}
-			});
-	    }
-	    
-	    public void push(int x) {
-	    	int min;
-	    	my_list.add(x);
-	    	my_pq.add(my_list.size()-1);
-	    }
-	    
-	    public void pop() {
-	    	my_pq.remove(my_list.size()-1);
-	        my_list.remove(my_list.size()-1);
-	    }
-	    
-	    public int top() {
-	    	return my_list.get(my_list.size()-1).intValue();
-	    }
-	    
-	    public int getMin() {
-	        return my_list.get(my_pq.peek()).intValue();
-	    }
+    /** initialize your data structure here. */
+    public MinStack() {
+    	stack = new Stack<>();
+    }
+    
+    public void push(int x) {
+    	if(stack.isEmpty())
+    		min = x;
+    	stack.push(x-min);
+    	min = Math.min(x, min);
+    }
+    
+    public void pop() {
+    	if(stack.isEmpty()) return;
+    	int x = stack.pop().intValue();
+    	if(x < 0) min -= x;
+    }
+    
+    public int top() {
+    	int x = stack.peek().intValue();
+    	if(x > 0)
+    		return stack.peek() + min;
+    	return min;
+    }
+    
+    public int getMin() {
+        return min;
+    }
 	
 
 	/**
@@ -51,8 +49,8 @@ public class MinStack {
 		obj.push(3);
 		obj.push(5);
 		obj.pop();
-		int param_3 = obj.top();
-		int param_4 = obj.getMin();
+		System.out.println(obj.top());
+		System.out.println(obj.getMin());
 	}
 
 }
