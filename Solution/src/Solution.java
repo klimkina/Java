@@ -1,43 +1,55 @@
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.Comparator;
 
 class Solution {
-	public List<List<Integer>> threeSum(int[] nums) {
-	        List<List<Integer>> result = new ArrayList<>();
-	        if(nums.length < 3) return result;
-	        Arrays.sort(nums);
-	        int i = 0;
-	        while(i < nums.length - 2) {
-	            if(nums[i] > 0) break;
-	            int j = i + 1;
-	            int k = nums.length - 1;
-	            while(j < k) {
-	                int sum = nums[i] + nums[j] + nums[k];
-	                if(sum == 0) result.add(Arrays.asList(nums[i], nums[j], nums[k]));
-	                if(sum <= 0) while(nums[j] == nums[++j] && j < k);
-	                if(sum >= 0) while(nums[k--] == nums[k] && j < k);
-	            }
-	            while(nums[i] == nums[++i] && i < nums.length - 2);
-	        }
-	        return result;
+	public int maxProduct(String[] words) {
+		Arrays.sort(words, new Comparator<String>() {
+			public int compare(String s1, String s2) {
+				if(s1.length() != s2.length())
+					return s1.length() - s2.length();
+				return s1.compareTo(s2);
+			}
+		});
+		int res = 0;
+		char[][] word_letters = new char[words.length][];
+		for(int i = 0; i < words.length; i++) {
+			word_letters[i] = words[i].toCharArray();
+			Arrays.sort(word_letters[i]);
+		}
+		for(int i = words.length-1; i > 0; i--) {
+			if(word_letters[i].length * word_letters[i-1].length <= res)
+				break;
+			for(int j = i-1; j >= 0; j--) {
+				if(word_letters[i].length * word_letters[j].length <= res)
+					break;
+				if(!hasCommonLetter(word_letters[i], word_letters[j])) {
+					if(word_letters[i].length * word_letters[j].length > res)
+						res = word_letters[i].length * word_letters[j].length;
+					break;
+				}
+			}
+			
+		}
+        return res;
     }
-	
+	private boolean hasCommonLetter(char[] chars1, char[] chars2) {
+		int idx1 = 0;
+		int idx2 = 0;
+		while(idx1 < chars1.length && idx2 < chars2.length) {
+			if(chars1[idx1] == chars2[idx2])
+				return true;
+			if(chars1[idx1] < chars2[idx2])
+				idx1++;
+			else
+				idx2++;
+		}
+		return false;
+	}
     public static void main(String[] args) {
-    	int[] nums = {-1, 0, 1, 2, -1, -4};
+    	String[] words = {"abcw", "baz", "foo", "bar", "xtfn", "abcdef"};
     	Solution obj = new Solution();
     	
-    	List<List<Integer>> res = obj.threeSum(nums);
-    	Iterator itr = res.iterator();
-    	while (itr.hasNext()) {
-    		Iterator inner = ((List<Integer>)itr.next()).iterator();
-    		while(inner.hasNext()) {
-    			System.out.print(inner.next() + " ");
-    		}
-    		System.out.println();
-        }
+    	System.out.println(obj.maxProduct(words));
+        
     }
 }
