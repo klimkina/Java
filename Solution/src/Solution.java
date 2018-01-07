@@ -1,26 +1,35 @@
-class Solution {
-	
-	public int lengthLongestPath(String input) {
-		
-		input = input.replace("\\n", "\n");
-		input = input.replace("\\t", "\t");
-		String[] paths = input.split("\\n");
-	    int[] stack = new int[paths.length+1];
-	    int maxLen = 0;
-	    for(String s:paths){
-	        int lev = s.lastIndexOf("\t")+1;
-	        stack[lev+1] = stack[lev]+s.length()-(lev)+1; // remove "\\t", add"\"
-	        if(s.contains(".")) 
-	        	maxLen = Math.max(maxLen, stack[lev+1]-1);
-	    }
-	    return maxLen;
-   }
+import java.util.Arrays;
+import java.util.Comparator;
 
+class Solution {
+	public int maxCoins(int[] nums) {
+	    if (nums == null || nums.length == 0) return 0;
+	    
+	    int[][] dp = new int[nums.length][nums.length];
+	    for (int len = 1; len <= nums.length; len++) {
+	        for (int start = 0; start <= nums.length - len; start++) {
+	            int end = start + len - 1;
+	            for (int i = start; i <= end; i++) {
+	                int coins = nums[i] * getValue(nums, start - 1) * getValue(nums, end + 1);
+	                coins += i != start ? dp[start][i - 1] : 0; // If not first one, we can add subrange on its left.
+	                coins += i != end ? dp[i + 1][end] : 0; // If not last one, we can add subrange on its right
+	                dp[start][end] = Math.max(dp[start][end], coins);
+	            }
+	        }
+	    }
+	    return dp[0][nums.length - 1];
+	}
+
+	private int getValue(int[] nums, int i) { // Deal with num[-1] and num[num.length]
+	    if (i < 0 || i >= nums.length) {
+	        return 1;
+	    }
+	    return nums[i];
+	}
     public static void main(String[] args) {
-    	String file_sys = "dir\\n\\tsubdir1\\n\\t\\tfile1.ext\\n\\t\\tsubsubdir1\\n\\tsubdir2\\n\\t\\tsubsubdir2\\n\\t\\t\\tfile2.ext";
     	Solution obj = new Solution();
-    	
-    	System.out.print(obj.lengthLongestPath(file_sys));
+    	int[] coins = {3, 1, 5, 8};
+    	System.out.print(obj.maxCoins(coins));
         
     }
 }
