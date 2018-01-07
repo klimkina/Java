@@ -1,47 +1,62 @@
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
+/**
+ * Definition for an interval.
+ * public class Interval {
+ *     int start;
+ *     int end;
+ *     Interval() { start = 0; end = 0; }
+ *     Interval(int s, int e) { start = s; end = e; }
+ * }
+ */
 class Solution {
-	public void wallsAndGates(int[][] rooms) {
-		if (rooms.length == 0 || rooms[0].length == 0) return;
-	    Queue<int[]> queue = new LinkedList<>();
-	    for (int i = 0; i < rooms.length; i++) {
-	        for (int j = 0; j < rooms[0].length; j++) {
-	            if (rooms[i][j] == 0) queue.add(new int[]{i, j});
-	        }
-	    }
-	    while (!queue.isEmpty()) {
-	        int[] top = queue.remove();
-	        int row = top[0], col = top[1];
-	        int[] dx = {1, -1, 0, 0};
-	        int[] dy = {0, 0, 1, -1};
-	        
-	        for(int i = 0; i < 4; i++) {
-	        	int new_row = row + dy[i];
-	        	int new_col = col + dx[i];
-	        	if(new_row >= 0 && new_row < rooms.length &&
-	        			new_col >= 0 && new_col < rooms[0].length &&
-	        			rooms[new_row][new_col] == Integer.MAX_VALUE) {
-	        		
-	        		rooms[new_row][new_col] = rooms[row][col] + 1;
-	        		queue.add(new int[]{new_row, new_col});
-	        	}
-	        
-	        }
-	    }
+	public static class Interval {
+		 int start;
+		 int end;
+		 Interval() { start = 0; end = 0; }
+		 Interval(int s, int e) { start = s; end = e; }
 	}
+    public List<Interval> employeeFreeTime(List<List<Interval>> schedule) {
+        List<Interval> all = new ArrayList<>();
+        List<Interval> ans = new ArrayList<>();
+        for (List<Interval> list:schedule)
+            for (Interval in:list)
+                all.add(in);
+        Collections.sort(all,(c,d)->(c.start-d.start));
+        int max = all.get(0).end;
+        for (int i = 1; i < all.size(); i++)
+        {
+            int l = all.get(i).start;
+            int r = all.get(i).end;
+            if (r <= max) continue;
+            if (l > max) 
+                ans.add(new Interval(max, l));
+            
+            max = r;
+        }
+        return ans;
+    }
+    
+
     public static void main(String[] args) {
     	Solution obj = new Solution();
-    	int[][] house = {{2147483647,  -1,  0,  2147483647},
-    			{2147483647, 2147483647, 2147483647,  -1},
-    			{2147483647,  -1, 2147483647,  -1},
-    			  {0,  -1,2147483647, 2147483647}};
-    	obj.wallsAndGates(house);
-    	for(int row = 0; row < house.length; row++) {
-    		for(int col = 0; col < house[0].length; col++)
-    			System.out.print(house[row][col] + " ");
-    		System.out.println();
+    	int[][][] intervals = {{{1,2},{5,6}},
+    			{{1,3}},{{4,10}}
+    	};
+    	List<List<Interval>> avails = new ArrayList<>();
+    	for(int i = 0; i < intervals.length; i++) {
+    		List<Interval> l = new ArrayList<>();
+    		for(int j = 0; j < intervals[i].length; j++)
+    			l.add(new Interval(intervals[i][j][0], intervals[i][j][1]));
+    		avails.add(l);
     	}
+    	List<Interval> res = obj.employeeFreeTime(avails);
+    	for(Interval interval : res)
+    		System.out.println(interval.start + " " + interval.end);
         
     }
 }
