@@ -1,41 +1,41 @@
+import java.util.Arrays;
+import java.util.HashSet;
+
 class Solution {
-	private int[][] jumps;
-	private boolean[] visited;
-
-	public int numberOfPatterns(int m, int n) {
-	    jumps = new int[10][10];
-	    jumps[1][3] = jumps[3][1] = 2;
-	    jumps[4][6] = jumps[6][4] = 5;
-	    jumps[7][9] = jumps[9][7] = 8;
-	    jumps[1][7] = jumps[7][1] = 4;
-	    jumps[2][8] = jumps[8][2] = 5;
-	    jumps[3][9] = jumps[9][3] = 6;
-		jumps[1][9] = jumps[9][1] = jumps[3][7] = jumps[7][3] = 5;
-	    visited = new boolean[10];
-	    int count = 0;
-		count += DFS(1, 1, 0, m, n) * 4; // 1, 3, 7, 9 are symmetrical
-		count += DFS(2, 1, 0, m, n) * 4; // 2, 4, 6, 8 are symmetrical
-		count += DFS(5, 1, 0, m, n);
-		return count;
-	}
-
-	private int DFS(int num, int len, int count, int m, int n) {
-		if (len >= m) count++; // only count if moves are larger than m
-		len++;
-		if (len > n) return count;
-	    visited[num] = true;
-	    for (int next = 1; next <= 9; next++) {
-	        int jump = jumps[num][next];
-	        if (!visited[next] && (jump == 0 || visited[jump])) {
-	            count = DFS(next, len, count, m, n);
-	        }
+	private static class Point {
+		int x, y;
+		public Point(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}
+		@Override
+		public boolean equals(Object that) 
+		{
+			if (this == that) return true;
+		    if (that == null || getClass() != that.getClass()) return false;
+			return (this.x == ((Point)that).x && this.y == ((Point)that).y);
+		}
+		public int hashCode() {
+	        return x*10000009 + y;
 	    }
-		visited[num] = false; // backtracking
-	    return count;
 	}
+	public boolean isReflected(int[][] points) {
+		if(points.length < 2)
+			return true;
+        Arrays.sort(points, (a,b)->(a[0] - b[0]));
+        HashSet<Point> set = new HashSet<>();
+        for(int i = 0; i < points.length; i++)
+        	set.add(new Point(points[i][0], points[i][1]));
+        int y2 = 2*points[0][0] + (points[points.length-1][0] - points[0][0]);
+        for(int i = 0; i < (points.length-1) / 2 + 1; i++)
+        	if(!set.contains(new Point(y2 - points[i][0], points[i][1])))
+        		return false;
+        return true;
+    }
 	    
-    public static void main(String[] args) {   			
+    public static void main(String[] args) {   	
+    	int[][] points = {{-16,1},{16,1},{16,1}};
     	Solution obj = new Solution();
-    	System.out.println(obj.numberOfPatterns(1, 1));
+    	System.out.println(obj.isReflected(points));
     }
 }
