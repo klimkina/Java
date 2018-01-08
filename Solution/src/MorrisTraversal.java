@@ -1,5 +1,3 @@
-import Solution.TreeNode;
-
 public class MorrisTraversal {
 	public static class TreeNode {
 		 int val;
