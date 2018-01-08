@@ -1,40 +1,29 @@
 class Solution {
-	public int[] getModifiedArray(int length, int[][] updates) {
-
-	    int[] res = new int[length];
-	     for(int[] update : updates) {
-	        int value = update[2];
-	        int start = update[0];
-	        int end = update[1];
-	        
-	        res[start] += value;
-	        
-	        if(end < length - 1)
-	            res[end + 1] -= value;
-	        
-	    }
-	    
-	    int sum = 0;
-	    for(int i = 0; i < length; i++) {
-	        sum += res[i];
-	        res[i] = sum;
-	    }
-	    
-	    return res;
+	public boolean isStrobogrammatic(String num) {
+        char[] charr = num.toCharArray();
+        StringBuilder sb = new StringBuilder();
+        for(int i = charr.length -1; i >= 0; i--)
+        	sb.append(rotate(charr[i]));
+        return sb.toString().equals(num);
+    }
+	private String rotate(char ch) {
+		switch(ch) {
+			case '0' : return "0";
+			case '1' : return "1";
+			case '6' : return "9";
+			case '8' : return "8";
+			case '9' : return "6";
+			default: return "#";
+		}
 	}
-	
 	    
-    public static void main(String[] args) {
-    	int length = 5;
-    	int[][]  updates = {
-    		        {1,  3,  2},
-    		        {2,  4,  3},
-    		        {0,  2, -2}
-    		        };
-    			
+    public static void main(String[] args) {   			
     	Solution obj = new Solution();
-    	int[] res = obj.getModifiedArray(length, updates);
-    	for(int i: res)
-    		System.out.print(i + ", ");
+    	System.out.println(obj.isStrobogrammatic("666"));
+    	System.out.println(obj.isStrobogrammatic("88"));
+    	System.out.println(obj.isStrobogrammatic("69"));
+    	System.out.println(obj.isStrobogrammatic("618"));
+    	System.out.println(obj.isStrobogrammatic("619"));
+    	System.out.println(obj.isStrobogrammatic("225"));
     }
 }
