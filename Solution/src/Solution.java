@@ -11,7 +11,7 @@ class Solution {
         for(int i = 0; i < points.length; i++)
         	set.add(points[i][0] + "#" + points[i][1]);
         int y = points[0][0] + points[points.length-1][0];
-        for(int i = 0; i < (points.length-1) / 2 + 1; i++)
+        for(int i = 0; i < points.length / 2; i++)
         	if(!set.contains(y - points[i][0] + "#" + points[i][1]))
         		return false;
         return true;
