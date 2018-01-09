@@ -19,7 +19,8 @@ class SnakeGame {
     public SnakeGame(int width, int height, int[][] food) {
         this.width = width;
         this.height = height;
-        this.food = new int[food.length][food[0].length];
+        if(food != null && food.length > 0)
+        	this.food = new int[food.length][food[0].length];
         for(int i = 0; i < food.length; i++)
         	this.food[i] = food[i].clone();
         snake = new LinkedList<>();
@@ -38,7 +39,7 @@ class SnakeGame {
     	return false;
     }
     private boolean isFood(Integer pos) {
-    	if(curr_col < food.length)
+    	if(food != null && curr_col < food.length)
 			return(pos == food[curr_col][0]* width + food[curr_col][1]);
     	return false;
     }
@@ -48,7 +49,7 @@ class SnakeGame {
         Game over when snake crosses the screen boundary or bites its body. */
     public int move(String direction) {
         char[] charr = direction.toCharArray();
-        Integer curr_pos = snake.getLast();
+        Integer curr_pos = snake.peekFirst();
         Integer new_pos = 0;
         for(int i = 0; i < charr.length; i++) {
         	switch(charr[i]) {
@@ -67,6 +68,7 @@ class SnakeGame {
         	set.add(new_pos);
         	if(isFood(new_pos)) {
         		curr_col++;
+        		return snake.size()-1;
         	}
         	else {
         		set.remove(snake.peekLast());
@@ -81,6 +83,11 @@ class SnakeGame {
     	int[][] food = {{1,2},{0,1}};
     	SnakeGame obj = new SnakeGame(3, 3, food);
     	System.out.println(obj.move("R"));
+    	System.out.println(obj.move("D"));
+    	System.out.println(obj.move("R"));
+    	System.out.println(obj.move("U"));
+    	System.out.println(obj.move("L"));
+    	System.out.println(obj.move("U"));
     }
 }
 
