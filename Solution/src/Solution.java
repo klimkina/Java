@@ -10,6 +10,10 @@ class Solution {
 	private boolean[] marked;
 	public List<Integer> findMinHeightTrees(int n, int[][] edges) {
 		List<Integer> res = new ArrayList<>();
+		if(n == 1) {
+			res.add(0);
+			return res;
+		}
 		marked = new boolean[n];
 		adj = (Set<Integer>[])new HashSet[n];
 		for(int i = 0; i < edges.length; i++) {
@@ -20,31 +24,29 @@ class Solution {
 			adj[edges[i][0]].add(edges[i][1]);
 			adj[edges[i][1]].add(edges[i][0]);
 		}
-		int min = Integer.MAX_VALUE;
-		int[] heights = new int[n];
-		for(int i = 0; i < n; i++) {
-			Arrays.fill(marked, false);
-			heights[i] = findHeight(i);
-			if(heights[i] < min)
-				min = heights[i];
-		}
-		for(int i = 0; i < n; i++)
-			if(heights[i] == min)
-				res.add(i);
+		int[] degree = new int[n];  //degree
+        for(int i=0; i<n; i++) 
+        	degree[i]=adj[i].size();
+        
+        for(int remain=n, j; remain>2;){
+            ArrayList<Integer> del = new ArrayList<>(); // nodes to delete
+            for(j=0; j<n; j++){
+                if(degree[j]==1) { //find leaves
+                    remain--;
+                    del.add(j);
+                    degree[j]=-1;
+                }
+            }
+            for(int k: del){ //delete this node and its edges 
+                for(int neigh: adj[k]) 
+                	degree[neigh]--;
+            }
+        }
+        for(int i=0; i<n; i++) 
+        	if(degree[i]>=0) res.add(i);
         return res;
     }
-	private int findHeight(int i) { // dfs
-		marked[i] = true;
-		int max = 0;
-		int temp;
-		for(int v: adj[i])
-			if(!marked[v]) {
-				temp = findHeight(v) + 1;
-				if(max < temp)
-					max = temp;
-			}
-		return max;
-	}
+	
 	    
     public static void main(String[] args) {   	
     	int[][] edges = {{0, 1}};
