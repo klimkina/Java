@@ -2,15 +2,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FizzBuzz {
-	public static class Pair<Key,Value> {
-	    private Key key;
-	    private Value value;
-
-	    public Pair(Key key, Value value){
-	        this.key = key;
-	        this.value = value;
-	    }
-	}
+	
 	public void printFizzBuzz(int start, int end, Map<Integer, String> map) {
 		int increment = (start < end) ? 1 : -1;
 		int index = start;
