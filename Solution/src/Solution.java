@@ -23,7 +23,7 @@ class Solution {
         for(int i = 0; i < N; i++)
         	for(int j = 0; j < N; j++)
         		if(matrix[i][j] == 1) {
-        			int curr = 999999;
+        			int curr = Integer.MAX_VALUE;
 	        		for(int k = 0;k < 4;k++){
 	        			curr = Math.min(curr, res[i][j][k]);
 	        		}
