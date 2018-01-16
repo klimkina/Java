@@ -1,46 +1,57 @@
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.Arrays;
 
-/*A string S of lowercase letters is given. We want to partition this string into as many parts as possible 
- * so that each letter appears in at most one part, and return a list of integers representing the size of these parts.
- * */
+/*In a 2D grid from (0, 0) to (N-1, N-1), every cell contains a 1, 
+ * except those cells in the given list mines which are 0. 
+ * What is the largest axis-aligned plus sign of 1s contained in the grid? Return the order of the plus sign. 
+ * If there is none, return 0.
+
+ * An "axis-aligned plus sign of 1s of order k" has some center grid[x][y] = 1 
+ * along with 4 arms of length k-1 going up, down, left, and right, and made of 1s. 
+ * This is demonstrated in the diagrams below. Note that there could be 0s or 1s beyond the arms of the plus sign, 
+ * only the relevant area of the plus sign is checked for 1s. 
+*/
 class Solution {
-	public List<Integer> partitionLabels(String S) {
-		List<Integer> res = new ArrayList<>();
-		char[] charr = S.toCharArray();
-		
-		Set<Character> sets[] = new Set[charr.length];
-		for(int i = charr.length - 1; i >= 0; i--) {
-			sets[i] = new HashSet<>();
-			if(i < charr.length-1)
-				sets[i].addAll(sets[i+1]);
-			sets[i].add(charr[i]);
-		}
-		int start = 0;
-		int prev = -1;
-		Set<Character> curr = new HashSet<>();
-		Set<Character> intersection = null;
-		while(start < charr.length-1) {
-			curr.add(charr[start]); 
-			intersection = sets[start+1];
-			intersection.retainAll(curr);
-			if(intersection.isEmpty()) {
-				res.add(start-prev);
-				prev = start;
-				curr.clear();
-			}
-			start++;
-		}
-		res.add(start-prev);
-		return res;
+	public int orderOfLargestPlusSign(int N, int[][] mines) {
+		int[][] matrix = new int[N][N];
+        for(int i = 0; i < N; i++)
+        	Arrays.fill(matrix[i], 1);
+        for(int i = 0; i < mines.length; i++)
+        	matrix[mines[i][0]][mines[i][1]] = 0;
+        int[][][] res = new int[N][N][4];
+        countMax(res, matrix, N);
+        int max = 0;
+        for(int i = 0; i < N; i++)
+        	for(int j = 0; j < N; j++)
+        		if(matrix[i][j] == 1) {
+        			int curr = 999999;
+	        		for(int k = 0;k < 4;k++){
+	        			curr = Math.min(curr, res[i][j][k]);
+	        		}
+        			if(curr > max)
+        				max = curr;
+        		}
+        
+        return max;
     }
+	
+	private void countMax(int[][][] res, int[][] matrix, int N) {
+		for (int i = 0; i < N; i++)
+            for (int j=0; j < N; j++) 
+                if (matrix[i][j] == 1) {
+                    res[i][j][0] = (j == 0 ? 1 : res[i][j-1][0] + 1);
+                    res[i][j][1] = (i == 0 ? 1 : res[i-1][j][1] + 1);
+                }
+        for (int i = N-1; i >= 0; i--)
+            for (int j = N-1; j >= 0; j--) 
+                if (matrix[i][j] == 1) {
+                	res[i][j][2] = (j == N-1 ? 1 : res[i][j+1][2] + 1);
+                	res[i][j][3] = (i == N-1 ? 1 : res[i+1][j][3] + 1);
+                }
+	}
     
     public static void main(String[] args) {   	
     	Solution obj = new Solution();
-    	List<Integer> res = obj.partitionLabels("ababcbacadefegdehijhklij");
-    	for(int i : res)
-    		System.out.print(i + " ");
+    	int[][] mines = {{4,2}};
+    	System.out.println(obj.orderOfLargestPlusSign(5, mines));
     }
 }
