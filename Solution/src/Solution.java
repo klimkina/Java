@@ -6,24 +6,11 @@ You are guaranteed to have only one unique value in the BST that is closest to t
 */
 class Solution {
 	public int closestValue(TreeNode root, double target) {
-		if(root.val == target)
-			return root.val;
-		int res;
 		int val = root.val;
-		if(root.val > target) {
-			if(root.left == null)
-				return root.val;
-			root = root.left;
-		}
-		else {
-			if(root.right == null)
-				return root.val;
-			root = root.right;
-		}
-		res = closestValue(root, target);
-		if(Math.abs(target - res) > Math.abs(target-val))
-			return val;
-		return res;
+	    TreeNode kid = target < val ? root.left : root.right;
+	    if (kid == null) return val;
+	    int close = closestValue(kid, target);
+	    return Math.abs(val - target) < Math.abs(close - target) ? val : close;
     }
 	
     
