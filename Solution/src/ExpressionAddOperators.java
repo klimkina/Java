@@ -6,50 +6,39 @@ import java.util.List;
 
 public class ExpressionAddOperators {
 	public List<String> addOperators(String num, int target) {
-		List<String> res = new ArrayList<>();
-		if(num.isEmpty() || Long.parseLong(num) > Integer.MAX_VALUE)
-			return res;
-		res = getOperator(num, target, 0, num.length());
-		return res;
-    }
-	// start inclusive and end is not inclusive
-	private List<String> getOperator(String sub, long target, int start, int end) {
-		List<String> res = new ArrayList<>();
-		if(start >= end)
-			return res;
-		if(sub.charAt(start) != '0' && Long.parseLong(sub.substring(start, end)) == target) 
-			res.add(sub.substring(start, end));
-		
-		for(int i = start + 1; i < end; i++) {
-			long left = Long.parseLong(sub.substring(start, i));
-			List<String> right = getOperator(sub, target-left, i, end);
-			addOperators(res, "+", left, right);
-			right = getOperator(sub, left-target, i, end);
-			addOperators(res, "-", left, right);
-			
-			for(int j = start+i + 1; j < end; j++) {
-				long next_left = Long.parseLong(sub.substring(start+i, j));
-				right = getOperator(sub, target - left * next_left, j, end);
-				if(!right.isEmpty())
-					for(String s: right)
-						res.add(left + "*" + next_left + "+" + s);
-				right = getOperator(sub, left * next_left - target, j, end);
-				if(!right.isEmpty())
-					for(String s: right)
-						res.add(left + "*" + next_left + "-" + s);
+	    List<String> res = new ArrayList<>();
+	   	StringBuilder sb = new StringBuilder();
+	    dfs(res, sb, num, 0, target, 0, 0);
+	    return res;
+	    
+	}
+	public void dfs(List<String> res, StringBuilder sb, String num, int pos, int target, long prev, long multi) { 
+		if(pos == num.length()) {
+			if(target == prev) res.add(sb.toString());
+			return;
+		}
+		for(int i = pos; i < num.length(); i++) {
+			if(num.charAt(pos) == '0' && i != pos) break;
+			long curr = Long.parseLong(num.substring(pos, i + 1));
+			int len = sb.length();
+			if(pos == 0) {
+				dfs(res, sb.append(curr), num, i + 1, target, curr, curr); 
+				sb.setLength(len);
+			} else {
+				dfs(res, sb.append("+").append(curr), num, i + 1, target, prev + curr, curr); 
+				sb.setLength(len);
+				dfs(res, sb.append("-").append(curr), num, i + 1, target, prev - curr, -curr); 
+				sb.setLength(len);
+				dfs(res, sb.append("*").append(curr), num, i + 1, target, prev - multi + multi * curr, multi * curr); 
+				sb.setLength(len);
 			}
 		}
-		return res;
 	}
-	private void addOperators(List<String> res, String op, long left, List<String> right) {
-		if(!right.isEmpty())
-			for(String s: right)
-				res.add(left + op + s);
-	}
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		ExpressionAddOperators obj = new ExpressionAddOperators();
-		List<String> res = obj.addOperators("232", 8);
+		List<String> res = obj.addOperators("105", 5);
 		for(String s : res)
 			System.out.println(s);
 	}
