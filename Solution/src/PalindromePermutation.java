@@ -1,27 +1,25 @@
+import java.util.HashMap;
+
 // Given a string, determine if a permutation of the string could form a palindrome.
 
 public class PalindromePermutation {
 	public boolean canPermutePalindrome(String s) {
-        int freq = 0; // 26 letters map to bits
-        char[] charr = s.toLowerCase().toCharArray();
+        char[] charr = s.toCharArray();
+        HashMap<Character, Boolean> map = new HashMap<>();// character and if odd
         for(char ch : charr) {
-        	int pos = ch - 'a';
-        	int mask = 1 << (pos+1);
-        	int prev = freq & mask;
-        	if(prev > 0) // set 0
-        		freq &= ~mask;
+        	if(map.containsKey(ch))
+        		map.put(ch, !map.get(ch));
         	else
-        		freq |= mask;
+        		map.put(ch, true);
         }
         boolean isOdd = false;
-        while(freq > 0) {
-        	if((freq&1) > 0) {
+        for(Character c : map.keySet()) {
+        	if(map.get(c)) {
         		if(isOdd)
         			return false;
         		else
         			isOdd = true;
         	}
-        	freq >>>= 1;
         }
         return true;
     }
