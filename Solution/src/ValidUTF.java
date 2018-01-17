@@ -15,14 +15,14 @@ public class ValidUTF {
 			if(count == 0) count++;
 			for(int j=1; j < count; j++) { // check that the next n bytes start with 10xxxxxx
 				if(i+j >= data.length) return false;
-				if(countLeadingBits(data[i+j]) != 1) return false; // 192(11000000), 128(10000000)
+				if(countLeadingBits(data[i+j]) != 1) return false; // 
 			}
 			i += count;
 		}
         return true;
     }
 	private int countLeadingBits(int n) {
-		int mask = (1 << 7);
+		int mask = (1 << 7); //10000000
 		int count = 0;
 		while((n&mask) != 0) {
 			mask >>>= 1;
