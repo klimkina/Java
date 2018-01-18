@@ -1,4 +1,4 @@
-
+// create max number size k from two arrays maintaining the same order as in original arrays
 public class CreateMaximumNumber {
 	public int[] maxNumber(int[] nums1, int[] nums2, int k) {
 	    int n = nums1.length;
