@@ -1,50 +1,29 @@
-/*The API: int read4(char *buf) reads 4 characters at a time from a file.
+/*Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand.
 
-The return value is the actual number of characters read. For example, it returns 3 if there is only 3 characters left in the file.
+(i.e., 0 1 2 4 5 6 7 might become 4 5 6 7 0 1 2).
 
-By using the read4 API, implement the function int read(char *buf, int n) that reads n characters from the file.
+Find the minimum element.
 
-Note:
-The read function may be called multiple times.*/
+You may assume no duplicate exists in the array.*/
 
 class Solution {
-	int read4(char[] buf) {
-		Arrays.fill(buf, 'a');
-		return 3;
-	}
-
-    /**
-     * @param buf Destination buffer
-     * @param n   Maximum number of characters to read
-     * @return    The number of characters read
-     */
-	private char[] charr = new char[4];
-	private int charr_left = 0;
-	private int charr_start = 0;
-	
-    public int read(char[] buf, int n) { 	
-        
-        int count = 0;
-        while(count < n) {
-        	if(charr_left == 0)
-        		charr_left = read4(charr);
-        	if(charr_left == 0) break; //end
-        	while(count < n && charr_start < charr_left)
-        		buf[count++] = charr[charr_start++];
-        	if(charr_start >= charr_left){
-                charr_left = 0;
-                charr_start = 0;
-            }
+	public int findMin(int[] nums) {
+        int low = 0, high = nums.length - 1;
+        int mid;
+        while(low < high) {
+        	mid = low + (high - low)/2;
+        	if(nums[mid] < nums[high]) 
+        		high = mid; // min is at the left        	
+        	else
+        		low = mid + 1; // min is at the right
         }
-        
-        return count;
+        return nums[low];
     }
     
 	
     public static void main(String[] args) { 
     	Solution obj = new Solution();
-    	char[] temp = new char[4];
-    	System.out.println(obj.read(temp, 1));
-    	System.out.println(obj.read(temp, 2));
+    	int[] nums = {4, 5, 6, 7, 0, 1, 2};
+    	System.out.println(obj.findMin(nums));
     }
 }
