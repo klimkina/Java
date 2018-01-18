@@ -8,57 +8,43 @@ Given a list of positions to operate, count the number of islands after each add
 An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically. 
 You may assume all four edges of the grid are all surrounded by water.*/
 public class NumberOfIslandsII {
-	String[][] visited;
+	int[][] dirs = {{0, 1}, {1, 0}, {-1, 0}, {0, -1}};
+
 	public List<Integer> numIslands2(int m, int n, int[][] positions) {
-		List<Integer> res = new ArrayList<>();
-		if(m <=0 || n <= 0)
-			return res;
-        visited = new String [m][n];
-        for(int i = 0; i < m; i++)
-        	Arrays.fill(visited[i], "");
-        int curr = 0;
-        
-        for(int i = 0; i < positions.length; i++) {
-        	curr += add_land(positions[i][0], positions[i][1]);
-        	
-        	res.add(curr);
-        }
-        return res;
-    }
-	
-	private int add_land(int row, int col) {
-		int res = 0;
-		if(row >= 0 && row < visited.length &&
-					col >= 0 && col < visited[0].length) {
-			int[] dx = {-1, 1, 0, 0};
-			int[] dy = {0, 0, -1, 1};
-			visited[row][col] = row + " " + col;
-			res = 1;
-			String connected = "";
-			for(int i = 0; i < 4; i++) {
-				int new_row = row + dy[i];
-				int new_col = col + dx[i];
-				if(new_row >= 0 && new_row < visited.length &&
-						new_col >= 0 && new_col < visited[0].length)
-					if(!visited[new_row][new_col].isEmpty()) {
-						if(connected.isEmpty()) {
-							connected = visited[new_row][new_col];
-							visited[row][col] = connected;
-							res--;
-						}else if(visited[new_row][new_col]!= connected) {
-							connect(visited[new_row][new_col], connected);
-							res--;
-						}
-					}
-			}		
-		}
-		return res;
+	    List<Integer> result = new ArrayList<>();
+	    if(m <= 0 || n <= 0) return result;
+
+	    int count = 0;                      // number of islands
+	    int[] roots = new int[m * n];       // one island = one tree
+	    Arrays.fill(roots, -1);            
+
+	    for(int[] p : positions) {
+	        int root = n * p[0] + p[1];     // assume new point is isolated island
+	        roots[root] = root;             // add new island
+	        count++;
+
+	        for(int[] dir : dirs) {
+	            int x = p[0] + dir[0]; 
+	            int y = p[1] + dir[1];
+	            int nb = n * x + y;
+	            if(x < 0 || x >= m || y < 0 || y >= n || roots[nb] == -1) continue;
+	            
+	            int rootNb = findIsland(roots, nb);
+	            if(root != rootNb) {        // if neighbor is in another island
+	                roots[root] = rootNb;   // union two islands 
+	                root = rootNb;          // current tree root = joined tree root
+	                count--;               
+	            }
+	        }
+
+	        result.add(count);
+	    }
+	    return result;
 	}
-	private void connect(String prev, String land) {
-		for(int i = 0; i < visited.length; i++)
-        	for(int j = 0; j < visited[0].length; j++)
-        		if(visited[i][j] == prev)
-        			visited[i][j] = land;
+
+	public int findIsland(int[] roots, int id) {
+	    while(id != roots[id]) id = roots[id];
+	    return id;
 	}
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
