@@ -43,7 +43,10 @@ public class NumberOfIslandsII {
 	}
 
 	public int findIsland(int[] roots, int id) {
-	    while(id != roots[id]) id = roots[id];
+		while(id != roots[id]) {
+	        roots[id] = roots[roots[id]];   // path compression
+	        id = roots[id];
+	    }
 	    return id;
 	}
 	public static void main(String[] args) {
