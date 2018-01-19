@@ -10,27 +10,19 @@ Given "abcd", return "dcbabcd".*/
 
 class Solution {
 	public String shortestPalindrome(String s) {
-		if(s == null || s.isEmpty() || s.length() == 1)
-			return s;
-		ArrayList<Character> pref = new ArrayList<>();
-		char[] charr = s.toCharArray();
-		int count = 1;
-		while(!isPalindrome(pref, charr)) 
-			pref.add(charr[charr.length - count++]);
-		StringBuilder builder = new StringBuilder(pref.size());
-	    for(Character ch: pref)
-	    {
-	        builder.append(ch);
+		int i = 0, end = s.length() - 1, j = end; 
+		char chs[] = s.toCharArray();
+	    while(i < j) {
+	         if (chs[i] == chs[j]) {
+	             i++; j--;
+	         } else { 
+	             i = 0; end--; j = end;
+	         }
 	    }
-		return builder.toString() + s;
+	    return new StringBuilder(s.substring(end+1)).reverse().toString() + s;
     }
     
-	private boolean isPalindrome(ArrayList<Character> arr, char[] charr) {
-		for(int i = 0; i < (arr.size() + charr.length) /2; i++)
-			if((i < arr.size() ? arr.get(i) : charr [i - arr.size()]) != charr[charr.length - i - 1])
-				return false;
-		return true;
-	}
+	
     public static void main(String[] args) { 
     	Solution obj = new Solution();
     	String s1 = "aacecaaa";
