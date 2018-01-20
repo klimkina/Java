@@ -24,10 +24,12 @@ class Solution {
     
 	
     public static void main(String[] args) { 
-    	Solution obj = new Solution();
+    	/*Solution obj = new Solution();
     	String s1 = "aacecaaa";
     	String s2 = "abcd";
     	System.out.println(obj.shortestPalindrome(s1));
-    	System.out.println(obj.shortestPalindrome(s2));
+    	System.out.println(obj.shortestPalindrome(s2));*/
+    	unsigned int 
+    	System.out.printl
     }
 }
