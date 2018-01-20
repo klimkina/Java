@@ -1,3 +1,4 @@
+import java.util.HashMap;
 
 public class StringWordSpaces {
 	private static final int R = 26;
@@ -58,12 +59,15 @@ public class StringWordSpaces {
         }
 	}
 	private Trie dict;
+	HashMap<String, String> memoized;
 	public String breakString(String s, String[] dictionary) {
 		dict = new Trie();
+		memoized = new HashMap<>();
 		for(String str:dictionary)
 			dict.insert(str);
 		//return dfs(s);
-		return partitionWords(s, "", "", dict.root);
+		//return partitionWords(s, "", "", dict.root);
+		return segmentString(s);
 	}
 	private String partitionWords(String lettersLeft, String wordSoFar, String wordBreaks, TrieNode trieNode){
 	    // If you walked off the trie, this path fails.
@@ -84,6 +88,29 @@ public class StringWordSpaces {
 	                   wordBreaks, trieNode.kids[lettersLeft.charAt(0) - 'a']);
 	}
 	
+
+	private String segmentString(String input) {
+	  if (dict.contains(input)) return input;
+	  
+	  if (memoized.containsKey(input))
+	    return memoized.get(input);
+	  
+	  int len = input.length();
+	  for (int i = 1; i < len; i++) {
+	    String prefix = input.substring(0, i);
+	    if (dict.contains(prefix)) {
+	      String suffix = input.substring(i, len);
+	      String segSuffix = segmentString(suffix);
+	      if (segSuffix != null) {
+	        memoized.put(input, prefix + " " + segSuffix);
+	        return prefix + " " + segSuffix;
+	      }
+		}
+	  }
+		memoized.put(input, null);
+		return null;
+	}
+	  
 	private String dfs(String s) {
 		if(dict.contains(s))
 			return s;
