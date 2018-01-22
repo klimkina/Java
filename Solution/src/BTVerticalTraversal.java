@@ -1,8 +1,10 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.TreeMap;
 
 /*Given a binary tree, return the vertical order traversal of its nodes' values. (ie, from top to bottom, column by column).
@@ -25,24 +27,39 @@ public class BTVerticalTraversal {
 		      }
 	}
 	
-    public List<List<Integer>> verticalOrder(TreeNode root) {
-    	TreeMap<Integer, List<Integer>> map = new TreeMap<>();
-        calcOrder(root, 0, map);
-        List<List<Integer>> res = new ArrayList<>();
-        
-        for(Map.Entry<Integer, List<Integer>> entry : map.entrySet())
-        	res.add(entry.getValue());
-        return res;
-    }
-    private void calcOrder(TreeNode root, int curr, TreeMap<Integer, List<Integer>> map){
-        if(root == null)
-            return;
-        if(map.get(curr) == null)
-        	map.put(curr, new ArrayList<Integer>());
-        map.get(curr).add(root.val);
-        calcOrder(root.left, curr-1, map);
-        calcOrder(root.right, curr+1, map);
-    }
+	private int min = 0, max = 0;
+	public List<List<Integer>> verticalOrder(TreeNode root) {
+	    List<List<Integer>> list = new ArrayList<>();
+	    if(root == null)    return list;
+	    computeRange(root, 0);
+	    for(int i = min; i <= max; i++) 
+	    	list.add(new ArrayList<>());
+	    Queue<TreeNode> q = new LinkedList<>();
+	    Queue<Integer> idx = new LinkedList<>();
+	    idx.add(-min);
+	    q.add(root);
+	    while(!q.isEmpty()){
+	        TreeNode node = q.poll();
+	        int i = idx.poll();
+	        list.get(i).add(node.val);
+	        if(node.left != null){
+	            q.add(node.left);
+	            idx.add(i - 1);
+	        }
+	        if(node.right != null){
+	            q.add(node.right);
+	            idx.add(i + 1);
+	        }
+	    }
+	    return list;
+	}
+	private void computeRange(TreeNode root, int idx){
+	    if(root == null)    return;
+	    min = Math.min(min, idx);
+	    max = Math.max(max, idx);
+	    computeRange(root.left, idx - 1);
+	    computeRange(root.right, idx + 1);
+	}
     
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
