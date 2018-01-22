@@ -1,6 +1,9 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /*Given a binary tree, return the vertical order traversal of its nodes' values. (ie, from top to bottom, column by column).
 
@@ -21,44 +24,24 @@ public class BTVerticalTraversal {
 		    	  return right;
 		      }
 	}
-	private static class NodeOrder implements Comparable<NodeOrder>{
-        int val;
-        int order;
-        public NodeOrder(int v, int o){
-            val = v;
-            order = o;
-        }
-        @Override
-        public int compareTo(NodeOrder that){
-            return this.order - that.order;
-        }
-    }
+	
     public List<List<Integer>> verticalOrder(TreeNode root) {
-        List<NodeOrder> res = new ArrayList<>();
-        calcOrder(root, 0, res);
-        Collections.sort(res);
-        List<List<Integer>> sorted = new ArrayList<>();
-        List<Integer> temp = null;
-        int last = 0;
-        for(int i = 0; i < res.size(); i++){
-            if(temp == null || last != res.get(i).order) {
-                if(temp != null)
-                    sorted.add(temp);
-                temp = new ArrayList<>();
-            }
-            temp.add(res.get(i).val);
-            last = res.get(i).order;
-        }
-        if(temp != null)
-        	sorted.add(temp);
-        return sorted;
+    	TreeMap<Integer, List<Integer>> map = new TreeMap<>();
+        calcOrder(root, 0, map);
+        List<List<Integer>> res = new ArrayList<>();
+        
+        for(Map.Entry<Integer, List<Integer>> entry : map.entrySet())
+        	res.add(entry.getValue());
+        return res;
     }
-    private void calcOrder(TreeNode root, int curr, List<NodeOrder> res){
+    private void calcOrder(TreeNode root, int curr, TreeMap<Integer, List<Integer>> map){
         if(root == null)
             return;
-        res.add(new NodeOrder(root.val, curr));
-        calcOrder(root.left, curr-1, res);
-        calcOrder(root.right, curr+1, res);
+        if(map.get(curr) == null)
+        	map.put(curr, new ArrayList<Integer>());
+        map.get(curr).add(root.val);
+        calcOrder(root.left, curr-1, map);
+        calcOrder(root.right, curr+1, map);
     }
     
 	public static void main(String[] args) {
