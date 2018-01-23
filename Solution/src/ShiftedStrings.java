@@ -1,5 +1,7 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /*
  * Given a string, we can "shift" each of its letter to its successive letter, for example: "abc" -> "bcd". We can keep "shifting" which forms the sequence:
@@ -9,46 +11,33 @@ import java.util.List;
 */
 public class ShiftedStrings {
 	public List<List<String>> groupStrings(String[] strings) {
-		List<List<String>> res = new ArrayList<>();
-		if(strings == null || strings.length == 0)
-			return res;
-		boolean added;
-		for(int i = 0; i < strings.length; i++) {
-			added = false;
-			for(List<String> list : res)
-				if(sameGroup(strings[i], list.get(0))) {
-					list.add(strings[i]);
-					added = true;
-					break;
-				}
-			if(!added) {
-				List<String> temp = new ArrayList<>();
-				temp.add(strings[i]);
-				res.add(temp);
-			}
-		}
-		return res;
+        List<List<String>> result = new ArrayList<List<String>>();
+        Map<String, List<String>> map = new HashMap<String, List<String>>();
+        for (String str : strings) {
+            int offset = str.charAt(0) - 'a';
+            String key = "";
+            for (int i = 0; i < str.length(); i++) {
+                char c = (char) (str.charAt(i) - offset);
+                if (c < 'a') {
+                    c += 26;
+                }
+                key += c;
+            }
+            if (!map.containsKey(key)) {
+                List<String> list = new ArrayList<String>();
+                map.put(key, list);
+            }
+            map.get(key).add(str);
+        }
+        for (String key : map.keySet()) {
+            List<String> list = map.get(key);
+            result.add(list);
+        }
+        return result;
     }
-	private boolean sameGroup(String s1, String s2) {
-		if(s1.length() != s2.length())
-			return false;
-		
-		for(int i = 1; i < s1.length(); i++) {
-			if(calcDiff(s2.charAt(i), s1.charAt(i)) != calcDiff(s2.charAt(i-1), s1.charAt(i-1)))
-				return false;
-		}
-		return true;
-	}
-	private int calcDiff(char a, char b) {
-		if(b > a)
-			return b - a;
-		else
-			return (b - 'a') + ('z' - a + 1);
-		
-	}
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		String[] strings = {"az", "ba"};
+		String[] strings = {"abc", "bcd", "acef", "xyz", "az", "ba", "a", "z"};
 		ShiftedStrings obj = new ShiftedStrings();
 		List<List<String>> res = obj.groupStrings(strings);
 		for(List<String> list : res) {
