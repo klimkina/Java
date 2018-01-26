@@ -8,30 +8,18 @@ import java.util.stream.IntStream;
 
 public class ProgrammingCompetition {
 
-	static int winningLotteryTicket(String[] tickets) {
-		
-        // Complete this function
-		int res = 0;
-		int[] bit_tickets = new int[tickets.length];
-		for(int i = 0; i < tickets.length; i++)
-			bit_tickets[i] = stringToBits(tickets[i]);
-		int mask = (~0)>>> 22;
-		for(int i = 0; i < tickets.length; i++)
-			for(int j = i + 1; j < tickets.length; j++)
-				if((bit_tickets[i]|bit_tickets[j]) == mask)
-					res++;
-		return res;
-    }
-	private static int stringToBits(String s) {
-		int res = 0;
-		//char[] charr = s.toCharArray();
-		List<Integer> distinctIntegers = s.chars()
-		        .distinct()
-		        .boxed()
-		        .collect(Collectors.toList());
-		for(int i = 0; i < distinctIntegers.size(); i++)
-			res |= (1 << (distinctIntegers.get(i) - '0'));
-		return res;
+	public int f(int k, int n) {
+	    int sum = 0;
+	    System.out.println();
+	    int i;
+	    for (i = 1; i <= n; i++) {
+	    	System.out.print(i + " ");
+	        sum += i;
+	        i *= k;
+	        
+	    }
+	    System.out.println(i);
+	    return sum;
 	}
     public static void main(String[] args) {
         /*Scanner in = new Scanner(System.in);
@@ -40,13 +28,25 @@ public class ProgrammingCompetition {
         for(int tickets_i = 0; tickets_i < n; tickets_i++){
             tickets[tickets_i] = in.next();
         }*/
-    	String[] tickets = {"129300455",
-    			"5559948277",
-    			"012334556", 
-    			"56789",
-    			"123456879"};
-        int result = winningLotteryTicket(tickets);
-        System.out.println(result);
+    	ProgrammingCompetition obj = new ProgrammingCompetition();
+    	System.out.println(obj.f(3, 0));
+    	System.out.println(obj.f(3, 1));
+    	System.out.println(obj.f(3, 3));
+    	System.out.println(obj.f(3, 4));
+    	System.out.println(obj.f(3, 5));
+    	System.out.println(obj.f(3, 6));
+    	System.out.println(obj.f(3, 7));
+    	System.out.println(obj.f(3, 8));
+    	System.out.println(obj.f(3, 9));
+    	System.out.println(obj.f(3, 10));
+    	System.out.println(obj.f(3, 11));
+    	System.out.println(obj.f(3, 12));
+    	System.out.println(obj.f(3, 13));
+    	System.out.println(obj.f(3, 14));
+    	System.out.println(obj.f(3, 15));
+    	System.out.println(obj.f(3, 16));
+    	System.out.println(obj.f(2, 47));
+    	
         //in.close();
     }
 
