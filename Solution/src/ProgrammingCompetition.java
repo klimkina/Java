@@ -3,6 +3,8 @@ import java.util.*;
 import java.text.*;
 import java.math.*;
 import java.util.regex.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class ProgrammingCompetition {
 
@@ -22,9 +24,13 @@ public class ProgrammingCompetition {
     }
 	private static int stringToBits(String s) {
 		int res = 0;
-		char[] charr = s.toCharArray();
-		for(int i = 0; i < charr.length; i++)
-			res |= (1 << (charr[i] - '0'));
+		//char[] charr = s.toCharArray();
+		List<Integer> distinctIntegers = s.chars()
+		        .distinct()
+		        .boxed()
+		        .collect(Collectors.toList());
+		for(int i = 0; i < distinctIntegers.size(); i++)
+			res |= (1 << (distinctIntegers.get(i) - '0'));
 		return res;
 	}
     public static void main(String[] args) {
