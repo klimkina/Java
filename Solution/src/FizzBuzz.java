@@ -1,36 +1,28 @@
+import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class FizzBuzz {
 	
-	public void printFizzBuzz(int start, int end, Map<Integer, String> map) {
-		int increment = (start < end) ? 1 : -1;
-		int index = start;
-		StringBuilder sb = new StringBuilder();
-		while(true) {
-			sb.setLength(0);
-			for(int i : map.keySet())
-				if(index % i == 0)
-					sb.append(map.get(i));
-			if(sb.length() == 0)
-				sb.append("" + index);
-			if(index == end) {
-				System.out.println(sb.toString());
-				break;
-			}
-			sb.append(", ");
-			System.out.print(sb.toString());
-			index += increment;
-		}
+	public void printFizzBuzz() {
+		IntStream in = IntStream.range(1, 50);
+		String text = in.mapToObj(i -> (i%15 == 0 ? "FizzBuzz" : 
+										(i%3 == 0 ? "Fizz" : 
+										(i%5 == 0 ? "Buzz" :
+										((Integer) i).toString()))))
+			    .collect(Collectors.joining(", "));
+			System.out.println(text);
+		
 	}
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		Map<Integer, String> map = new HashMap<>();
-		map.put(3, "Fizz"); map.put(5, "Buzz"); map.put(7, "Fuzz"); map.put(9, "Bizz");
 		FizzBuzz obj = new FizzBuzz();
-		obj.printFizzBuzz(0, 10, map);
-		obj.printFizzBuzz(20, 10, map);
+		obj.printFizzBuzz();
 	}
 
 }
