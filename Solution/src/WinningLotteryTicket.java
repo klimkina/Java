@@ -1,23 +1,21 @@
 
 public class WinningLotteryTicket {
-	private static int[][] nozero;
-	private static int[] nozero_pos;
-	private static int full = 0;
+	private static int full = 0;// tickets with all digits
+	private static int[] digits;
+	private static int[][] ticket_digits;
 	static int winningLotteryTicket(String[] tickets) {
 		
         // Complete this function
-		nozero = new int[10][];
+		digits = new int[10];
+		ticket_digits = new int[10][];
 		for(int i = 0; i < 10; i++)
-			nozero[i] = new int[tickets.length];
-		nozero_pos = new int[10];
-		int res = 0;
+			ticket_digits[i] = new int[tickets.length];
 		
 		stringsToBits(tickets);
 		
 		int mask = (~0)>>> 22;
-		//combine tickets with no zeroes with tickets with zeroes
-		//no use to combine no zeroes together
-		for(int i = 0; i < zero_pos; i++)
+		//combine tickets with rare digit with other tickets
+		/*for(int i = 0; i < zero_pos; i++)
 			for(int j = 0; j < nozero_pos; j++)
 				if((zero[i]|nozero[j]) == mask)
 					res++;
@@ -47,7 +45,7 @@ public class WinningLotteryTicket {
 					}
 				
 			}
-		}
+		}*/
 	}
     public static void main(String[] args) {
         /*Scanner in = new Scanner(System.in);
