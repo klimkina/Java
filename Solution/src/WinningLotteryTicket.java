@@ -1,51 +1,55 @@
 
 public class WinningLotteryTicket {
-	private static int full = 0;// tickets with all digits
-	private static int[] digits;
-	private static int[][] ticket_digits;
-	static int winningLotteryTicket(String[] tickets) {
+	private static int[] ticket_digits;
+	private static long[] dp;
+	private static int full = 0;
+	//(1111111111)2 = (1023)10
+	static long winningLotteryTicket(String[] tickets) {
 		
         // Complete this function
-		digits = new int[10];
-		ticket_digits = new int[10][];
-		for(int i = 0; i < 10; i++)
-			ticket_digits[i] = new int[tickets.length];
+		long res = 0;
 		
-		stringsToBits(tickets);
+		dp = new long[1024];
 		
-		int mask = (~0)>>> 22;
-		//combine tickets with rare digit with other tickets
-		/*for(int i = 0; i < zero_pos; i++)
-			for(int j = 0; j < nozero_pos; j++)
-				if((zero[i]|nozero[j]) == mask)
-					res++;
-		// combine zero and zero
-		for(int i = 0; i < zero_pos; i++)
-			for(int j = 0; j < zero_pos; j++)
-				if((zero[i]|zero[j]) == mask)
-					res++;
-		//any full we can combine with any other ticket
-		//so we get full * (tickets.length-1) additional
-		return res + full * (tickets.length - 1);
+		ticket_digits = new int[tickets.length];
+		
+		for(int i = 0; i < tickets.length; i++) {
+			ticket_digits[i] = stringToBits(tickets[i]);
+			dp[ticket_digits[i]]++;
+		}
+		
+		calcRange(0, 1023);
+		for(int i = 0; i < tickets.length;i++){
+			res += dp[1023 - ticket_digits[i]]; 
+		}
+		res -= full;
+		res /= 2;
+		res += full;		
+		
+		return res;
     }
-	private static void stringsToBits(String[] s) {
-		
-		for(String str:s) {
-			char[] charr = str.toCharArray();
-			int res = 0;
-			for(int i = 0; i < charr.length; i++)
-				res |= (1 << (charr[i]) - '0');
-			if(res == 1023)
-				full++;
-			else {
-				for(int i = 0; i < 10; i++)
-					if((res & (1<<i)) == 0) {
-						nozero[i][nozero_pos[i++]] = res;
-						break;
-					}
-				
+	private static void calcRange(int l,int r){
+		if(l != r) {
+			
+			int mid = (r + l)/2;
+			int len = (r - l + 1)/2;
+			calcRange(l, mid);
+			calcRange(mid+1, r);
+			for(int i = 1; i <= mid; i++){
+				dp[i] += dp[i+len];
 			}
-		}*/
+		}
+	}
+	
+	private static int stringToBits(String s) {
+		
+		char[] charr = s.toCharArray();
+		int res = 0;
+		for(int i = 0; i < charr.length; i++) 
+			res |= (1 << (charr[i]) - '0');
+		if(res == 1023)
+			full++;
+		return res;		
 	}
     public static void main(String[] args) {
         /*Scanner in = new Scanner(System.in);
@@ -59,7 +63,7 @@ public class WinningLotteryTicket {
     			"012334556", 
     			"56789",
     			"123456879"};
-        int result = winningLotteryTicket(tickets);
+        long result = winningLotteryTicket(tickets);
         System.out.println(result);
         //in.close();
     }
