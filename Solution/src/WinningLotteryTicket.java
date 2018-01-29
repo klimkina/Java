@@ -1,45 +1,36 @@
+/*
+The SuperBowl Lottery is about to commence, and there are several lottery tickets being sold, and each ticket is identified with a ticket ID. In one of the many winning scenarios in the Superbowl lottery, a winning pair of tickets is:
 
+Concatenation of the two ticket IDs in the pair, in any order, contains each digit from  to  at least once.
+For example, if there are  distinct tickets with ticket ID  and ,  is a winning pair.
+
+NOTE: The ticket IDs can be concantenated in any order. Digits in the ticket ID can occur in any order.
+
+Your task is to find the number of winning pairs of distinct tickets, such that concatenation of their ticket IDs (in any order) makes for a winning scenario. Complete the function winningLotteryTicket which takes a string array of ticket IDs as input, and return the number of winning pairs.
+*/	
+		
 public class WinningLotteryTicket {
-	private static int[] ticket_digits;
-	private static long[] dp;
-	private static int full = 0;
+	
 	//(1111111111)2 = (1023)10
 	static long winningLotteryTicket(String[] tickets) {
 		
         // Complete this function
 		long res = 0;
 		
-		dp = new long[1024];
+		long[] dp = new long[1024];
 		
-		ticket_digits = new int[tickets.length];
+		for(int i = 0; i < tickets.length; i++) 
+			dp[stringToBits(tickets[i])]++;
 		
-		for(int i = 0; i < tickets.length; i++) {
-			ticket_digits[i] = stringToBits(tickets[i]);
-			dp[ticket_digits[i]]++;
-		}
-		
-		calcRange(0, 1023);
-		for(int i = 0; i < tickets.length;i++){
-			res += dp[1023 - ticket_digits[i]]; 
-		}
-		res -= full;
-		res /= 2;
-		res += full;		
-		
-		return res;
-    }
-	private static void calcRange(int l,int r){
-		if(l != r) {
-			
-			int mid = (r + l)/2;
-			int len = (r - l + 1)/2;
-			calcRange(l, mid);
-			calcRange(mid+1, r);
-			for(int i = 1; i <= mid; i++){
-				dp[i] += dp[i+len];
+		for(int i = 0; i < 1024; i++){
+			for(int j = i+1; j < 1024; j++) 
+				if((i|j) == 1023) {
+					res += dp[i]* dp[j];	
 			}
 		}
-	}
+		res += dp[1023]*(dp[1023]-1)/2;
+		return res;
+    }
 	
 	private static int stringToBits(String s) {
 		
@@ -47,8 +38,7 @@ public class WinningLotteryTicket {
 		int res = 0;
 		for(int i = 0; i < charr.length; i++) 
 			res |= (1 << (charr[i]) - '0');
-		if(res == 1023)
-			full++;
+		
 		return res;		
 	}
     public static void main(String[] args) {
@@ -58,11 +48,17 @@ public class WinningLotteryTicket {
         for(int tickets_i = 0; tickets_i < n; tickets_i++){
             tickets[tickets_i] = in.next();
         }*/
-    	String[] tickets = {"129300455",
+    	String[] tickets = {"0123456789",
+    			"1023456789",
+    			"1023456789",
+    			"129300455",
+    			"12930045",
+    			"129304550",
     			"5559948277",
-    			"012334556", 
+    			"012334556",
     			"56789",
-    			"123456879"};
+    			"5678955",
+    			"0123456879"};
         long result = winningLotteryTicket(tickets);
         System.out.println(result);
         //in.close();
