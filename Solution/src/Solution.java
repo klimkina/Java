@@ -5,14 +5,16 @@ import java.math.*;
 import java.util.regex.*;
 
 public class Solution {
-	public int kthGrammar(int N, int K) {
-		if(N == 1 && K == 1)
-			return 0;
-		int half_len = 1 << (N-2);
-		if(K > half_len) // reverse
-			return kthGrammar(N-1, K - half_len) == 0 ? 1 : 0;
-        return kthGrammar(N-1, K);
-    }
+	public int[] merge (int[] A, int[] B)
+	{
+		int[] C = new int[A.length + B.length];
+		int a_pos = 0;
+		int b_pos = 0;
+		for(int i = 0; i < C.length; i++)
+			if (a_pos < A.length && (b_pos >= B.length || A[a_pos] < B[b_pos])) C[i] = A[a_pos++];
+			else C[i] = B[b_pos++];
+		return C;
+	}
 
     public static void main(String[] args) {
         /*Scanner in = new Scanner(System.in);
@@ -28,9 +30,13 @@ public class Solution {
                 queries[queries_i][queries_j] = in.nextInt();
             }
         }*/
+    	int[] A = {1,5,7,12,18,32};
+
+    	int[] B = {2,4,9,16,27,76,98};
     	Solution obj =  new Solution();
-        int result = obj.kthGrammar(1, 1);
-        System.out.println(result);
+    	int[] C = obj.merge(A,  B);
+    	for(int i = 0; i < C.length; i++)
+    		System.out.println(C[i]);
         //in.close();
     }
 }
