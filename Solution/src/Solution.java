@@ -6,34 +6,34 @@ import java.util.regex.*;
 
 public class Solution {
 	
-	private boolean isVowel(char ch)
-	{
-		String vowels = "aeiou";
-		char low = Character.toLowerCase(ch);
-		return (vowels.indexOf(low) >= 0);
-	}
-	public String toGoatLatin(String S)
-	{
-		StringBuilder sb = new StringBuilder();
-		String[] words = S.split("\\s+");
-		StringBuilder ending = new StringBuilder();
-		for (int i = 0; i < words.length; i++)
+	public int numFriendRequests(int[] ages) {
+		Arrays.sort(ages);
+		int less = 0;
+		int count = 0;
+		int num = 0;
+		TreeMap<Integer, Integer> hashmap = new TreeMap<>();
+		for(int i = 0; i < ages.length; i++)
 		{
-			if(sb.length() > 0)
-				sb.append(' ');	
-			String word = words[i];
-			char first = word.charAt(0);
-			if(isVowel(first))
-				sb.append(word);
+			double dfloor = ((double)ages[i])/2 + 7;
+			int floor = (int)Math.floor(dfloor);
+			if(!hashmap.isEmpty() && hashmap.floorEntry(floor) != null)
+				less = hashmap.floorEntry(floor).getValue() + 1;
 			else
-				sb.append(word.substring(1) + first);
-			sb.append("ma");
-			ending.append("a");
-			sb.append(ending);
-						
+				less = 0;
+			num += count - less;
+			int k = 1;
+			dfloor = ((double)ages[i])/2 + 7;
+			if(dfloor < ages[i])
+				while( i+k < ages.length && ages[i+k] == ages[i])
+				{
+					num++; k++;
+				}
+			count++;
+			hashmap.put(ages[i], i);
 		}
-		return sb.toString();
-	}
+		
+        return num;
+    }
 
     public static void main(String[] args) {
         /*Scanner in = new Scanner(System.in);
@@ -49,11 +49,13 @@ public class Solution {
                 queries[queries_i][queries_j] = in.nextInt();
             }
         }*/
-    	String s1 = "I speak Goat Latin";
-    	String s2 = "The quick brown fox jumped over the lazy dog";
+    	int[] arr1 = {73,106,39,6,26,15,30,100,71,35,46,112,6,60,110};
+    	int[] arr2 = {16,17,18};
+    	int[] arr3 = {20,30,100,110,120};
     	Solution obj =  new Solution();
-    	System.out.println(obj.toGoatLatin(s1));
-    	System.out.println(obj.toGoatLatin(s2));
+    	System.out.println(obj.numFriendRequests(arr1));
+    	System.out.println(obj.numFriendRequests(arr2));
+    	System.out.println(obj.numFriendRequests(arr3));
         //in.close();
     }
 }
