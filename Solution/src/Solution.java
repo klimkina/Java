@@ -5,15 +5,34 @@ import java.math.*;
 import java.util.regex.*;
 
 public class Solution {
-	public int[] merge (int[] A, int[] B)
+	
+	private boolean isVowel(char ch)
 	{
-		int[] C = new int[A.length + B.length];
-		int a_pos = 0;
-		int b_pos = 0;
-		for(int i = 0; i < C.length; i++)
-			if (a_pos < A.length && (b_pos >= B.length || A[a_pos] < B[b_pos])) C[i] = A[a_pos++];
-			else C[i] = B[b_pos++];
-		return C;
+		String vowels = "aeiou";
+		char low = Character.toLowerCase(ch);
+		return (vowels.indexOf(low) >= 0);
+	}
+	public String toGoatLatin(String S)
+	{
+		StringBuilder sb = new StringBuilder();
+		String[] words = S.split("\\s+");
+		StringBuilder ending = new StringBuilder();
+		for (int i = 0; i < words.length; i++)
+		{
+			if(sb.length() > 0)
+				sb.append(' ');	
+			String word = words[i];
+			char first = word.charAt(0);
+			if(isVowel(first))
+				sb.append(word);
+			else
+				sb.append(word.substring(1) + first);
+			sb.append("ma");
+			ending.append("a");
+			sb.append(ending);
+						
+		}
+		return sb.toString();
 	}
 
     public static void main(String[] args) {
@@ -30,13 +49,11 @@ public class Solution {
                 queries[queries_i][queries_j] = in.nextInt();
             }
         }*/
-    	int[] A = {1,5,7,12,18,32};
-
-    	int[] B = {2,4,9,16,27,76,98};
+    	String s1 = "I speak Goat Latin";
+    	String s2 = "The quick brown fox jumped over the lazy dog";
     	Solution obj =  new Solution();
-    	int[] C = obj.merge(A,  B);
-    	for(int i = 0; i < C.length; i++)
-    		System.out.println(C[i]);
+    	System.out.println(obj.toGoatLatin(s1));
+    	System.out.println(obj.toGoatLatin(s2));
         //in.close();
     }
 }
