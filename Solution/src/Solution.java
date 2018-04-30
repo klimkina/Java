@@ -6,23 +6,19 @@ import java.util.regex.*;
 
 public class Solution {
 	
-	public int[] mix(int[] arr) {
-		int[] res = Arrays.copyOf(arr, arr.length);
-		int left = 0;
-		int right = res.length - 1;
-		while(left < right)
+	public void mix(int[] arr, int n) {
+		Set<Integer> set = new HashSet<>();
+		for(int i = 0; i < arr.length; i++)
 		{
-			if(res[left] == 0) left++;
-			else if (res[right] == 1) right--;
-			else
+			if (!set.isEmpty())
 			{
-				res[left] = 0;
-				res[right] = 1;
-				left++;
-				right--;
+				if(set.contains(arr[i] + n))
+					System.out.println(arr[i] + " " + (arr[i] + n));
+				if(set.contains(arr[i] - n))
+					System.out.println(arr[i] + " " + (arr[i] - n));
 			}
+			set.add(arr[i]);
 		}
-        return res;
     }
 
     public static void main(String[] args) {
@@ -39,11 +35,9 @@ public class Solution {
                 queries[queries_i][queries_j] = in.nextInt();
             }
         }*/
-    	int[] input =  { 0, 1, 0, 1, 0, 0, 1, 1, 1, 0};
+    	int[] input =  { 9, 29,10, 2, 50, 24, 100};
+    	int n = 50;
     	Solution obj =  new Solution();
-    	int[] res = obj.mix(input);
-    	for (int i = 0; i < res.length; i++)
-
-    		System.out.print(res[i] + " ");//in.close();
+    	obj.mix(input, n);
     }
 }
