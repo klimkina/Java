@@ -5,27 +5,41 @@ import java.math.*;
 import java.util.regex.*;
 
 public class Solution {
-	
-	public char max(String str) {
-		if (str.isEmpty())
-			throw new IllegalArgumentException("No characters in string");
-		char[] charr = str.toCharArray();
-		char max_char = charr[0];
-		int max_val = 0;
-		HashMap<Character, Integer> map = new HashMap<>();
-		for(int i = 0; i < charr.length; i++)
+	private  static class Node
+	{
+		int val;
+		Node left;
+		Node right;
+		public Node (int v)
 		{
-			int curr = map.getOrDefault(charr[i], 0);
-			curr++;
-			if (curr > max_val)
-			{
-				max_val = curr;
-				max_char = charr[i];
-			}
-			map.put(charr[i], curr);
+			val = v;
+			left = null;
+			right = null;
 		}
-		return max_char;
+		public  Node addLeft (int v)
+		{
+			left = new Node (v);
+			return left;
+		}
+		public Node addRight (int v)
+		{
+			right = new Node (v);
+			return right;
+		}
+	}
+	
+	public boolean isSearch(Node root) {
+		return isSearch(root, Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
+	
+	public boolean isSearch(Node root, int min, int max) {
+		if (root == null)
+			return true;
+		if (root.val < min || root.val > max)
+			return false;
+		return isSearch(root.left, min, root.val) && isSearch(root.right, root.val, max);
+    }
+	
 
     public static void main(String[] args) {
         /*Scanner in = new Scanner(System.in);
@@ -41,8 +55,14 @@ public class Solution {
                 queries[queries_i][queries_j] = in.nextInt();
             }
         }*/
-    	String str = "aaabbrrrrrr";
+    	Node tree = new Node(5);
+    	Node left = tree.addLeft(2);
+    	Node right = tree.addRight(7);
+    	left.addLeft(1);
+    	left.addRight(3);
+    	right.addLeft(6);
+    	right.addRight(8);
     	Solution obj =  new Solution();
-    	System.out.println(obj.max(str));
+    	System.out.println(obj.isSearch(tree));
     }
 }
