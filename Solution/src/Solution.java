@@ -6,19 +6,25 @@ import java.util.regex.*;
 
 public class Solution {
 	
-	public void mix(int[] arr, int n) {
-		Set<Integer> set = new HashSet<>();
-		for(int i = 0; i < arr.length; i++)
+	public char max(String str) {
+		if (str.isEmpty())
+			throw new IllegalArgumentException("No characters in string");
+		char[] charr = str.toCharArray();
+		char max_char = charr[0];
+		int max_val = 0;
+		HashMap<Character, Integer> map = new HashMap<>();
+		for(int i = 0; i < charr.length; i++)
 		{
-			if (!set.isEmpty())
+			int curr = map.getOrDefault(charr[i], 0);
+			curr++;
+			if (curr > max_val)
 			{
-				if(set.contains(arr[i] + n))
-					System.out.println(arr[i] + " " + (arr[i] + n));
-				if(set.contains(arr[i] - n))
-					System.out.println(arr[i] + " " + (arr[i] - n));
+				max_val = curr;
+				max_char = charr[i];
 			}
-			set.add(arr[i]);
+			map.put(charr[i], curr);
 		}
+		return max_char;
     }
 
     public static void main(String[] args) {
@@ -35,9 +41,8 @@ public class Solution {
                 queries[queries_i][queries_j] = in.nextInt();
             }
         }*/
-    	int[] input =  { 9, 29,10, 2, 50, 24, 100};
-    	int n = 50;
+    	String str = "aaabbrrrrrr";
     	Solution obj =  new Solution();
-    	obj.mix(input, n);
+    	System.out.println(obj.max(str));
     }
 }
