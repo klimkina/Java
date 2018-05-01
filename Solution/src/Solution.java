@@ -7,11 +7,29 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Solution {
+	int[] match = new int[2];
 	
-	public String splitChunk(String str) {
-		Stream<String> stream = Stream.of(str.split("\r"));
-		return stream.collect(Collectors.joining("\r\n"));
+	public void match3(int[] arr, int sum) {
+		Arrays.sort(arr);
+		int i = 0;
+		while(  i < arr.length - 2)
+			match2(arr, sum - arr[i], ++i);
     }
+	
+	private void match2(int[] arr, int sum, int left)
+	{
+		int right = arr.length - 1;
+		int third = arr[left-1];
+		while (left < right)
+			if (arr[left] + arr[right] == sum)
+			{
+				System.out.println(third + " " + arr[left] + " " + arr[right]);
+				left++;
+				right--;
+			}
+			else if(arr[left] + arr[right] < sum) left++;
+			else right--;
+	}
 
     public static void main(String[] args) {
         /*Scanner in = new Scanner(System.in);
@@ -27,9 +45,9 @@ public class Solution {
                 queries[queries_i][queries_j] = in.nextInt();
             }
         }*/
-    	String myStr = "Quick Brown Fox\rJumps over a red box\rMila";
+    	int[] arr = {1,2,3,4,2,-1,5};
+    	int sum = 7;
     	Solution obj =  new Solution();
-    	String res = obj.splitChunk(myStr);
-    	System.out.println(res);
+    	obj.match3(arr, sum);
     }
 }
