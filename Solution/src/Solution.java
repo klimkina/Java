@@ -3,55 +3,14 @@ import java.util.*;
 import java.text.*;
 import java.math.*;
 import java.util.regex.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Solution {
 	
-	public int tickTackToe(int[][] game) {
-		int zero = 0;
-		int one = 0;
-		//horizontal
-		for (int i = 0; i < game.length; i++)
-		{
-			zero = 0; one = 0;
-			for (int j = 0; j < game[0].length; j++)
-			{
-				if (game[i][j] == 0) zero++;
-				else one++;
-			}
-			if (zero == 3) return 0;
-			else if (one == 3) return 1;
-		}
-		//vertical
-		for (int i = 0; i < game.length; i++)
-		{
-			zero = 0; one = 0;
-			for (int j = 0; j < game[0].length; j++)
-			{
-				if (game[j][i] == 0) zero++;
-				else one++;
-			}
-			if (zero == 3) return 0;
-			else if (one == 3) return 1;
-		}
-		//diagonal
-		zero = 0; one = 0;
-		for(int i = 0; i < game.length; i++)
-		{
-			if (game[i][i] == 0) zero++;
-			else one++;
-		}
-		if (zero == 3) return 0;
-		else if (one == 3) return 1;
-		//contrdiagonal
-		zero = 0; one = 0;
-		for(int i = 0; i < game.length; i++)
-		{
-			if (game[i][2-i] == 0) zero++;
-			else one++;
-		}
-		if (zero == 3) return 0;
-		else if (one == 3) return 1;
-		return 2;
+	public String splitChunk(String str) {
+		Stream<String> stream = Stream.of(str.split("\r"));
+		return stream.collect(Collectors.joining("\r\n"));
     }
 
     public static void main(String[] args) {
@@ -68,10 +27,9 @@ public class Solution {
                 queries[queries_i][queries_j] = in.nextInt();
             }
         }*/
-    	int[][] game = {{0,0,1},
-    			{1,1,0},
-    			{1,1,0}};
+    	String myStr = "Quick Brown Fox\rJumps over a red box\rMila";
     	Solution obj =  new Solution();
-    	System.out.println(obj.tickTackToe(game));
+    	String res = obj.splitChunk(myStr);
+    	System.out.println(res);
     }
 }
