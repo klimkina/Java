@@ -7,28 +7,32 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Solution {
-	int[] match = new int[2];
 	
-	public void match3(int[] arr, int sum) {
-		Arrays.sort(arr);
-		int i = 0;
-		while(  i < arr.length - 2)
-			match2(arr, sum - arr[i], ++i);
+	public String reverseWords(String str) {
+		char[] charr = str.toCharArray();
+		int prev = -1;
+		for(int i = 0; i < charr.length; i++)
+		{
+			if(charr[i] == ' ')
+			{
+				reverse(charr, prev, i);
+				prev = i;
+			}
+		}
+		reverse(charr, prev, charr.length);
+		reverse(charr, -1, charr.length);
+		return String.valueOf(charr);
     }
 	
-	private void match2(int[] arr, int sum, int left)
+	private void reverse (char[] charr, int start, int end)
 	{
-		int right = arr.length - 1;
-		int third = arr[left-1];
-		while (left < right)
-			if (arr[left] + arr[right] == sum)
-			{
-				System.out.println(third + " " + arr[left] + " " + arr[right]);
-				left++;
-				right--;
-			}
-			else if(arr[left] + arr[right] < sum) left++;
-			else right--;
+		char temp;
+		for(int i = 1; i <= (end-start)/2; i++)
+		{
+			temp = charr[start+i];
+			charr[start+i] = charr[end-i];
+			charr[end-i] = temp;
+		}
 	}
 
     public static void main(String[] args) {
@@ -45,9 +49,8 @@ public class Solution {
                 queries[queries_i][queries_j] = in.nextInt();
             }
         }*/
-    	int[] arr = {1,2,3,4,2,-1,5};
-    	int sum = 7;
+    	String s= "Quick brown fox jumped over a red box";
     	Solution obj =  new Solution();
-    	obj.match3(arr, sum);
+    	System.out.println(obj.reverseWords(s));;
     }
 }
