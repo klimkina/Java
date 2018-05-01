@@ -8,11 +8,11 @@ import java.util.stream.Stream;
 
 public class Solution {
 	
-	public int factorial(int n) {
-		int res = 1;
-		for(int i = 2; i <= n; i++)
-			res *= i;
-		return res;
+	public void swap(int a, int b) {
+		a = a - b;
+		b = a + b;
+		a = b - a;
+		System.out.println(a + " " + b);
     }
 
     public static void main(String[] args) {
@@ -29,8 +29,8 @@ public class Solution {
                 queries[queries_i][queries_j] = in.nextInt();
             }
         }*/
-    	
+    	int a = 10, b = 15;
     	Solution obj =  new Solution();
-    	System.out.println(obj.factorial(23));
+    	obj.swap(a, b);
     }
 }
