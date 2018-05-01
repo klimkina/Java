@@ -8,32 +8,20 @@ import java.util.stream.Stream;
 
 public class Solution {
 	
-	public String reverseWords(String str) {
-		char[] charr = str.toCharArray();
-		int prev = -1;
-		for(int i = 0; i < charr.length; i++)
-		{
-			if(charr[i] == ' ')
-			{
-				reverse(charr, prev, i);
-				prev = i;
-			}
-		}
-		reverse(charr, prev, charr.length);
-		reverse(charr, -1, charr.length);
-		return String.valueOf(charr);
+	public boolean isAnagram(String str1, String str2) {
+		str1 = str1.toLowerCase().replaceAll("\\s+", "");
+		str2 = str2.toLowerCase().replaceAll("\\s+", "");
+		if(str1.length() != str2.length())
+			return false;
+		char[] charr1 = str1.toCharArray();
+		char[] charr2 = str2.toCharArray();
+		Arrays.sort(charr1);
+		Arrays.sort(charr2);
+		for(int i = 0; i < charr1.length; i++)
+			if(charr1[i]!= charr2[i])
+				return false;
+		return true;
     }
-	
-	private void reverse (char[] charr, int start, int end)
-	{
-		char temp;
-		for(int i = 1; i <= (end-start)/2; i++)
-		{
-			temp = charr[start+i];
-			charr[start+i] = charr[end-i];
-			charr[end-i] = temp;
-		}
-	}
 
     public static void main(String[] args) {
         /*Scanner in = new Scanner(System.in);
@@ -49,8 +37,9 @@ public class Solution {
                 queries[queries_i][queries_j] = in.nextInt();
             }
         }*/
-    	String s= "Quick brown fox jumped over a red box";
+    	String s= "anagram";
+    	String s2 = "naga ram";
     	Solution obj =  new Solution();
-    	System.out.println(obj.reverseWords(s));;
+    	System.out.println(obj.isAnagram(s, s2));;
     }
 }
