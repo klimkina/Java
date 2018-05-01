@@ -8,19 +8,11 @@ import java.util.stream.Stream;
 
 public class Solution {
 	
-	public boolean isAnagram(String str1, String str2) {
-		str1 = str1.toLowerCase().replaceAll("\\s+", "");
-		str2 = str2.toLowerCase().replaceAll("\\s+", "");
-		if(str1.length() != str2.length())
-			return false;
-		char[] charr1 = str1.toCharArray();
-		char[] charr2 = str2.toCharArray();
-		Arrays.sort(charr1);
-		Arrays.sort(charr2);
-		for(int i = 0; i < charr1.length; i++)
-			if(charr1[i]!= charr2[i])
-				return false;
-		return true;
+	public int factorial(int n) {
+		int res = 1;
+		for(int i = 2; i <= n; i++)
+			res *= i;
+		return res;
     }
 
     public static void main(String[] args) {
@@ -37,9 +29,8 @@ public class Solution {
                 queries[queries_i][queries_j] = in.nextInt();
             }
         }*/
-    	String s= "anagram";
-    	String s2 = "naga ram";
+    	
     	Solution obj =  new Solution();
-    	System.out.println(obj.isAnagram(s, s2));;
+    	System.out.println(obj.factorial(23));
     }
 }
