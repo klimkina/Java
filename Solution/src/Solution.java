@@ -8,28 +8,36 @@ import java.util.stream.Stream;
 
 public class Solution {
 	
-	public static class Buffer
-	{
-		private int currpos = 0;
-		private int size = 4;
-		private char[] charr;
-		public Buffer(char[] arr)
-		{
-			String s = String.valueOf(arr);
-			s = s.replaceAll("\n", "\r\n");
-			charr = s.toCharArray();
-		}
-		public char[] read()
-		{
-			if(currpos >= charr.length)
-				return null;
-			int newpos = Math.min(currpos + size, charr.length);
-			char[] res = Arrays.copyOfRange(charr, currpos, newpos);
-			currpos = newpos;
-			return res;
-		}
+	static void _printParenthesis(char str[], int pos, int n, int open, int close)
+    {
+        if(close == n) 
+        {
+            // print the possible combinations
+            for(int i=0;i<str.length;i++)
+                System.out.print(str[i]);
+            System.out.println();
+            return;
+        }
+        else
+        {
+            if(open > close) {
+                str[pos] = '}';
+                _printParenthesis(str, pos+1, n, open, close+1);
+            }
+            if(open < n) {
+                str[pos] = '{';
+                _printParenthesis(str, pos+1, n, open+1, close);
+            }
+        }
     }
-
+     
+    // Wrapper over _printParenthesis()
+    static void printParenthesis(char str[], int n)
+    {
+        if(n > 0)
+        _printParenthesis(str, 0, n, 0, 0);
+        return;
+    }
     public static void main(String[] args) {
         /*Scanner in = new Scanner(System.in);
         int n = in.nextInt();
@@ -44,13 +52,8 @@ public class Solution {
                 queries[queries_i][queries_j] = in.nextInt();
             }
         }*/
-    	String s = "abcabcvbb\nadsafdsdfs\r\ntsdsfsd";
-    	Buffer obj = new Buffer(s.toCharArray());
-    	char[] buff = obj.read();
-    	while (buff != null)
-    	{
-    		System.out.println(buff);
-    		buff = obj.read();
-    	}
+    	int n = 4;
+        char[] str = new char[8];
+        printParenthesis(str, n);
     }
 }
