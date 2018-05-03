@@ -8,11 +8,27 @@ import java.util.stream.Stream;
 
 public class Solution {
 	
-	public void swap(int a, int b) {
-		a = a^b;
-		b = a^b;
-		a = b^a;
-		System.out.println(a + " " + b);
+	public String longestsub(String s) {
+		char[] charr = s.toCharArray();
+		HashMap<Character, Integer> map = new HashMap<>();
+		int max = 0;
+		int maxpos = 0;
+		int currlen = 0;
+		for(int i = 0; i < charr.length; i++)
+		{
+			Integer prev = map.get(charr[i]);
+			if (prev == null || prev < i - currlen)
+				currlen++;
+			else
+				currlen = 1;
+			if(currlen > max)
+			{
+				max = currlen;
+				maxpos = i - max + 1;
+			}
+			map.put(charr[i], i);
+		}
+		return s.substring(maxpos, maxpos+max);
     }
 
     public static void main(String[] args) {
@@ -29,13 +45,8 @@ public class Solution {
                 queries[queries_i][queries_j] = in.nextInt();
             }
         }*/
-    	int[] fib = {1, 1};
-    	int flag = 0;
-    	for (int i = 0; i  < 50; i++)
-    	{
-    		fib[flag] = fib[0] + fib[1];
-    		System.out.print(fib[flag] + " ");
-    		flag = (flag + 1) % 2;
-    	}
+    	String s = "abcabcvbb";
+    	Solution obj = new Solution();
+    	System.out.println(obj.longestsub(s));
     }
 }
