@@ -8,27 +8,26 @@ import java.util.stream.Stream;
 
 public class Solution {
 	
-	public String longestsub(String s) {
-		char[] charr = s.toCharArray();
-		HashMap<Character, Integer> map = new HashMap<>();
-		int max = 0;
-		int maxpos = 0;
-		int currlen = 0;
-		for(int i = 0; i < charr.length; i++)
+	public static class Buffer
+	{
+		private int currpos = 0;
+		private int size = 4;
+		private char[] charr;
+		public Buffer(char[] arr)
 		{
-			Integer prev = map.get(charr[i]);
-			if (prev == null || prev < i - currlen)
-				currlen++;
-			else
-				currlen = 1;
-			if(currlen > max)
-			{
-				max = currlen;
-				maxpos = i - max + 1;
-			}
-			map.put(charr[i], i);
+			String s = String.valueOf(arr);
+			s = s.replaceAll("\n", "\r\n");
+			charr = s.toCharArray();
 		}
-		return s.substring(maxpos, maxpos+max);
+		public char[] read()
+		{
+			if(currpos >= charr.length)
+				return null;
+			int newpos = Math.min(currpos + size, charr.length);
+			char[] res = Arrays.copyOfRange(charr, currpos, newpos);
+			currpos = newpos;
+			return res;
+		}
     }
 
     public static void main(String[] args) {
@@ -45,8 +44,13 @@ public class Solution {
                 queries[queries_i][queries_j] = in.nextInt();
             }
         }*/
-    	String s = "abcabcvbb";
-    	Solution obj = new Solution();
-    	System.out.println(obj.longestsub(s));
+    	String s = "abcabcvbb\nadsafdsdfs\r\ntsdsfsd";
+    	Buffer obj = new Buffer(s.toCharArray());
+    	char[] buff = obj.read();
+    	while (buff != null)
+    	{
+    		System.out.println(buff);
+    		buff = obj.read();
+    	}
     }
 }
