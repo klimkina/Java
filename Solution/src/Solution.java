@@ -9,9 +9,9 @@ import java.util.stream.Stream;
 public class Solution {
 	
 	public void swap(int a, int b) {
-		a = a - b;
-		b = a + b;
-		a = b - a;
+		a = a^b;
+		b = a^b;
+		a = b^a;
 		System.out.println(a + " " + b);
     }
 
@@ -29,8 +29,13 @@ public class Solution {
                 queries[queries_i][queries_j] = in.nextInt();
             }
         }*/
-    	int a = 10, b = 15;
-    	Solution obj =  new Solution();
-    	obj.swap(a, b);
+    	int[] fib = {1, 1};
+    	int flag = 0;
+    	for (int i = 0; i  < 50; i++)
+    	{
+    		fib[flag] = fib[0] + fib[1];
+    		System.out.print(fib[flag] + " ");
+    		flag = (flag + 1) % 2;
+    	}
     }
 }
