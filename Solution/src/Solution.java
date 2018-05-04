@@ -8,35 +8,34 @@ import java.util.stream.Stream;
 
 public class Solution {
 	
-	static void _printParenthesis(char str[], int pos, int n, int open, int close)
+	static String compress(String str)
     {
-        if(close == n) 
+		if(str == null || str.length() < 2)
+			return str;
+        StringBuilder sb = new StringBuilder();
+        char[] charr = str.toCharArray();
+        char prev = charr[0];
+        int count = 1;
+        for(int i = 1; i <= charr.length; i++)
         {
-            // print the possible combinations
-            for(int i=0;i<str.length;i++)
-                System.out.print(str[i]);
-            System.out.println();
-            return;
+        	if(i < charr.length && charr[i] == prev)
+        		count++;
+        	else
+        	{
+        		if(count == 1)
+        			sb.append(prev);
+        		else
+        		{
+        			sb.append(count);
+        			sb.append(prev);
+        			
+        		}
+        		count = 1;
+        		if(i < charr.length)
+        			prev = charr[i];
+        	}
         }
-        else
-        {
-            if(open > close) {
-                str[pos] = '}';
-                _printParenthesis(str, pos+1, n, open, close+1);
-            }
-            if(open < n) {
-                str[pos] = '{';
-                _printParenthesis(str, pos+1, n, open+1, close);
-            }
-        }
-    }
-     
-    // Wrapper over _printParenthesis()
-    static void printParenthesis(char str[], int n)
-    {
-        if(n > 0)
-        _printParenthesis(str, 0, n, 0, 0);
-        return;
+        return sb.toString();
     }
     public static void main(String[] args) {
         /*Scanner in = new Scanner(System.in);
@@ -52,8 +51,7 @@ public class Solution {
                 queries[queries_i][queries_j] = in.nextInt();
             }
         }*/
-    	int n = 4;
-        char[] str = new char[8];
-        printParenthesis(str, n);
+    	String s = "aabbbcabcc";
+    	System.out.println(compress(s));
     }
 }
