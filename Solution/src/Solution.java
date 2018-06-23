@@ -9,13 +9,13 @@ import java.util.stream.Stream;
 
 public class Solution {
 	
-	private static int[] negToRight(int[] A)
+	private static int[] onesToRight(int[] A)
 	{
 		int l = 0;
 		int r = A.length - 1;
 		while (l < r)
 		{			
-			if(A[l] >= 0 && A[r] < 0)
+			if(A[l] == 1 && A[r] == 0)
 			{
 				int t = A[l];
 				A[l] = A[r];
@@ -23,8 +23,8 @@ public class Solution {
 			}
 			else
 			{
-				if(A[l] < 0) l++;
-				if(A[r] >= 0) r--;
+				if(A[l] == 0) l++;
+				if(A[r] == 1) r--;
 			}
 		}
 		return A;
@@ -44,8 +44,8 @@ public class Solution {
                 queries[queries_i][queries_j] = in.nextInt();
             }
         }*/
-    	int[] input = { 4, -3, 2, -5, 5, -1, 3};
-    	String res = Arrays.stream(negToRight(input)).mapToObj(i -> Integer.toString(i)).collect(Collectors.joining(", "));
+    	int[] input = { 0, 1, 0, 1, 0, 0, 1, 1, 1, 0};
+    	String res = Arrays.stream(onesToRight(input)).mapToObj(i -> Integer.toString(i)).collect(Collectors.joining(", "));
     	System.out.println(res);
     	
     }
