@@ -9,35 +9,41 @@ import java.util.stream.Stream;
 
 public class Solution {
 	
-	public static class Board
+	public static class SmallChunks
 	{
-		public int[][] board;
-		private int[] horizontals;
-		private int[] verticals;
-		private int[] diagonals;
-		public Board(int size)
+		private char[] charr;
+		int curr = 0;
+		boolean isNLeft = false;
+		public SmallChunks(char[] charr)
 		{
-			board = new int[size][size];
-			horizontals = new int[size];
-			verticals = new int[size];
-			diagonals = new int[2];
+			this.charr = Arrays.copyOf(charr, charr.length);
 		}
-		public int play(int x, int y, boolean isFirst)
+		public char[] GetChunk(int size)
 		{
-			int val = isFirst ? 1 : -1;
-			if(board[x][y] != 0)
-				throw new IllegalArgumentException();
-			board[x][y] = val;
-			horizontals[x] += val;
-			verticals[y] += val;
-			if(x == y)
-				diagonals[0] += val;
-			if (x == board.length - y)
-				diagonals[1] += val;
-			if(Math.abs(horizontals[x]) == board.length || Math.abs(verticals[y]) == board.length ||
-					Math.abs(diagonals[0]) == board.length || Math.abs(diagonals[1]) == board.length)
-				return val;
-			return 0;
+			char[] res = new char[size];
+			if(size < 1)
+				return res;
+			int start = 0;
+			if (isNLeft)
+				res[start++] = '\n';
+			
+			for(int i = start; i < size; i++)
+			{
+				if (curr >= charr.length)
+					return res;
+				if(charr[curr] == '\n')
+				{
+					curr++;
+					res[i] = '\r';
+					if(i < size - 1)
+						res[++i] = '\n';
+					else
+						isNLeft = true;
+				}
+				else
+					res[i] = charr[curr++];
+			}
+			return res;
 		}
 	}
 	
@@ -55,13 +61,13 @@ public class Solution {
                 queries[queries_i][queries_j] = in.nextInt();
             }
         }*/
-    	Board game = new Board(3);
-    	game.play(0, 0, true);
-    	game.play(1, 0, false);
-    	game.play(2, 1, true);
-    	game.play(1, 2, false);
-    	System.out.println(game.play(2, 2, true));
-    	System.out.println(game.play(1, 1, false));
+    	char[] charr = {'a', 'b', 'v', '\n', 'a', 'b', 'c', 'f', '\n', 'a', 'b', '\n'};
+    	SmallChunks chuncks = new SmallChunks(charr);
+    	System.out.println(String.valueOf(chuncks.GetChunk(3)));
+    	System.out.println(String.valueOf(chuncks.GetChunk(3)));
+    	System.out.println(String.valueOf(chuncks.GetChunk(3)));
+    	System.out.println(String.valueOf(chuncks.GetChunk(3)));
+    	System.out.println(String.valueOf(chuncks.GetChunk(3)));
     	//String res = Arrays.stream(findPair(input, n)).mapToObj(i -> Integer.toString(i)).collect(Collectors.joining(", "));
     	//System.out.println(res);
     	
