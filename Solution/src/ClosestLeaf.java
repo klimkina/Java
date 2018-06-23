@@ -20,14 +20,14 @@ public class ClosestLeaf {
 	int distance = Integer.MAX_VALUE;
     int value = -1;
     
-	public int findClosestLeaf(Tree.TreeNode root, int k) {
+	public int findClosestLeaf(Node.TreeNode root, int k) {
 		distance = Integer.MAX_VALUE;
         value = -1;
         find(root, -1, k);
         return value;
 			
     }
-	private int find(Tree.TreeNode root, int knownDistance, int target) {
+	private int find(Node.TreeNode root, int knownDistance, int target) {
         if (root == null) {
             return -1;
         }
@@ -72,8 +72,8 @@ public class ClosestLeaf {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		ClosestLeaf sol = new ClosestLeaf();
-		Tree tree = new Tree();
-		Tree.TreeNode root = tree.init("1,2,3,4,,,,5,,6");
+		Node tree = new Node();
+		Node.TreeNode root = tree.init("1,2,3,4,,,,5,,6");
 		int k = 2;
 		int res = sol.findClosestLeaf(root, k);
 		System.out.println(res);

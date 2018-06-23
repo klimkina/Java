@@ -7,7 +7,7 @@ import java.util.Scanner;
 import java.util.Queue;
 import java.util.LinkedList;;
 
-public class Tree {
+public class Node {
 	private TreeNode root;
 	public class TreeNode {
 		int val;
@@ -60,7 +60,7 @@ public class Tree {
         }
         return root;
 	}
-	public Tree readFile(String fileName) throws FileNotFoundException {
+	public Node readFile(String fileName) throws FileNotFoundException {
         Scanner scanner = new Scanner(new File(fileName));
         scanner.useDelimiter(",");
         
@@ -117,7 +117,7 @@ public class Tree {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		Tree tree = new Tree();
+		Node tree = new Node();
 		try {
 			tree.readFile("mytree.txt");
 			tree.writeFile("newtree.txt");

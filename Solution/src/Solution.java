@@ -9,25 +9,38 @@ import java.util.stream.Stream;
 
 public class Solution {
 	
-	private static int[] onesToRight(int[] A)
+	public static class Node
 	{
-		int l = 0;
-		int r = A.length - 1;
-		while (l < r)
-		{			
-			if(A[l] == 1 && A[r] == 0)
-			{
-				int t = A[l];
-				A[l] = A[r];
-				A[r] = t;
-			}
-			else
-			{
-				if(A[l] == 0) l++;
-				if(A[r] == 1) r--;
-			}
+		public int val;
+		Node left;
+		Node right;
+		Node (int val)
+		{
+			this.val = val;
+			left = null;
+			right  = null;
 		}
-		return A;
+		public Node insert(int val, boolean isLeft)
+		{
+			Node node = new Node (val);
+			if (isLeft)
+				left = node;
+			else
+				right = node;
+			return node;
+		}
+		public boolean isSearchTree()
+		{
+			return isSearchTree(this, Integer.MIN_VALUE, Integer.MAX_VALUE);
+		}
+		public boolean isSearchTree(Node node, int left, int right)
+		{
+			if(node == null)
+				return true;
+			if(node.val > right || node.val < left)
+				return false;
+			return isSearchTree (node.left, left, node.val) && isSearchTree(node.right, node.val, right);
+		}
 	}
 	
     public static void main(String[] args) {
@@ -44,9 +57,15 @@ public class Solution {
                 queries[queries_i][queries_j] = in.nextInt();
             }
         }*/
-    	int[] input = { 0, 1, 0, 1, 0, 0, 1, 1, 1, 0};
-    	String res = Arrays.stream(onesToRight(input)).mapToObj(i -> Integer.toString(i)).collect(Collectors.joining(", "));
-    	System.out.println(res);
+    	int[] input = {9, 29,10, 2, 50, 24, 100};
+    	Node node = new Node(5);
+    	Node left = node.insert(3, true);
+    	Node right = node.insert(7, false);
+    	left.insert(4, false);
+    	right.insert(6, true);
+    	System.out.println(node.isSearchTree());
+    	//String res = Arrays.stream(findPair(input, n)).mapToObj(i -> Integer.toString(i)).collect(Collectors.joining(", "));
+    	//System.out.println(res);
     	
     }
 }
