@@ -4,38 +4,27 @@ import java.text.*;
 import java.math.*;
 import java.util.regex.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Solution {
 	
-	static String compress(String str)
-    {
-		if(str == null || str.length() < 2)
-			return str;
-        StringBuilder sb = new StringBuilder();
-        char[] charr = str.toCharArray();
-        char prev = charr[0];
-        int count = 1;
-        for(int i = 1; i <= charr.length; i++)
-        {
-        	if(i < charr.length && charr[i] == prev)
-        		count++;
-        	else
-        	{
-        		helper(sb, prev, count);
-        		count = 1;
-        		if(i < charr.length)
-        			prev = charr[i];
-        	}
-        }
-        helper(sb, prev, count);
-        return sb.toString();
-    }
-	private static void helper(StringBuilder sb, char ch, int count)
+	private static int[] merge(int[] A, int[] B)
 	{
-		if(count > 1)
-			sb.append(count);
-		sb.append(ch);
+		int currA = 0;
+		int currB = 0;
+		int[] C = new int[A.length + B.length];
+		for(int i = 0; i < C.length; i++)
+			if(currA < A.length)
+			{
+				if(currB < B.length && A[currA] > B[currB])
+					C[i] = B[currB++];
+				else
+					C[i] = A[currA++];
+			}
+			else
+				C[i] = B[currB++];
+		return C;
 	}
     public static void main(String[] args) {
         /*Scanner in = new Scanner(System.in);
@@ -51,7 +40,12 @@ public class Solution {
                 queries[queries_i][queries_j] = in.nextInt();
             }
         }*/
-    	String s = "aabbbcabcc";
-    	System.out.println(compress(s));
+    	int[] A = {1,5,7,12,18,32};
+    	int[] B = {2,4,9,16,27,76,98};
+    	int[] C = merge(A, B);
+    	String res = Arrays.stream(C).mapToObj(i -> Integer.toString(i)).collect(Collectors.joining(", "));
+    	System.out.println(res);
+    	for(int i = 0; i < C.length; i++)
+    		System.out.print(C[i] + " ");
     }
 }
