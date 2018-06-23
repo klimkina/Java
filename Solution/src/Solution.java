@@ -9,23 +9,27 @@ import java.util.stream.Stream;
 
 public class Solution {
 	
-	private static int[] merge(int[] A, int[] B)
+	private static int[] negToRight(int[] A)
 	{
-		int currA = 0;
-		int currB = 0;
-		int[] C = new int[A.length + B.length];
-		for(int i = 0; i < C.length; i++)
-			if(currA < A.length)
+		int l = 0;
+		int r = A.length - 1;
+		while (l < r)
+		{			
+			if(A[l] >= 0 && A[r] < 0)
 			{
-				if(currB < B.length && A[currA] > B[currB])
-					C[i] = B[currB++];
-				else
-					C[i] = A[currA++];
+				int t = A[l];
+				A[l] = A[r];
+				A[r] = t;
 			}
 			else
-				C[i] = B[currB++];
-		return C;
+			{
+				if(A[l] < 0) l++;
+				if(A[r] >= 0) r--;
+			}
+		}
+		return A;
 	}
+	
     public static void main(String[] args) {
         /*Scanner in = new Scanner(System.in);
         int n = in.nextInt();
@@ -40,12 +44,9 @@ public class Solution {
                 queries[queries_i][queries_j] = in.nextInt();
             }
         }*/
-    	int[] A = {1,5,7,12,18,32};
-    	int[] B = {2,4,9,16,27,76,98};
-    	int[] C = merge(A, B);
-    	String res = Arrays.stream(C).mapToObj(i -> Integer.toString(i)).collect(Collectors.joining(", "));
+    	int[] input = { 4, -3, 2, -5, 5, -1, 3};
+    	String res = Arrays.stream(negToRight(input)).mapToObj(i -> Integer.toString(i)).collect(Collectors.joining(", "));
     	System.out.println(res);
-    	for(int i = 0; i < C.length; i++)
-    		System.out.print(C[i] + " ");
+    	
     }
 }
