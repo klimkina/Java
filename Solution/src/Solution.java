@@ -9,37 +9,35 @@ import java.util.stream.Stream;
 
 public class Solution {
 	
-	public static class Node
+	public static class Board
 	{
-		public int val;
-		Node left;
-		Node right;
-		Node (int val)
+		public int[][] board;
+		private int[] horizontals;
+		private int[] verticals;
+		private int[] diagonals;
+		public Board(int size)
 		{
-			this.val = val;
-			left = null;
-			right  = null;
+			board = new int[size][size];
+			horizontals = new int[size];
+			verticals = new int[size];
+			diagonals = new int[2];
 		}
-		public Node insert(int val, boolean isLeft)
+		public int play(int x, int y, boolean isFirst)
 		{
-			Node node = new Node (val);
-			if (isLeft)
-				left = node;
-			else
-				right = node;
-			return node;
-		}
-		public boolean isSearchTree()
-		{
-			return isSearchTree(this, Integer.MIN_VALUE, Integer.MAX_VALUE);
-		}
-		public boolean isSearchTree(Node node, int left, int right)
-		{
-			if(node == null)
-				return true;
-			if(node.val > right || node.val < left)
-				return false;
-			return isSearchTree (node.left, left, node.val) && isSearchTree(node.right, node.val, right);
+			int val = isFirst ? 1 : -1;
+			if(board[x][y] != 0)
+				throw new IllegalArgumentException();
+			board[x][y] = val;
+			horizontals[x] += val;
+			verticals[y] += val;
+			if(x == y)
+				diagonals[0] += val;
+			if (x == board.length - y)
+				diagonals[1] += val;
+			if(Math.abs(horizontals[x]) == board.length || Math.abs(verticals[y]) == board.length ||
+					Math.abs(diagonals[0]) == board.length || Math.abs(diagonals[1]) == board.length)
+				return val;
+			return 0;
 		}
 	}
 	
@@ -57,13 +55,13 @@ public class Solution {
                 queries[queries_i][queries_j] = in.nextInt();
             }
         }*/
-    	int[] input = {9, 29,10, 2, 50, 24, 100};
-    	Node node = new Node(5);
-    	Node left = node.insert(3, true);
-    	Node right = node.insert(7, false);
-    	left.insert(4, false);
-    	right.insert(6, true);
-    	System.out.println(node.isSearchTree());
+    	Board game = new Board(3);
+    	game.play(0, 0, true);
+    	game.play(1, 0, false);
+    	game.play(2, 1, true);
+    	game.play(1, 2, false);
+    	System.out.println(game.play(2, 2, true));
+    	System.out.println(game.play(1, 1, false));
     	//String res = Arrays.stream(findPair(input, n)).mapToObj(i -> Integer.toString(i)).collect(Collectors.joining(", "));
     	//System.out.println(res);
     	
