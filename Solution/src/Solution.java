@@ -9,35 +9,44 @@ import java.util.stream.Stream;
 
 public class Solution {
 	
-	private static boolean isSwap(String a, String b)
-	{
-		if(a == null || b == null || a.length() != b.length() || a.length() < 2)
-			return false;
-		char[] charra = a.toCharArray();
-		char[] charrb = b.toCharArray();
-		HashSet<Character> set = new HashSet<>();
-		boolean hasTwo = false;
-		int diff = -1;
-		for (int i = 0; i < charra.length; i++)
-		{
-			if(set.contains(charra[i]))
-				hasTwo = true;
-			set.add(charra[i]);
-			if(charra[i] != charrb[i]) {
-				if(diff >= 0)
-					return charrb[i] == charra[diff] && charra[i] == charrb[diff] && 
-					(i == charra.length - 1 || b.endsWith(a.substring(i + 1)));
-				else
-					diff = i;
-			}
-		}
-		return hasTwo;
-	}
+	public static int scoreOfParentheses(String S) {
+        int res = 0;
+        String s;
+        char[] charr = S.toCharArray();
+        Stack<String> stack = new Stack<>();
+        for (int i = 0; i < charr.length; i++)
+        {
+        	if(charr[i] == '(')
+        		stack.push("(");
+        	if(charr[i] == ')')
+        	{
+        		res = 0;
+        		do
+        		{
+        			s = stack.pop();
+        			if(s != "(")
+        				res = res + Integer.valueOf(s);
+        			
+        		} while (s != "(");
+        		if(res > 0)
+        			res *= 2;
+        		else
+        			res = 1;
+        		stack.push(String.valueOf(res));
+        	}
+        }
+        res = 0;
+        while(!stack.isEmpty())
+        {
+        	s = stack.pop();
+        	res = res + Integer.valueOf(s);
+        }
+        return res;
+    }
 	
     public static void main(String[] args) {
-        String a = "aa";
-        String b = "aa";
-    	System.out.println(isSwap(a, b));
+        String a = "(()(()))";
+    	System.out.println(scoreOfParentheses(a));
     	//String res = Arrays.stream(findPair(input, n)).mapToObj(i -> Integer.toString(i)).collect(Collectors.joining(", "));
     	//System.out.println(res);
     	
