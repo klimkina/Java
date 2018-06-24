@@ -9,29 +9,28 @@ import java.util.stream.Stream;
 
 public class Solution {
 	
-	public static String ReverseWords (String s) {
-		String[] words = s.split(" ");
-		for (int i = 0; i < words.length; i++)
-			words[i] = reverse(words[i]);
-       return reverse(Arrays.stream(words).collect(Collectors.joining(" ")));
+	public static boolean isAnagramm (String s1, String s2) {
+		if(s1 == null && s2 == null || s1.length() ==0 && s2.length() == 0)
+			return true;
+		if(s1.length() != s2.length())
+			return false;
+		char[] charr = s1.toCharArray();
+		char[] charr2 = s2.toCharArray();
+		HashMap<Character, Integer> map = new HashMap<>();
+		for(int i = 0; i < s1.length(); i++)
+			map.put(charr[i], map.getOrDefault(charr[i], 0) + 1);
+		for(int i = 0; i < s2.length(); i++)
+			if(!map.containsKey(charr2[i]) || map.get(charr2[i]) == 0)
+				return false;
+			else
+				map.put(charr2[i], map.get(charr2[i])-1);
+		return true;
     }
 	
-	private static String reverse (String s)
-	{
-		char[] charr = s.toCharArray();
-		for(int i = 0; i < charr.length/2; i++)
-		{
-			char t = charr[i];
-			charr[i] = charr[charr.length - i - 1];
-			charr[charr.length - i - 1] = t;
-		}
-		return String.valueOf(charr);
-	}
-	
-	
     public static void main(String[] args) {
-        String s = "Red fox jumped over the hard rock";
-    	System.out.println(ReverseWords(s));
+        String s1 = "Red fox jumped over the red rock";
+        String s2 = "Red red jumped over the sock rock";
+    	System.out.println(isAnagramm(s1, s2));
     	//String res = Arrays.stream(findPair(input, n)).mapToObj(i -> Integer.toString(i)).collect(Collectors.joining(", "));
     	//System.out.println(res);
     	
