@@ -9,26 +9,35 @@ import java.util.stream.Stream;
 
 public class Solution {
 	
-	public static int Fibb (int n) {
-		if(n < 3)
-			return 1;
-		int[] res = new int[2];
-		res[0] = 1; res[1] = 1;
-		int next = 0;
-		System.out.print("1 1 ");
-		for (int i = 3; i <= n; i++)
+	public static String longestNonRepeating (String s) {
+		if(s == null || s.length() < 2)
+			return s;
+		char[] charr = s.toCharArray();
+		int start = 0;
+		int maxend = 0;
+		int maxstart = 0;
+		HashMap<Character, Integer> lastpos = new HashMap<>();
+		for(int i = 0; i < charr.length; i++)
 		{
-			
-			next = res[0] + res[1];
-			System.out.print(next + " ");
-			res[0] = res[1];
-			res[1] = next;
+			int prev = lastpos.getOrDefault(charr[i], -1);
+			if(prev >= start)
+			{
+				if(i - start > maxend - maxstart)
+				{
+					maxend = i;
+					maxstart = start;
+				}
+				start = prev+1;
+			}
+			lastpos.put(charr[i], i);
 		}
-		return next;
+		if(charr.length - start > maxend - maxstart)
+		{maxend = charr.length; maxstart = start;}
+		return s.substring(maxstart, maxend);
     }
 	
     public static void main(String[] args) {
-        System.out.println(Fibb(8));
+        System.out.println(longestNonRepeating("aabcabcddabacdfvgb"));
     	//String res = Arrays.stream(findPair(input, n)).mapToObj(i -> Integer.toString(i)).collect(Collectors.joining(", "));
     	//System.out.println(res);
     	
