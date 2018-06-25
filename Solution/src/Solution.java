@@ -9,35 +9,27 @@ import java.util.stream.Stream;
 
 public class Solution {
 	
-	public static String longestNonRepeating (String s) {
-		if(s == null || s.length() < 2)
-			return s;
-		char[] charr = s.toCharArray();
-		int start = 0;
-		int maxend = 0;
-		int maxstart = 0;
-		HashMap<Character, Integer> lastpos = new HashMap<>();
-		for(int i = 0; i < charr.length; i++)
-		{
-			int prev = lastpos.getOrDefault(charr[i], -1);
-			if(prev >= start)
-			{
-				if(i - start > maxend - maxstart)
-				{
-					maxend = i;
-					maxstart = start;
-				}
-				start = prev+1;
-			}
-			lastpos.put(charr[i], i);
-		}
-		if(charr.length - start > maxend - maxstart)
-		{maxend = charr.length; maxstart = start;}
-		return s.substring(maxstart, maxend);
+	public static void parenthesis (int n) {
+		parenthesis("", n, n);
     }
-	
+	public static void parenthesis(String sofar, int open, int closed)
+	{
+		if(open == 0 && closed == 0)
+			System.out.println(sofar);
+		else
+		{
+			if(open == closed)
+				parenthesis(sofar + "(", open -1, closed);
+			else
+			{
+				if(open > 0)
+					parenthesis(sofar + "(", open - 1, closed);
+				parenthesis(sofar + ")", open, closed - 1);
+			}
+		}
+	}
     public static void main(String[] args) {
-        System.out.println(longestNonRepeating("aabcabcddabacdfvgb"));
+    	parenthesis(3);
     	//String res = Arrays.stream(findPair(input, n)).mapToObj(i -> Integer.toString(i)).collect(Collectors.joining(", "));
     	//System.out.println(res);
     	
