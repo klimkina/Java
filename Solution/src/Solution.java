@@ -9,27 +9,42 @@ import java.util.stream.Stream;
 
 public class Solution {
 	
-	public static void parenthesis (int n) {
-		parenthesis("", n, n);
-    }
-	public static void parenthesis(String sofar, int open, int closed)
+	public static boolean rotate (int[][] matrix) 
 	{
-		if(open == 0 && closed == 0)
-			System.out.println(sofar);
-		else
+		if(matrix == null || matrix.length == 0 || matrix.length != matrix[0].length)
+			return false;
+		int n = matrix.length;
+		for(int l = 0; l < n/2; l++)
 		{
-			if(open == closed)
-				parenthesis(sofar + "(", open -1, closed);
-			else
+			int last = n - l - 1;
+			for(int i = l; i < last; i++)
 			{
-				if(open > 0)
-					parenthesis(sofar + "(", open - 1, closed);
-				parenthesis(sofar + ")", open, closed - 1);
+				int offset = i - l;
+				// save top
+				int top = matrix[l][i];
+				// top = left
+				matrix[l][i] = matrix[last - offset][l];
+				// left = bottom
+				matrix[last - offset][l] = matrix[last][last - offset];
+				// bottom = right
+				matrix[last][last - offset] = matrix[i][last]; 
+				//right = top
+				matrix[i][last] = top; 
 			}
 		}
-	}
+        return true;
+    }
+	
     public static void main(String[] args) {
-    	parenthesis(3);
+    	int[][] matrix = {{1,2,3,4}, {5,6,7,8}, {9, 10,11,12}, {13,14,15,16}};
+    	if(rotate(matrix))
+    		for(int i = 0; i < matrix.length; i++)
+    		{
+    			for (int j = 0; j < matrix[0].length; j++)
+    				System.out.print(matrix[i][j] + " ");
+    			System.out.println();
+    		}
+    	
     	//String res = Arrays.stream(findPair(input, n)).mapToObj(i -> Integer.toString(i)).collect(Collectors.joining(", "));
     	//System.out.println(res);
     	
