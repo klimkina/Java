@@ -9,39 +9,45 @@ import java.util.stream.Stream;
 
 public class Solution {
 	
-	public static boolean rotate (int[][] matrix) 
+	public static List<List<Integer>> GetCombinations (List<Integer> list) 
 	{
-		if(matrix == null || matrix.length == 0 || matrix.length != matrix[0].length)
-			return false;
-		int n = matrix.length;
-		for(int l = 0; l < n/2; l++)
+		List<List<Integer>> res = new ArrayList<List<Integer>>();
+		if(list == null || list.size() == 0)
 		{
-			int last = n - l - 1;
-			for(int i = l; i < last; i++)
+			res.add(list);
+			return res;
+		}
+		
+		int first = list.get(0);
+		list = list.subList(1, list.size());
+		List<List<Integer>> sub_comb = GetCombinations(list);
+		res.addAll(sub_comb);
+		for(List<Integer> sub : sub_comb)
+		{
+			List<Integer> to_add = new ArrayList<Integer>();
+			if(sub == null || sub.size() == 0)
 			{
-				int offset = i - l;
-				// save top
-				int top = matrix[l][i];
-				// top = left
-				matrix[l][i] = matrix[last - offset][l];
-				// left = bottom
-				matrix[last - offset][l] = matrix[last][last - offset];
-				// bottom = right
-				matrix[last][last - offset] = matrix[i][last]; 
-				//right = top
-				matrix[i][last] = top; 
+				to_add.add(first);
+				res.add(to_add);
+			}
+			else
+			{
+				to_add.add(first);
+				to_add.addAll(sub);
+				res.add(to_add);
 			}
 		}
-        return true;
+		return res;
     }
 	
     public static void main(String[] args) {
-    	int[][] matrix = {{1,2,3,4}, {5,6,7,8}, {9, 10,11,12}, {13,14,15,16}};
-    	if(rotate(matrix))
-    		for(int i = 0; i < matrix.length; i++)
+    	List<Integer> list = Arrays.asList(1,2,3);
+    	List<List<Integer>> res = GetCombinations(list);
+    		for(int i = 0; i < res.size(); i++)
     		{
-    			for (int j = 0; j < matrix[0].length; j++)
-    				System.out.print(matrix[i][j] + " ");
+    			List<Integer> sub = res.get(i);
+    			for (int j = 0; j < sub.size(); j++)
+    				System.out.print(sub.get(j) + " ");
     			System.out.println();
     		}
     	
