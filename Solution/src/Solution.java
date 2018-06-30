@@ -8,45 +8,59 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Solution {
-	public static int countBattleships(char[][] board) {
-		int res = 0;
-		if(board.length != 0 && board[0].length != 0)
-			for(int i = 0; i < board.length; i++)
-				for(int j = 0; j < board[0].length; j++)
-					if(board[i][j] == 'X')
-					{
-						res++;
-						markShip(board, i, j);
-					}
+	public static List<String> removeComments(String[] source) {
+        List<String> res = new ArrayList<>();
+        boolean inBlock = false;
+        int block = 0;
+    	int line = 0;
+    	int last = 0;
+    	String temp;
+        for(String s : source)
+        {
+        	temp = "";
+        	if(inBlock)
+        	{
+        		block = s.indexOf("*/");
+        		if(block >= 0)
+        		{
+        			temp = s.substring(block+2, s.length());
+        			inBlock = false;
+        		}
+        	}
+        	else
+        	{
+	        	block = s.indexOf("/*");
+	        	line = s.indexOf("//");
+	        	if(block >= 0 && (line < 0 || block < line))
+	        	{
+	        		last = s.indexOf("*/");
+	        		if(last >= 0)
+	        		{
+	        			temp = s.substring(0, block);
+	        			if (last < s.length() - 2)
+	        				temp += s.substring(last + 2, s.length());
+	        		}
+        			else
+        				inBlock = true;
+	        	}
+	        	
+	        	if (block >= 0 && inBlock || line >= 0)
+	        		temp = (s.substring(0, Math.min(Math.max(0, block), Math.max(0, line))));
+	        	else if (block < 0)
+	        		temp = s;
+	        	if(temp != null && temp != "")
+	        		res.add(temp);
+        	}
+        }
         return res;
     }
 	
-	private static void markShip(char[][] board, int i, int j)
-	{
-		if(board[i][j] != 'X')
-			return;
-		board[i][j] = 'V';
-		int[] dx = {-1, 1, 0, 0};
-		int[] dy = {0, 0, -1, 1};
-		for(int k = 0; k < 4; k++)
-		{
-			int newx = i + dx[k] + dy[k];
-			int newy = j + dx[k] + dy[k];
-			if(onBoard(board, newx, newy))
-				markShip(board, newx, newy);
-		}
-	}
-	
-	private static boolean onBoard(char[][] board, int i, int j)
-	{
-		return i >= 0 && j >= 0 && i < board.length && j < board[0].length;
-	}
-	
     public static void main(String[] args) {
-    	char[][] field = {{'X', '.','.', 'X'},
-    			{'.', '.','.', 'X'},
-    			{'.', '.','.', 'X'}};
-    	System.out.print(countBattleships(field));
+    	String[] input = {"/*Test program */", "int main()", "{ ", "  // variable declaration ", "int a, b, c;", "/* This is a test", "   multiline  ", "   comment for ", "   testing */", "a = b + c;", "}"};
+    			
+    	List<String> output = removeComments(input);
+    	for (String s : output)
+    		System.out.println(s);
     	
     	//String res = Arrays.stream(findPair(input, n)).mapToObj(i -> Integer.toString(i)).collect(Collectors.joining(", "));
     	//System.out.println(res);
