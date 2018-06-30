@@ -8,39 +8,45 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Solution {
-	public static class TreeNode {
-		     int val;
-		      TreeNode left;
-		      TreeNode right;
-		      TreeNode(int x) { val = x; }
-		 }
+	public static int countBattleships(char[][] board) {
+		int res = 0;
+		if(board.length != 0 && board[0].length != 0)
+			for(int i = 0; i < board.length; i++)
+				for(int j = 0; j < board[0].length; j++)
+					if(board[i][j] == 'X')
+					{
+						res++;
+						markShip(board, i, j);
+					}
+        return res;
+    }
 	
-	public static TreeNode constructMaximumBinaryTree(int[] nums) {
-        return constructMaximumBinaryTree(nums, 0, nums.length-1);
-    }
-    public static TreeNode constructMaximumBinaryTree(int[] nums, int start, int end) {
-        int maxPos = maxPos(nums, start, end);
-        TreeNode node = new TreeNode (nums[maxPos]);
-        if(maxPos > start)
-            node.left = constructMaximumBinaryTree(nums, start, maxPos);
-        if(maxPos < end)
-            node.right = constructMaximumBinaryTree(nums, maxPos, end);
-        return node;
-    }
-    
-    private static int maxPos(int[] nums, int start, int end)
-    {
-        if(start >= end) return start;
-        int maxPos = start;
-        for(int i = start + 1; i <= end; i++)
-            if(nums[i] > nums[maxPos])
-                maxPos = i;
-        return maxPos;
-    }
+	private static void markShip(char[][] board, int i, int j)
+	{
+		if(board[i][j] != 'X')
+			return;
+		board[i][j] = 'V';
+		int[] dx = {-1, 1, 0, 0};
+		int[] dy = {0, 0, -1, 1};
+		for(int k = 0; k < 4; k++)
+		{
+			int newx = i + dx[k] + dy[k];
+			int newy = j + dx[k] + dy[k];
+			if(onBoard(board, newx, newy))
+				markShip(board, newx, newy);
+		}
+	}
+	
+	private static boolean onBoard(char[][] board, int i, int j)
+	{
+		return i >= 0 && j >= 0 && i < board.length && j < board[0].length;
+	}
 	
     public static void main(String[] args) {
-    	int[] Input = {3,2,1,6,0,5};
-    	System.out.print(constructMaximumBinaryTree(Input).val);
+    	char[][] field = {{'X', '.','.', 'X'},
+    			{'.', '.','.', 'X'},
+    			{'.', '.','.', 'X'}};
+    	System.out.print(countBattleships(field));
     	
     	//String res = Arrays.stream(findPair(input, n)).mapToObj(i -> Integer.toString(i)).collect(Collectors.joining(", "));
     	//System.out.println(res);
