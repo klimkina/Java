@@ -8,26 +8,39 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Solution {
+	public static class TreeNode {
+		     int val;
+		      TreeNode left;
+		      TreeNode right;
+		      TreeNode(int x) { val = x; }
+		 }
 	
-	public static void rotate(int[] nums, int k) {
-        k = k % nums.length;
-        int temp;
-        for(int i = 0; i < k; i++)
-        {
-        	temp = nums[nums.length - 1];
-        	for(int j = nums.length - 1; j >0 ; j--)
-        		nums[j] = nums[j-1];
-        	nums[0] = temp;
-        }
+	public static TreeNode constructMaximumBinaryTree(int[] nums) {
+        return constructMaximumBinaryTree(nums, 0, nums.length-1);
+    }
+    public static TreeNode constructMaximumBinaryTree(int[] nums, int start, int end) {
+        int maxPos = maxPos(nums, start, end);
+        TreeNode node = new TreeNode (nums[maxPos]);
+        if(maxPos > start)
+            node.left = constructMaximumBinaryTree(nums, start, maxPos);
+        if(maxPos < end)
+            node.right = constructMaximumBinaryTree(nums, maxPos, end);
+        return node;
+    }
+    
+    private static int maxPos(int[] nums, int start, int end)
+    {
+        if(start >= end) return start;
+        int maxPos = start;
+        for(int i = start + 1; i <= end; i++)
+            if(nums[i] > nums[maxPos])
+                maxPos = i;
+        return maxPos;
     }
 	
     public static void main(String[] args) {
-    	int[] Input = {1,2,3,4,5,6,7};
-    	rotate(Input, 7);
-    		for(int i = 0; i < Input.length; i++)
-    		{
-    			System.out.print(Input[i]);
-    		}
+    	int[] Input = {3,2,1,6,0,5};
+    	System.out.print(constructMaximumBinaryTree(Input).val);
     	
     	//String res = Arrays.stream(findPair(input, n)).mapToObj(i -> Integer.toString(i)).collect(Collectors.joining(", "));
     	//System.out.println(res);
