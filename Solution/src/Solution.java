@@ -9,36 +9,21 @@ import java.util.stream.Stream;
 
 public class Solution {
 	
-	public static void reverseWords(char[] str) {
-        if(str.length < 2)
-            return;
-        int start = 0;
-        for(int i = 1; i < str.length; i++)
-            if(str[i] == ' ')
-            {
-                reversePos(str, start, i);
-                start = i + 1;
-            }
-        if(start < str.length - 1)
-            reversePos(str, start, str.length);
-        reversePos(str, 0, str.length);
-        return;
-    }
-    
-    private static void reversePos(char[] str, int start, int end)
-    {
-        char temp;
-        for(int i = 0; i < (end - start)/2; i++)
+	public static void rotate(int[] nums, int k) {
+        k = k % nums.length;
+        int temp;
+        for(int i = 0; i < k; i++)
         {
-            temp = str[start + i];
-            str[start + i] = str[end-1-i]; 
-            str[end-1-i] = temp;
+        	temp = nums[nums.length - 1];
+        	for(int j = nums.length - 1; j >0 ; j--)
+        		nums[j] = nums[j-1];
+        	nums[0] = temp;
         }
     }
 	
     public static void main(String[] args) {
-    	char[] Input = {'t','h','e',' ','s','k','y',' ','i','s',' ','b','l','u','e'};
-    	reverseWords(Input);
+    	int[] Input = {1,2,3,4,5,6,7};
+    	rotate(Input, 7);
     		for(int i = 0; i < Input.length; i++)
     		{
     			System.out.print(Input[i]);
