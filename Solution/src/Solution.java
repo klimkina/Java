@@ -9,46 +9,39 @@ import java.util.stream.Stream;
 
 public class Solution {
 	
-	public static List<List<Integer>> GetCombinations (List<Integer> list) 
-	{
-		List<List<Integer>> res = new ArrayList<List<Integer>>();
-		if(list == null || list.size() == 0)
-		{
-			res.add(list);
-			return res;
-		}
-		
-		int first = list.get(0);
-		list = list.subList(1, list.size());
-		List<List<Integer>> sub_comb = GetCombinations(list);
-		res.addAll(sub_comb);
-		for(List<Integer> sub : sub_comb)
-		{
-			List<Integer> to_add = new ArrayList<Integer>();
-			if(sub == null || sub.size() == 0)
-			{
-				to_add.add(first);
-				res.add(to_add);
-			}
-			else
-			{
-				to_add.add(first);
-				to_add.addAll(sub);
-				res.add(to_add);
-			}
-		}
-		return res;
+	public static void reverseWords(char[] str) {
+        if(str.length < 2)
+            return;
+        int start = 0;
+        for(int i = 1; i < str.length; i++)
+            if(str[i] == ' ')
+            {
+                reversePos(str, start, i);
+                start = i + 1;
+            }
+        if(start < str.length - 1)
+            reversePos(str, start, str.length);
+        reversePos(str, 0, str.length);
+        return;
+    }
+    
+    private static void reversePos(char[] str, int start, int end)
+    {
+        char temp;
+        for(int i = 0; i < (end - start)/2; i++)
+        {
+            temp = str[start + i];
+            str[start + i] = str[end-1-i]; 
+            str[end-1-i] = temp;
+        }
     }
 	
     public static void main(String[] args) {
-    	List<Integer> list = Arrays.asList(1,2,3);
-    	List<List<Integer>> res = GetCombinations(list);
-    		for(int i = 0; i < res.size(); i++)
+    	char[] Input = {'t','h','e',' ','s','k','y',' ','i','s',' ','b','l','u','e'};
+    	reverseWords(Input);
+    		for(int i = 0; i < Input.length; i++)
     		{
-    			List<Integer> sub = res.get(i);
-    			for (int j = 0; j < sub.size(); j++)
-    				System.out.print(sub.get(j) + " ");
-    			System.out.println();
+    			System.out.print(Input[i]);
     		}
     	
     	//String res = Arrays.stream(findPair(input, n)).mapToObj(i -> Integer.toString(i)).collect(Collectors.joining(", "));
