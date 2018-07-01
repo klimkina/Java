@@ -8,54 +8,131 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Solution {
-	private static HashMap<Integer, Integer> my_bills = new HashMap<>();
-	public static boolean lemonadeChange(int[] bills) {
-		if(bills.length == 0)
-			return true;
-	
-		my_bills.put(bills[0], 1);
-		for (int i = 1; i < bills.length; i++)
-			if(!getChange(bills[i]))
-				return false;
-			else
-				my_bills.put(bills[i], my_bills.getOrDefault(bills[i], 0) + 1);
-        return true;
-    }
-	public static boolean getChange(int bill) {
-		int change = 0;
-		HashMap<Integer, Integer> temp = new HashMap<>();
-		while (change != bill - 5)
-			if(bill - change -5 >= 20 && my_bills.getOrDefault(20, 0) > 0)
-			{
-				my_bills.put(20, my_bills.get(20) - 1);
-				change += 20;
-				temp.put(20, temp.getOrDefault(20, 0));
-			}
-			else if (bill - change -5>= 10 && my_bills.getOrDefault(10, 0) > 0)
-			{
-				my_bills.put(10, my_bills.get(10) - 1);
-				change += 10;
-				temp.put(10, temp.getOrDefault(10, 0));
-			}
-			else if (bill - change -5>= 5 && my_bills.getOrDefault(5, 0) > 0)
-			{
-				my_bills.put(5, my_bills.get(5) - 1);
-				change += 5;
-				temp.put(5, temp.getOrDefault(5, 0));
-			}
-			else
-			{
-				if (change != bill - 5)
-					for(int key : temp.keySet())
-						my_bills.put(key, my_bills.get(key) - temp.get(key));
-				return change == bill - 5;
-			}
-		return true;
+	public static class TreeNode {
+		 int val;
+		 TreeNode left;
+		 TreeNode right;
+		 TreeNode(int x) { val = x; }
 	}
 	
+	public static  List<Integer> distanceK(TreeNode root, TreeNode target, int K) {
+		List<Integer> res = new ArrayList<>();
+		if(K < 0)
+			return res;
+		if(K == 0)
+		{
+			res.add(target.val);
+			return res;
+		}
+		Stack<TreeNode> stack = new Stack<>();
+		stack.push(root);
+		if (!findTarget(target, stack))
+			return res;
+		boolean isLeft = true;
+		TreeNode prev = target;
+		stack.push(target);
+		while(!stack.isEmpty() && K >= 0)
+		{
+			TreeNode node = stack.pop();
+			if(node != target)
+			{
+				if(node.left == prev)
+					isLeft = false;
+				else
+					isLeft = true;
+			}
+			List<Integer> temp = distanceK(node, K, isLeft);
+			if(!temp.isEmpty())
+				res.addAll(temp);
+			if(node == target)
+			{
+				temp = distanceK(node, K, !isLeft);
+				if(!temp.isEmpty())
+					res.addAll(temp);
+			}
+			K--; 
+			prev = node;
+		}
+		return res;
+    }
+	private static boolean findTarget(TreeNode target, Stack<TreeNode> stack) {
+		TreeNode root = stack.pop();
+		if(root == null)
+			return false;
+		if(root == target)
+			return true;
+		if(root.left != null || root.right != null)
+			stack.push(root);
+		if(root.left != null)
+		{
+			stack.push(root.left);
+			if (findTarget(target, stack))
+				return true;
+		}
+		if(root.right != null)
+		{
+			stack.push(root.right);
+			if(findTarget(target, stack))
+				return true;
+			else
+				stack.pop();
+		}
+		return false;
+	}
+	private static List<Integer> distanceK(TreeNode node, int K, boolean isLeft) {
+		
+			
+		List<Integer> res = new ArrayList<>();
+		if(node == null) return res;
+		if(K == 0)
+		{
+			res.add(node.val);
+			return res;
+		}
+		if(isLeft)
+			node = node.left;
+		else
+			node = node.right;
+		res = distanceK(node, K - 1);
+		return res;
+	}
+	private static List<Integer> distanceK(TreeNode node, int K) {		
+		
+		List<Integer> res = new ArrayList<>();
+		if(node == null) return res;
+		if(K == 0)
+		{
+			res.add(node.val);
+			return res;
+		}
+		
+		res.addAll(distanceK(node.left, K - 1));
+		res.addAll(distanceK(node.right, K - 1));
+		return res;
+	}
     public static void main(String[] args) {
-    	int[] bills = {5,5,10,10,25};
-    	System.out.println(lemonadeChange(bills));
+    	TreeNode root = new TreeNode(3);
+    	TreeNode root2 = root;
+    	TreeNode left = new TreeNode(5);
+    	TreeNode target = left;
+    	TreeNode right = new TreeNode(1);
+    	root.left = left; root.right = right;
+    	root = new TreeNode(6);
+    	left.left = root;
+    	root = new TreeNode(2);
+    	left.right = root;
+    	left = left.right;
+    	root = new TreeNode(7);
+    	left.left = root;
+    	root = new TreeNode(4);
+    	left.right = root;
+    	root = right;
+    	left = new TreeNode(0);
+    	right = new TreeNode(8);
+    	root.left = left; root.right = right;
+    	List<Integer> res = distanceK(root2, target, 2);
+    	for(int i : res)
+    		System.out.print(i + " ");
     	
     	//String res = Arrays.stream(findPair(input, n)).mapToObj(i -> Integer.toString(i)).collect(Collectors.joining(", "));
     	//System.out.println(res);
