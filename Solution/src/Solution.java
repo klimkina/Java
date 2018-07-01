@@ -8,24 +8,59 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Solution {
-	public static int compareVersion(String version1, String version2) {
-		String[] v1 = version1.split("\\.");
-        String[] v2 = version2.split("\\.");
-        int len = Math.max(v1.length,v2.length);
-        for(int i=0;i<len;i++){
-            int c1 = 0;
-            int c2 = 0;
-            if(v1.length>i) c1 = Integer.parseInt(v1[i]);
-            if(v2.length>i) c2 = Integer.parseInt(v2[i]);            
-            if(c1>c2) return 1;
-            if(c2>c1) return -1;
-        }
-        return 0;
+	static class MyQueue {
+		private static Stack<Integer> stack;
+		private static Stack<Integer> stack2;
+	    /** Initialize your data structure here. */
+	    public MyQueue() {
+	        stack = new Stack<>();
+	        stack2 = new Stack<>();
+	    }
+	    
+	    private void initStack2()
+	    {
+	    	while(!stack.isEmpty())
+	    		stack2.push(stack.pop());
+	    }
+	    /** Push element x to the back of queue. */
+	    public void push(int x) {
+	        stack.push(x);
+	    }
+	    
+	    /** Removes the element from in front of queue and returns that element. */
+	    public int pop() {
+	        if(stack2.isEmpty())
+	        	initStack2();
+        	return stack2.pop();
+	    }
+	    
+	    /** Get the front element. */
+	    public int peek() {
+	    	if(stack2.isEmpty())
+	        	initStack2();
+        	return stack2.peek();
+	    }
+	    
+	    /** Returns whether the queue is empty. */
+	    public boolean empty() {
+	        return stack2.isEmpty() && stack.isEmpty();
+	    }
 	}
 	
     public static void main(String[] args) {
-    	String version1 = "1.1", version2 = "1";
-    	System.out.println(compareVersion(version1, version2));
+    	MyQueue obj = new MyQueue();
+    	obj.push(1);
+    	obj.push(2);
+    	obj.push(3);
+    	obj.push(4);
+    	int param_2 = obj.pop();
+    	System.out.println(param_2);
+    	int param_3 = obj.peek();
+    	System.out.println(param_3);
+    	param_2 = obj.pop();
+    	System.out.println(param_2);
+    	boolean param_4 = obj.empty();
+    	System.out.println(param_4);
     	
     	//String res = Arrays.stream(findPair(input, n)).mapToObj(i -> Integer.toString(i)).collect(Collectors.joining(", "));
     	//System.out.println(res);
