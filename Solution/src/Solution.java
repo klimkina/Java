@@ -8,39 +8,37 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Solution {
-	static HashMap<Character, Integer> romans = new HashMap<>();
-	
-	public static int romanToInt(String s) {
-		romans.put('I', 1);
-		romans.put('V', 5);
-		romans.put('X', 10);
-		romans.put('L', 50);
-		romans.put('C', 100);
-		romans.put('D', 500);
-		romans.put('M', 1000);
+	public static class TreeNode {
+		 int val;
+		 TreeNode left;
+		 TreeNode right;
+		 TreeNode(int x) { val = x; }
+		 }
+	private static int min = Integer.MIN_VALUE;
+	private static int min_level = 0;
+	public static int findBottomLeftValue(TreeNode root) {
+		min = root.val;
+		findBottomLeftValue(root, 0);
+	    return min;  
+    }
 		
-		char[] charr = s.toCharArray();
-		int res = 0;
-		int prev = 0;
-		int curr = 0;
-		for(int i = 0; i < charr.length; i++)
+	public static void findBottomLeftValue(TreeNode root, int level) {
+		if(root.left == null && root.right == null)
 		{
-			curr = romans.get(charr[i]);
-			if (prev < curr)
-			{
-				curr = curr - prev;
-				prev = 0;
-			}
-			res += prev;
-			prev = curr;
+			if(level > min_level)
+				min = root.val;
 		}
-		res += prev;
-		return res;
-	}
+	   if(root.left != null)
+		   findBottomLeftValue(root.left, level + 1);
+	   if(root.right != null)
+		   findBottomLeftValue(root.left, level + 1);
+    }
 	
     public static void main(String[] args) {
-    	System.out.println(romanToInt("LVIII"));
-    	System.out.println(romanToInt("MCMXCIV"));
+    	TreeNode root = new TreeNode(1);
+    	TreeNode node = new TreeNode(1);
+    	root.right = node;
+    	System.out.println(findBottomLeftValue(root));
     	//String res = Arrays.stream(findPair(input, n)).mapToObj(i -> Integer.toString(i)).collect(Collectors.joining(", "));
     	//System.out.println(res);
     	
