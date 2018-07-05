@@ -8,95 +8,49 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Solution {
-	public static int calculate(String s) {
-		char[] charr = s.toCharArray();
-        Stack<Character> op_stack = new Stack<>();//(2+6* 3+5- (3*14/7+2)*5)+3
-        Stack<Integer> term_stack = new Stack<>();
-        int curr = 0;
-        while(curr < charr.length)
+	
+	public static class Interval {
+		 int start;
+		 int end;
+		 Interval() { start = 0; end = 0; }
+		 Interval(int s, int e) { start = s; end = e; }
+		 }
+	
+	public static List<Interval> merge(List<Interval> intervals) {
+		List<Interval> res = new ArrayList<>();
+        TreeMap<Integer, Integer> map = new TreeMap<>();
+        for(Interval i : intervals)
         {
-        	if (charr[curr] == '+' || charr[curr] == '-' ||
-        			charr[curr] == '*' || charr[curr] == '/' || charr[curr] == '(')
+        	Integer prev_l = map.floorKey(i.start);
+        	Integer next_l = map.higherKey(i.start);
+        	if (prev_l != null && map.get(prev_l) >= i.start)
+        		map.put(prev_l, Math.max(i.end, map.get(prev_l)));
+        	else
+        		map.put(i.start, i.end);
+        	prev_l = map.floorKey(i.start);
+        	while(next_l != null && (map.get(next_l) <= map.get(prev_l) || map.get(prev_l) >= next_l))
         	{
-        		op_stack.push(charr[curr++]);
-        	}
-        	else if (charr[curr]>= '0' && charr[curr] <= '9')
-        	{
-        		curr = readInt(charr, curr, term_stack);
-        		if(!op_stack.empty())
-        		{
-        			char ch = op_stack.pop();
-        			if (ch == '*' || ch == '/')
-        			{
-        				int r = term_stack.pop();
-        				int l = term_stack.pop();
-        				if (ch == '*')
-        					term_stack.push(r*l);
-        				else
-        					term_stack.push(l/r);
-        			}
-        			else
-        				op_stack.push(ch);
-        		}
-        	}
-        	else if (charr[curr] == ' ')
-        		curr++;
-        	else if (charr[curr] == ')')
-        	{
-        		calcStack(op_stack, term_stack);
-        		curr++;
+        		map.put(prev_l, Math.max(map.get(prev_l), map.get(next_l)));
+        		map.remove(next_l);
+        		next_l = map.higherKey(prev_l);
         	}
         }
-        calcStack(op_stack, term_stack);
-        return term_stack.pop();
+        for(Integer key : map.keySet())
+        	res.add(new Interval(key, map.get(key)));
+        return res;
     }
 	
-	private static void calcStack(Stack<Character> op_stack, Stack<Integer> stack)
-	{
-		int res = Integer.valueOf(stack.pop());
-		boolean par_met = false;
-		if(!stack.empty())
-		{
-			char ch = op_stack.pop();
-			while(!stack.empty() && ch != '(' && !(par_met && (ch == '+' || ch == '-')))
-			{
-				int l = Integer.valueOf(stack.pop());
-				switch (ch)
-				{
-					case '+' : res += l; break;
-					case '-' : res = l - res; break;
-					case '*' : res *= l; break;
-					case '/' : res = l/res; break;
-				}
-				if (!stack.empty())
-				{
-					ch = op_stack.pop();
-					if (ch == '(' && !par_met)
-					{
-						par_met = true;
-						if (!stack.empty())
-							ch = op_stack.pop();
-					}
-				}
-			}
-			if(ch == '+' || ch == '-')
-				op_stack.push(ch);
-		}
-		stack.push(res);
-	}
-	private static int readInt(char[] charr, int pos, Stack<Integer> stack)
-	{
-		int start = pos;
-		while(pos < charr.length && charr[pos]>= '0' && charr[pos] <= '9')
-			pos++;
-		stack.push(Integer.valueOf(String.valueOf(charr, start, pos-start)));
-		return pos;
-	}
-	
     public static void main(String[] args) {
+    	int[][] is = {{1,4},{0,1}};
+    	List<Interval> intervals = new ArrayList<>();
+    	for(int[] i : is)
+    		intervals.add(new Interval(i[0], i[1]));
+    	List<Interval> res = merge(intervals);
+    	for (Interval i : res)
+    		System.out.println(i.start + " " + i.end);
     	//System.out.println(calculate("1 + 1"));
     	//System.out.println(calculate("2*(5+5*2)/3+(6/2+8)")); //21
-    	System.out.println(calculate("(2+6* 3+5- (3*14/7+2)*5)+3")); // -12
+    	//System.out.println(calculate("(2+6* 3+5- (3*14/7+2)*5)+3")); // -12
     	//String res = Arrays.stream(findPair(input, n)).mapToObj(i -> Integer.toString(i)).collect(Collectors.joining(", "));
     	//System.out.println(res);
     	
