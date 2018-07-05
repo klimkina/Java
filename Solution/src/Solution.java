@@ -15,33 +15,31 @@ public class Solution {
 		 Interval() { start = 0; end = 0; }
 		 Interval(int s, int e) { start = s; end = e; }
 		 }
-	
+	static class IntervalComparator implements Comparator{
+		public int compare(Object o1, Object o2){
+		Interval i1 = (Interval)o1;
+		Interval i2 = (Interval)o2;
+		return i1.start - i2.start;
+		}
+	}
 	public static List<Interval> merge(List<Interval> intervals) {
-		List<Interval> res = new ArrayList<>();
-        TreeMap<Integer, Integer> map = new TreeMap<>();
-        for(Interval i : intervals)
-        {
-        	Integer prev_l = map.floorKey(i.start);
-        	Integer next_l = map.higherKey(i.start);
-        	if (prev_l != null && map.get(prev_l) >= i.start)
-        		map.put(prev_l, Math.max(i.end, map.get(prev_l)));
-        	else
-        		map.put(i.start, i.end);
-        	prev_l = map.floorKey(i.start);
-        	while(next_l != null && (map.get(next_l) <= map.get(prev_l) || map.get(prev_l) >= next_l))
-        	{
-        		map.put(prev_l, Math.max(map.get(prev_l), map.get(next_l)));
-        		map.remove(next_l);
-        		next_l = map.higherKey(prev_l);
-        	}
-        }
-        for(Integer key : map.keySet())
-        	res.add(new Interval(key, map.get(key)));
-        return res;
+		Collections.sort(intervals, new IntervalComparator());
+	    for(int i = 0;i<intervals.size()-1;i++)
+	    {
+	        int j = i+1;
+	        if(intervals.get(j).start<=intervals.get(i).end)
+	        {
+	            intervals.get(i).end = Math.max(intervals.get(j).end,intervals.get(i).end);
+	            //intervals.get(i).start = Math.min(intervals.get(j).start,intervals.get(i).start);
+	            intervals.remove(j);
+	            i--;
+	        }
+	    }
+	    return(intervals);
     }
 	
     public static void main(String[] args) {
-    	int[][] is = {{1,4},{0,1}};
+    	int[][] is = {{1,4},{1,4}};
     	List<Interval> intervals = new ArrayList<>();
     	for(int[] i : is)
     		intervals.add(new Interval(i[0], i[1]));
