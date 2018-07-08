@@ -9,40 +9,55 @@ import java.util.stream.Stream;
 
 public class Solution {
 	
-	public static List<List<Integer>> permuteUnique(int[] nums) {
-		List<List<Integer>> res = new ArrayList<>();
-		HashMap<Integer, Integer> map = new HashMap<>();
-		for(int i = 0; i < nums.length; i++)
-			map.put(nums[i], map.getOrDefault(nums[i], 0) + 1);
-		List<Integer> start = new ArrayList<>();
-		res = helper(map, start);
-		return res;
-    }
-	
-	private static List<List<Integer>> helper(HashMap<Integer, Integer> map, List<Integer> start)
-	{
-		List<List<Integer>> res = new ArrayList<>();
-		if (map.values().stream().allMatch(x -> x == 0))
-			res.add(start);
-		else
-			for(int key : map.keySet())
-			{
-				if(map.get(key) > 0)
-				{
-					List<Integer> new_start = new ArrayList<Integer>(start);
-					new_start.add(key);
-					map.put(key, map.get(key) - 1);
-					res.addAll(helper(map, new_start));
-					map.put(key, map.getOrDefault(key, 0) + 1);
-				}
-			}
-		return res;
-	}
+	public static class TreeNode {
+		 int val;
+		 TreeNode left;
+		 TreeNode right;
+		 TreeNode(int x) { val = x; }
+		 }
+		
+		    public static TreeNode subtreeWithAllDeepest(TreeNode root) {
+		        return findCommon(root);
+		    }
+		    
+		    private static TreeNode findCommon(TreeNode root)
+		    {
+		        if(root == null || (root.left == null && root.right == null))
+		            return root;
+		        if(root.left == null)
+		            return root.right;
+		        if(root.right == null)
+		            return root.left;
+		        int left = subnodesMaxDepth(root.left);
+		        int right = subnodesMaxDepth(root.right);
+		        if (left == right)
+		            return root;
+		        if (left > right)
+		            return findCommon(root.left);
+		        return findCommon(root.right);
+		    }
+		    
+		    private static int subnodesMaxDepth(TreeNode root)
+		    {
+		        if(root == null)
+		            return 0;
+		        if(root.left == null && root.right == null)
+		            return 1;
+		        int max = 0;
+		        if(root.left != null)
+		            max = Math.max(max, subnodesMaxDepth(root.left));
+		        if(root.right != null)
+		            max = Math.max(max, subnodesMaxDepth(root.right));
+		        return max + 1;
+		    }
+		
     public static void main(String[] args) {
-    	int[] nums = {1,1,2};
-    	List<List<Integer>> res = permuteUnique(nums);
-    	for (List<Integer> perm : res)
-    		System.out.println(perm.stream().map(i -> i.toString()).collect(Collectors.joining(", ")));
+    	TreeNode node = new TreeNode(0);
+    	TreeNode node1 = new TreeNode(1);
+    	TreeNode node2 = new TreeNode(2);
+    	TreeNode node3 = new TreeNode(3);
+    	node.right = node1; node1.right = node2; node2.right = node3;
+    	System.out.println(subtreeWithAllDeepest(node).val);
     	//System.out.println(calculate("1 + 1"));
     	//System.out.println(calculate("2*(5+5*2)/3+(6/2+8)")); //21
     	//System.out.println(calculate("(2+6* 3+5- (3*14/7+2)*5)+3")); // -12
