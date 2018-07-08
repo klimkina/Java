@@ -9,55 +9,60 @@ import java.util.stream.Stream;
 
 public class Solution {
 	
-	public static class TreeNode {
-		 int val;
-		 TreeNode left;
-		 TreeNode right;
-		 TreeNode(int x) { val = x; }
-		 }
-		
-		    public static TreeNode subtreeWithAllDeepest(TreeNode root) {
-		        return findCommon(root);
-		    }
-		    
-		    private static TreeNode findCommon(TreeNode root)
-		    {
-		        if(root == null || (root.left == null && root.right == null))
-		            return root;
-		        if(root.left == null)
-		            return root.right;
-		        if(root.right == null)
-		            return root.left;
-		        int left = subnodesMaxDepth(root.left);
-		        int right = subnodesMaxDepth(root.right);
-		        if (left == right)
-		            return root;
-		        if (left > right)
-		            return findCommon(root.left);
-		        return findCommon(root.right);
-		    }
-		    
-		    private static int subnodesMaxDepth(TreeNode root)
-		    {
-		        if(root == null)
-		            return 0;
-		        if(root.left == null && root.right == null)
-		            return 1;
-		        int max = 0;
-		        if(root.left != null)
-		            max = Math.max(max, subnodesMaxDepth(root.left));
-		        if(root.right != null)
-		            max = Math.max(max, subnodesMaxDepth(root.right));
-		        return max + 1;
-		    }
+	public static int primePalindrome(int N) {
+		List<Integer> next = nextPalindrome(N);
+        while (true)
+        {
+        	for(int i : next)
+	            if(isPrime(i))
+	                return i;
+            next = nextPalindrome(next.get(0) + 1);
+        }
+    }
+    
+    private static List<Integer> nextPalindrome(int n)
+    {
+    	List<Integer> res = new ArrayList<>();
+    	if (n < 10)
+    	{
+    		res.add(n);
+    		return res;
+    	}
+    	char[] charr = String.valueOf(n).toCharArray();
+        for(int i = 0; i < charr.length/2; i++)
+        {
+        	char max = charr[i];
+            charr [charr.length - i - 1] = max;
+        }
+        int num = Integer.valueOf(String.valueOf(charr));
+        if (num >= n)
+        	res.add(num);
+        for (int i = 0; i < (charr.length + 1)/2; i++)
+        {
+        	char max = charr[(charr.length - 1)/2 - i];
+        	while (max != '9')
+        	{
+        		max++;
+        		charr[(charr.length - 1)/2 - i] = max;
+        		charr[(charr.length)/2 + i] = max;
+        		num = Integer.valueOf(String.valueOf(charr));
+                if (num >= n)
+                	res.add(num);
+        	}
+        }
+        return res;        
+    }
+    
+    private static boolean isPrime(int n)
+    {
+        for (int i = 2; i <= Math.sqrt(n); i++)
+            if (n % i == 0)
+                return false;
+        return true;
+    }
 		
     public static void main(String[] args) {
-    	TreeNode node = new TreeNode(0);
-    	TreeNode node1 = new TreeNode(1);
-    	TreeNode node2 = new TreeNode(2);
-    	TreeNode node3 = new TreeNode(3);
-    	node.right = node1; node1.right = node2; node2.right = node3;
-    	System.out.println(subtreeWithAllDeepest(node).val);
+    	System.out.println(primePalindrome(192));
     	//System.out.println(calculate("1 + 1"));
     	//System.out.println(calculate("2*(5+5*2)/3+(6/2+8)")); //21
     	//System.out.println(calculate("(2+6* 3+5- (3*14/7+2)*5)+3")); // -12
