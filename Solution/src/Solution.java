@@ -9,60 +9,45 @@ import java.util.stream.Stream;
 
 public class Solution {
 	
-	public static int primePalindrome(int N) {
-		List<Integer> next = nextPalindrome(N);
-        while (true)
-        {
-        	for(int i : next)
-	            if(isPrime(i))
-	                return i;
-            next = nextPalindrome(next.get(0) + 1);
-        }
-    }
-    
-    private static List<Integer> nextPalindrome(int n)
-    {
-    	List<Integer> res = new ArrayList<>();
-    	if (n < 10)
-    	{
-    		res.add(n);
-    		return res;
-    	}
-    	char[] charr = String.valueOf(n).toCharArray();
-        for(int i = 0; i < charr.length/2; i++)
-        {
-        	char max = charr[i];
-            charr [charr.length - i - 1] = max;
-        }
-        int num = Integer.valueOf(String.valueOf(charr));
-        if (num >= n)
-        	res.add(num);
-        for (int i = 0; i < (charr.length + 1)/2; i++)
-        {
-        	char max = charr[(charr.length - 1)/2 - i];
-        	while (max != '9')
-        	{
-        		max++;
-        		charr[(charr.length - 1)/2 - i] = max;
-        		charr[(charr.length)/2 + i] = max;
-        		num = Integer.valueOf(String.valueOf(charr));
-                if (num >= n)
-                	res.add(num);
-        	}
-        }
-        return res;        
-    }
-    
-    private static boolean isPrime(int n)
-    {
-        for (int i = 2; i <= Math.sqrt(n); i++)
-            if (n % i == 0)
-                return false;
-        return true;
-    }
+	public static class LRUCache {
+		static Map<Integer, Integer> map;
+		static int capacity;
+	    public LRUCache(int capacity) {
+	        this.capacity =  capacity;
+	        map = new LinkedHashMap<>();
+	    }
+	    
+	    public static int get(int key) {
+	        Integer val = map.get(key);
+	        if (val == null)
+	            return -1;
+	        map.remove(key);
+	        map.put(key, val);
+	        return val;
+	    }
+	    
+	    public static void put(int key, int value) {
+	        if (map.containsKey(key))
+	            map.remove(key);
+	        else if(map.size() == capacity)
+	        {
+	            int k = map.keySet().iterator().next();
+	            map.remove(k);
+	        }
+	        map.put(key, value);
+	    }
+	}
 		
     public static void main(String[] args) {
-    	System.out.println(primePalindrome(192));
+    	LRUCache obj = new LRUCache(2);
+    	obj.put(2,6);
+    	System.out.println(obj.get(1));
+    	obj.put(1,5);
+    	System.out.println(obj.get(1));
+    	obj.put(1,2);
+    	System.out.println(obj.get(2));
+    	
+    	System.out.println(obj.get(1));
     	//System.out.println(calculate("1 + 1"));
     	//System.out.println(calculate("2*(5+5*2)/3+(6/2+8)")); //21
     	//System.out.println(calculate("(2+6* 3+5- (3*14/7+2)*5)+3")); // -12
