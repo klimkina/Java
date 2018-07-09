@@ -8,56 +8,61 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Solution {
-	public static int search(int[] nums, int target) {
-		int pivot = findPivot (nums);
-		if (pivot < 0)
-			return (binarySearch(nums, target, 0, nums.length - 1));
-		if (nums[pivot] == target)
-			return pivot;
-		if (nums[0] <= target)
-			return (binarySearch(nums, target, 0, pivot - 1));
-        return (binarySearch(nums, target, pivot +1, nums.length - 1));
+	static class RandomListNode {
+		int label;
+		RandomListNode next, random;
+		RandomListNode(int x) { this.label = x; }
+	};
+			
+	private static HashMap<RandomListNode, RandomListNode> copied;
+    public static RandomListNode copyRandomList(RandomListNode head) {
+    	copied = new HashMap<>();
+        RandomListNode node = copyNode(head);
+        RandomListNode prev = node;
+        RandomListNode res = node;
+        RandomListNode next = head;
+        while(prev != null && next != null)
+        {
+            next = next.next;
+            node = copyNode(next);
+            prev.next = node;
+            prev = node;
+        }
+        return res;
     }
-	
-	public static int binarySearch(int[] nums, int target, int start, int end) {
-		int lo = start;
-		int hi = end;
-		while (lo <= hi)
-		{
-			int m = lo + (hi-lo)/2;
-			if ( nums[m] == target)
-				return m;
-			if (nums[m] < target)
-				lo = m + 1;
-			else
-				hi = m - 1;			
-		}
-		return -1;
-	}
-	
-	private static int findPivot(int[] nums)
-	{
-		int lo = 0;
-		int hi = nums.length-1;
-		while (lo <= hi)
-		{
-			int m = lo + (hi-lo)/2;
-			if ( m < hi && nums[m + 1] < nums[m])
-				return m;
-			if (m > lo && nums[m] < nums[m-1])
-				return m;
-			if (nums[lo] >= nums[m])
-				hi = m - 1;
-			else
-				lo = m + 1;
-		}
-		return -1;
-	}
+
+    private static RandomListNode copyNode (RandomListNode head)
+    {
+        if (head == null)
+            return null;
+        if(copied.containsKey(head))
+            return copied.get(head);
+        RandomListNode node = new RandomListNode(head.label);  
+        if (copied.containsKey(head.next))
+            node.next = copied.get(head.next);
+        copied.put(head, node);
+        if (head.random != null)
+        {
+            if (copied.containsKey(head.random))
+                node.random = copied.get(head.random);
+            else
+            {
+                RandomListNode random = copyNode(head.random);
+                node.random = random;
+            }
+        }      
+        
+        return node;
+    }
 		
     public static void main(String[] args) {
-    	int[] nums = {4,5,6,7,8,1,2};
-    	int target = 8;
-    	System.out.println(search(nums, target));
+    	RandomListNode node1 = new RandomListNode(1);
+    	RandomListNode node2 = new RandomListNode(2);
+    	node1.next = node2;
+    	node1.random = node2;
+    	node2.random = node1;
+    	RandomListNode copy = copyRandomList(node1);
+    	//System.out.println(search(nums, target));
     	//System.out.println(calculate("1 + 1"));
     	//System.out.println(calculate("2*(5+5*2)/3+(6/2+8)")); //21
     	//System.out.println(calculate("(2+6* 3+5- (3*14/7+2)*5)+3")); // -12
