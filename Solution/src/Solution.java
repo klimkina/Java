@@ -8,32 +8,29 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Solution {
-	public static void sortColors(int[] nums) {
-        int l = 0;
-        int r = nums.length - 1;
-        int curr = 0;
-        while (l <= r && curr <= r)
+	public static int lengthOfLIS(int[] nums) {
+		if (nums.length == 0)
+            return 0;
+        if (nums.length == 1)
+            return 1;
+        int[] max = new int[nums.length + 1];
+        max[0] = 1;
+        for (int i = 1; i < nums.length; i++)
         {
-        	if (nums[curr] == 0)
-        	{
-        		nums[curr] = nums[l];
-        		nums[l++] = 0;
-        		curr++;
-        	} else if (nums[curr] == 2)
-        	{
-        		nums[curr] = nums[r];
-        		nums[r--] = 2;
-        	} else
-        		curr++;
+            for(int j = 0; j < i ; j++)
+                if(nums[j] < nums[i] && max[i] < max[j])
+                    max[i] = max[j];
+            max[i]++;
         }
+        for(int j = 0; j < nums.length ; j++)
+            if(max[nums.length] < max[j])
+                max[nums.length] = max[j];
+        return max[nums.length];
     }
 	
-	
     public static void main(String[] args) {
-    	int[] input = {2,0,2,1,1,0};
-    	sortColors(input);
-    	for(int i = 0; i < input.length; i++)
-    		System.out.print(input[i] + " ");
+    	int[] input = {1,3,6,7,9,4,10,5,6};
+    	System.out.print(lengthOfLIS(input));
     	//System.out.println(search(nums, target));
     	//System.out.println(calculate("1 + 1"));
     	//System.out.println(calculate("2*(5+5*2)/3+(6/2+8)")); //21
