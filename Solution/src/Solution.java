@@ -8,35 +8,43 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Solution {
-	public static int[][] spiral(int n) {
-		int[][] res = new int[n][n];
-		int curr = 1;
-		for (int i = 0; i <= (n+1)/2; i++)
+	public static String lookNSay(int n) {
+		if(n == 1) return "1";
+		if (n==2) return "11";
+		Object[] start = {2,1};
+		for(int i = 3; i < n; i++)
 		{
-			int start = i;
-			int end = n - i - 1;
-			for(int j = start; j <= end; j++)
-				res[i][j] = curr++;
-			for(int j = start+1; j <= end; j++)
-				res[j][end] = curr++;
-			for(int j = end - 1; j >= start; j--)
-				res[end][j] = curr++;
-			for(int j = end - 1; j > start; j--)
-				res[j][start] = curr++;
+			List<Integer> arr = new ArrayList<>();
+			int prev = 0;
+			int curr = 1;
+			while(curr < start.length)
+			{
+				if (start[curr] != start[prev])
+				{
+					arr.add(curr-prev);
+					arr.add((Integer)start[prev]);
+					prev = curr;					
+				}
+				curr++;
+			}
+			if (curr <= start.length)
+			{
+				arr.add(curr-prev);
+				arr.add((Integer)start[prev]);
+				prev = curr;					
+			}
+			start = arr.toArray();
 		}
-			
-		return res;
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < start.length; i++)
+			sb.append(String.valueOf((Integer)start[i]));
+		return sb.toString();
    }
 	
 	
     public static void main(String[] args) {
-    	int[][] res = spiral(1);
-    	for (int i = 0; i < 1; i++)
-    	{
-    		for (int j = 0; j < 1; j++)
-    			System.out.print(res[i][j] + " ");
-    		System.out.println();
-    	}
+    	System.out.println(lookNSay(5));
+    	
     	//System.out.println(search(nums, target));
     	//System.out.println(calculate("1 + 1"));
     	//System.out.println(calculate("2*(5+5*2)/3+(6/2+8)")); //21
