@@ -8,57 +8,35 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Solution {
-	public static  class TreeLinkNode {
-		      int val;
-		      TreeLinkNode left, right, next;
-		      TreeLinkNode(int x) { val = x; }
-		  }
-	public static void connect(TreeLinkNode root) {
-		if (root == null)
-			return;
-        LinkedList<TreeLinkNode> pq = new LinkedList<>();
-        pq.offer(root);
-        connect(pq);
-    }
-	public static void connect(LinkedList<TreeLinkNode> pq) {
-		if (pq.isEmpty())
-			return;
-        
-        int size = pq.size();
-        int zeroes = 0;
-        TreeLinkNode next;
-        for (int i = 0; i < size; i++)
+	public static String countAndSay(int n) {
+		if (n <= 0)
+			return "";
+        if (n == 1)
+        	return "1";
+        StringBuilder sb = new StringBuilder("1");
+        for (int i = 2; i <= n; i++)
         {
-        	TreeLinkNode node = pq.poll();
-            if (i < size -1)
-                next = pq.peek();
-            else
-                next = null;
-        	if (node == null)
-        		{pq.offer(null); pq.offer(null);zeroes++;}
-        	else 
-    		{
-                node.next = next;
-        		pq.offer(node.left);
-        		pq.offer(node.right);
-    		}
+        	StringBuilder next = new StringBuilder();
+        	int prev = 0;
+        	int curr = 1;
+        	for (int j = 1; j < sb.length(); j++)
+        	{
+        		if (sb.charAt(j) != sb.charAt(prev))
+        		{
+        			next.append(curr - prev);
+        			next.append(sb.charAt(prev));
+        			prev = curr;
+        		}
+        		curr++;
+        	}
+        	next.append(curr - prev).append(sb.charAt(prev));
+			sb = next;
         }
-        if (zeroes < size)
-        	connect(pq);
+        return sb.toString();
     }
 	
     public static void main(String[] args) {
-    	TreeLinkNode node1 = new TreeLinkNode(1);
-    	TreeLinkNode node2 = new TreeLinkNode(2);
-    	TreeLinkNode node3 = new TreeLinkNode(3);
-    	TreeLinkNode node4 = new TreeLinkNode(4);
-    	TreeLinkNode node5 = new TreeLinkNode(5);
-    	node1.left = node2;
-    	node1.right = node3;
-    	node2.left = node4;
-    	node3.right = node5;
-    	connect(node1);
-    	//System.out.println(oneEditApart("one", "onee"));
+    	System.out.println(countAndSay(6));
     	
     	//System.out.println(search(nums, target));
     	//System.out.println(calculate("1 + 1"));
