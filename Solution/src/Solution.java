@@ -8,41 +8,66 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Solution {
-	private static String vowels = "aeiouAEIOU";
-	public static HashMap<String, Integer> groupConsonants(String s) {
-		HashMap<String, Integer> consonants = new HashMap<>();
-		char[] charr = s.toCharArray();
-		int startPos = 0;
-		int endPos = 0;
-		for(int i = 0; i < charr.length; i++)
-		{
-			if(vowels.indexOf(charr[i]) >= 0)
-				endPos++;
-			else
-			{
-				helper(charr, startPos, endPos, consonants);
-				startPos = i+1;
-				endPos = i+1;
-			}
-		}
-		helper(charr, startPos, endPos, consonants);
-		return consonants;
+	public static class ListNode {
+		 int val;
+		 ListNode next;
+		 ListNode(int x) { val = x; }
+		 }
+	public static ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+        ListNode l = null;
+        if(l1 == null && l2 == null)
+            return l;
+        if(l1 == null)
+            l = l2;
+        else
+        {
+            if (l2 == null || l1.val < l2.val)
+                l = l1;
+            else
+                l = l2;
+        }
+        if(l == l1)
+            l1 = l1.next;
+        else
+            l2 = l2.next;
+        ListNode start = l;
+        while(l1 != null && l2 !=null)
+        {
+            if(l1.val < l2.val)
+            {
+                l.next = l1;
+                l1 = l1.next;
+            }
+            else
+            {
+                l.next = l2;
+                l2 = l2.next;
+            }
+            l = l.next;
+        }
+        if(l1 != null)
+        	l.next = l1;
+        else
+        	l.next = l2;
+        return start;
     }
-	private static void helper(char[] charr, int startPos, int endPos, HashMap<String, Integer> consonants)
-	{
-		if(endPos - startPos > 1 && endPos - startPos < 4)
-		{
-			String consonant = String.valueOf(charr, startPos, endPos - startPos);
-			if(!consonants.containsKey(consonant))
-				consonants.put(consonant, 0);
-			consonants.put(consonant, consonants.get(consonant)+1);
-		}
-	}	
 	
     public static void main(String[] args) {
-    	HashMap<String, Integer> map = groupConsonants("aei eauoi   this       oooh aeiouaeiouthis  oho");
-    	for(String s : map.keySet())
-    		System.out.println(s.length() + " - " + map.get(s));
+    	ListNode l1 = new ListNode(1);
+    	ListNode l2 = new ListNode(2);
+    	ListNode l3 = new ListNode(4);
+    	l1.next = l2;
+    	l2.next = l3;
+    	ListNode l4 = new ListNode(1);
+    	ListNode l5 = new ListNode(3);
+    	ListNode l6 = new ListNode(4);
+    	l4.next = l5; l5.next = l6;
+    	ListNode l = mergeTwoLists(l1, l4);
+    	while(l != null)
+    	{
+    		System.out.println(l.val);
+    		l = l.next;
+    	}
     	//System.out.println(calculate("1 + 1"));
     	//System.out.println(calculate("2*(5+5*2)/3+(6/2+8)")); //21
     	//System.out.println(calculate("(2+6* 3+5- (3*14/7+2)*5)+3")); // -12
