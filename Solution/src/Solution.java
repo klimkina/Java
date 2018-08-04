@@ -8,30 +8,33 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Solution {
-	public static void merge(int[] nums1, int m, int[] nums2, int n) {
-		int cur1 = 0;
-        int cur2 = 0;
-        int tail = m;
-        for(int i = 0; i < n + m && cur2 < n; i++)
-            if(tail > i && nums1[cur1] <= nums2[cur2])
-                cur1++;
-            else
+	public static int compress(char[] chars) {
+        int prev = 0;
+        int end = 0;
+        for(int i = 1; i <= chars.length; i++)
+        {
+            if(i == chars.length || chars[i] != chars[prev])
             {
-                for(int k = tail; k > cur1; k--)
-                    nums1[k] = nums1[k-1];
-                tail++;
-                nums1[cur1++] = nums2[cur2++];
+            	chars[end++] = chars[prev];
+                if( i - prev > 1)
+                {
+                	char[] num = String.valueOf(i-prev).toCharArray();
+                    for(int j = 0; j < num.length; j++)
+                        chars[end + j] = num[j];
+                    end += num.length;
+                }
+                prev = i;
             }
-	}
+        }
+        return end;
+    }
 	
     public static void main(String[] args) {
-    	int[] nums1 = {1};
-    	int m = 1;
-    	int[] nums2 = {};
-    	int n = 0;
-    	merge(nums1, m, nums2, n);
-    	for(int i = 0; i < n+m; i++)
-    		System.out.print(nums1[i] + " ");
+    	String s = "b";
+    	char[] chars = s.toCharArray();
+    	int n = compress(chars);
+    	for(int i = 0; i < n; i++)
+    		System.out.print(chars[i]);
     	//System.out.println(calculate("1 + 1"));
     	//System.out.println(calculate("2*(5+5*2)/3+(6/2+8)")); //21
     	//System.out.println(calculate("(2+6* 3+5- (3*14/7+2)*5)+3")); // -12
