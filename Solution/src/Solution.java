@@ -8,54 +8,54 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Solution {
-	public static void setZeroes(int[][] matrix) {
-        if (matrix.length == 0 || matrix[0].length == 0)
-            return;
-        boolean isTopZero = false;
-        boolean isLeftZero = false;
-        int m = matrix.length;
+	public static List<Integer> spiralOrder(int[][] matrix) {
+        int[] dx = {1, 0, -1, 0};
+        int[] dy = {0, 1, 0, -1};
         int n = matrix[0].length;
-        for (int i = 0; i < m; i++)
-            if (matrix[i][0] == 0)
-                isLeftZero = true;
-        
-        for (int i = 0; i < n; i++)
-            if (matrix[0][i] == 0)
-                isTopZero = true;
-        
-        for (int i = 0; i < m; i++)
-            for (int j = 0; j < n; j++)
-                if (matrix[i][j] == 0)
+        int m = matrix.length;
+        int layer = 0;
+        List<Integer> res = new ArrayList<>();
+        int xpos = 0;
+        int ypos = 0;
+        res.add(matrix[0][0]);
+        while (layer < (Math.min(m,n)+1)/2)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                int newx = xpos + dx[i];
+                int newy = ypos + dy[i];
+                if (!inside(newx,newy,m,n,layer, dy[i]))
+                	break;
+                while(inside(newx,newy,m,n,layer, dy[i]))
                 {
-                    matrix[0][j] = 0;
-                    matrix[i][0] = 0;
+                    res.add(matrix[newy][newx]);
+                    newx = newx + dx[i];
+                    newy = newy + dy[i];
                 }
-        for (int i = 1; i < m; i++)
-            if (matrix[i][0] == 0)
-                for (int j = 0; j < n; j++)
-                    matrix[i][j] = 0;
-        
-        for (int j = 1; j < n; j++)
-            if (matrix[0][j] == 0)
-                for (int i = 0; i < m; i++)
-                    matrix[i][j] = 0;
-        
-        if (isTopZero)
-            for (int j = 0; j < n; j++)
-                matrix[0][j] = 0;
-        if (isLeftZero)
-            for (int i = 0; i < m; i++)
-                matrix[i][0] = 0;
+                xpos = newx - dx[i];
+                ypos = newy - dy[i];
+            }
+            layer++;
+        }
+        return res;
+    }
+    
+    private static boolean inside(int xpos, int ypos, int m, int n, int layer, int dy)
+    {
+        return (xpos >= layer && xpos < n - layer) && (ypos >= layer && ypos < m - layer) 
+        		&& (dy == 0 || xpos != layer || ypos != layer);
     }
 	
     public static void main(String[] args) {
-    	int[][] matrix = {{0,1,2,0},{3,4,5,2},{1,3,1,5}};
-    	setZeroes(matrix);
-    	for (int i = 0; i < matrix.length; i++)
+    	int[][] matrix = {
+    	                  {1, 2, 3, 4},
+    	                  {5, 6, 7, 8},
+    	                  {9,10,11,12}
+    					};
+    	List<Integer> res = spiralOrder(matrix);
+    	for (int i : res)
     	{
-            for (int j = 0; j < matrix[0].length; j++)
-            	System.out.print(matrix[i][j] + " ");
-            System.out.println();
+            System.out.print(i + " ");
     	}
     	
     	//System.out.println(calculate("1 + 1"));
