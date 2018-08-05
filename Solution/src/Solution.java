@@ -8,34 +8,37 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Solution {
-	public static int projectionArea(int[][] grid) {
-	        int m = grid.length;
-	        int n = grid[0].length;
-	        int[] maxCol = new int[n];
-	        int[] maxRow = new int[m];
-	        int topSum = 0;
-	        for(int i = 0; i < m; i++)
-	            for (int j = 0; j < n; j++)
-	                if(grid[i][j] > 0)
-	                    topSum++;
-	        for(int i = 0; i < m; i++)
-	            for (int j = 0; j < n; j++)
-	            {
-	                if (grid[i][j] > maxRow[i])
-	                    maxRow[i] = grid[i][j];
-	                if (grid[i][j] > maxCol[j])
-	                    maxCol[j] = grid[i][j];
-	            }
-	        for(int i = 0; i < m; i++)
-	            topSum += maxRow[i];
-	        for (int j = 0; j < n; j++)
-	            topSum += maxCol[j];
-	        return topSum;
-	    }
+	public static String longestPalindrome(String s) {
+        if (s.isEmpty())
+            return s;
+        char[] charr = s.toCharArray();
+        int n = charr.length;
+        int l = 0;
+        int r = 0;
+        boolean[][] memo = new boolean[n][n];
+        for (int i = 0; i < n; i++)
+        {
+            memo[i][i] = true;
+            if (i < n-1 && charr[i] == charr[i+1])
+            {
+                memo[i][i+1] = true;
+                l = i; r = i+1;
+            }
+        }
+        for (int diff = 1; diff < n; diff++)
+            for (int j = 0; j + diff < n ; j++)
+                if (charr[j] == charr[j + diff] && (diff == 2 || memo[j+1][j+diff-1]))
+                {
+                    memo[j][j+diff] = true;
+                    if (r - l < diff)
+                    { l = j; r = j+diff; }
+                }
+        return s.substring(l, r+1);
+    }
 	
     public static void main(String[] args) {
-    	int[][] grid = {{2,2,2},{2,1,2},{2,2,2}};
-    	System.out.print(projectionArea(grid));
+    	String s = "abcba";
+    	System.out.print(longestPalindrome(s));
     	//System.out.println(calculate("1 + 1"));
     	//System.out.println(calculate("2*(5+5*2)/3+(6/2+8)")); //21
     	//System.out.println(calculate("(2+6* 3+5- (3*14/7+2)*5)+3")); // -12
