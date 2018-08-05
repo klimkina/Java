@@ -8,37 +8,40 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Solution {
-	public static String longestPalindrome(String s) {
-        if (s.isEmpty())
-            return s;
-        char[] charr = s.toCharArray();
-        int n = charr.length;
-        int l = 0;
-        int r = 0;
-        boolean[][] memo = new boolean[n][n];
-        for (int i = 0; i < n; i++)
+	public static List<List<String>> groupAnagrams(String[] strs) {
+        HashMap<String, List<String>> map = new HashMap<>();
+        for(int i = 0; i < strs.length; i++)
         {
-            memo[i][i] = true;
-            if (i < n-1 && charr[i] == charr[i+1])
+            String code = helper(strs[i]);
+            if (!map.containsKey(code))
             {
-                memo[i][i+1] = true;
-                l = i; r = i+1;
+                List<String> list = new ArrayList<>();
+                map.put(code, list);
             }
+            map.get(code).add(strs[i]);
         }
-        for (int diff = 1; diff < n; diff++)
-            for (int j = 0; j + diff < n ; j++)
-                if (charr[j] == charr[j + diff] && (diff == 2 || memo[j+1][j+diff-1]))
-                {
-                    memo[j][j+diff] = true;
-                    if (r - l < diff)
-                    { l = j; r = j+diff; }
-                }
-        return s.substring(l, r+1);
+        List<List<String>> res = new ArrayList<>();
+        for(String key : map.keySet())
+            res.add(map.get(key));
+        return res;
+    }
+    private static String helper(String s)
+    {
+        char[] charr = s.toCharArray();
+        Arrays.sort(charr);
+        return String.valueOf(charr);
     }
 	
     public static void main(String[] args) {
-    	String s = "abcba";
-    	System.out.print(longestPalindrome(s));
+    	String[] s = {"eat", "tea", "tan", "ate", "nat", "bat", "tab"};
+    	List<List<String>> res = groupAnagrams(s);
+    	for (List<String> list : res)
+    	{
+    		for(String str : list)
+    			System.out.print(str + " ");
+    		System.out.println();
+    	}
+    	
     	//System.out.println(calculate("1 + 1"));
     	//System.out.println(calculate("2*(5+5*2)/3+(6/2+8)")); //21
     	//System.out.println(calculate("(2+6* 3+5- (3*14/7+2)*5)+3")); // -12
