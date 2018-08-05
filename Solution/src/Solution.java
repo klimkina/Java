@@ -8,40 +8,34 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Solution {
-	public static String reverseWords(String s) {
-        int prev = 0;
-        char[] charr = s.toCharArray();
-        for(int i = 1; i < charr.length; )
-        {
-            if(charr[i] == ' ')
-            {
-                reverse(charr, prev, i);
-                while(i < charr.length && charr[i++] == ' ')
-                prev = i;
-            }
-            else
-                i++;
-        }
-        if (prev < charr.length)
-        	reverse(charr, prev, charr.length);
-        reverse(charr, 0, charr.length);
-        String str = String.valueOf(charr).replaceAll("\\s{2,}", " ");
-        return str;
-    }
-    
-    private static void reverse(char[] charr, int start, int end)
-    {
-        char c;
-        for (int i = 0; i < (end - start)/ 2; i++)
-        {
-            c = charr[start+i];
-            charr[start+i] = charr[end-1-i];
-            charr[end-1-i] = c;
-        }
-    }
+	public static int projectionArea(int[][] grid) {
+	        int m = grid.length;
+	        int n = grid[0].length;
+	        int[] maxCol = new int[n];
+	        int[] maxRow = new int[m];
+	        int topSum = 0;
+	        for(int i = 0; i < m; i++)
+	            for (int j = 0; j < n; j++)
+	                if(grid[i][j] > 0)
+	                    topSum++;
+	        for(int i = 0; i < m; i++)
+	            for (int j = 0; j < n; j++)
+	            {
+	                if (grid[i][j] > maxRow[i])
+	                    maxRow[i] = grid[i][j];
+	                if (grid[i][j] > maxCol[j])
+	                    maxCol[j] = grid[i][j];
+	            }
+	        for(int i = 0; i < m; i++)
+	            topSum += maxRow[i];
+	        for (int j = 0; j < n; j++)
+	            topSum += maxCol[j];
+	        return topSum;
+	    }
 	
     public static void main(String[] args) {
-    	System.out.print(reverseWords("hello       world"));
+    	int[][] grid = {{2,2,2},{2,1,2},{2,2,2}};
+    	System.out.print(projectionArea(grid));
     	//System.out.println(calculate("1 + 1"));
     	//System.out.println(calculate("2*(5+5*2)/3+(6/2+8)")); //21
     	//System.out.println(calculate("(2+6* 3+5- (3*14/7+2)*5)+3")); // -12
