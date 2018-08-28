@@ -11,83 +11,24 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 class Solution {
-    public static class ListElem
-    {
-        public int val;
-        public ListElem next;
-        public ListElem prev;
-        public ListElem(int val)
-        {
-            this.val = val;
-        }
-        public ListElem insert(int val)
-        {
-            ListElem elem = new ListElem (val);
-            ListElem nextnext = this.next;
-            this.next = elem;
-            elem.next = nextnext;
-            elem.prev = this;
-            if (nextnext != null)
-                nextnext.prev = elem;
-            return elem;
-        }
+	public static boolean isMatch(String s, String p) {
+        int n = s.length();
+        int m = p.length();
+        boolean[][] memo = new boolean[n+1][m+1];
+        memo[0][0] = true;
+        for (int i = 0; i < m; i++)
+            memo[0][i+1] = (p.charAt(i) == '*') && memo[0][i];
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < m; j++)
+                if (s.charAt(i) == p.charAt(j) || p.charAt(j) == '?')
+                    memo[i+1][j+1] = memo[i][j];
+                else if (p.charAt(j) == '*')
+                    memo[i+1][j+1] = memo[i+1][j] || memo[i][j+1];
+        return memo[n][m];
     }
-    private TreeMap<Integer, ListElem> freq2x = new TreeMap<>();
-    private HashMap<Integer, Integer> x2freq = new HashMap<>();
-    ListElem head = null;
-    ListElem tail = null;
-    public Solution() {
-        
-    }
-    
-    public void push(int x) {
-        int freq = x2freq.getOrDefault(x, 0) + 1;
-        x2freq.put(x, freq);
-        if (head == null)
-        {
-            head = new ListElem(x);
-            tail = head;
-            freq2x.put(freq, head);
-        }
-        else
-        {
-            ListElem elem = freq2x.floorEntry(freq).getValue();
-            freq2x.put(freq, elem.insert(x));
-            if (elem == tail)
-                tail = elem.next;
-        }
-    }
-    
-    public int pop() {
-        int res = tail.val;        
-        if (freq2x.get(x2freq.get(res)) == tail)
-        	freq2x.put(x2freq.get(res), tail.prev);
-    	x2freq.put(res, x2freq.get(res) - 1);
-        tail = tail.prev;
-        return res;
-    }
-
     public static void main(String[] args) 
     {
-    	Solution obj = new Solution();
-    	obj.push(2);
-    	obj.push(2);
-    	obj.push(2);
-    	obj.push(2);
-    	obj.push(2);
-    	obj.push(2);
-    	obj.push(3);
-    	obj.push(3);
-    	obj.push(3);
-    	obj.push(4);
-    	obj.push(4);
-    	System.out.println(obj.pop());
-    	System.out.println(obj.pop());
-    	obj.push(1);
-    	System.out.println(obj.pop());
-    	obj.push(1);
-    	System.out.println(obj.pop());
-    	obj.push(4);
-    	System.out.println(obj.pop());
+    	
+    	System.out.println(isMatch("", "?"));
     }
 }
