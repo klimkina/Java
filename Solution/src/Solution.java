@@ -11,24 +11,27 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 class Solution {
-	public static int maxProfit(int[] prices) {
-        if (prices == null || prices.length == 0)
-            return 0;
-        int n = prices.length;        
-        int[] buys = new int[n];
-        int[] sells = new int[n];
-        buys[0] = -prices[0];
-        sells[0] = 0;
-        for (int i = 1; i < n; i++)
-        {
-            buys[i] = Math.max(buys[i-1], sells[i-1] - prices[i]);
-            sells[i] = Math.max(buys[i-1] + prices[i], sells[i-1]);
-        }
-        return sells[n-1];
+	public static double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        if (nums2 == null || (nums1 != null && nums1.length  > nums2.length))
+        	return findMedianSortedArrays(nums2, nums1);
+        int idx1 = 0; 
+        int idx2 = 0;
+        int m = nums1 == null ? 0 : nums1.length;
+        int n = nums2 == null ? 0 : nums2.length;
+        int l = 0;
+        int h = m;
+        while (l < h)
+        return calcMedian(nums1, nums2, idx1, idx2);
+    }
+    
+    private static double calcMedian (int[] nums1, int[] nums2, int idx1, int idx2)
+    {
+    	return 0;
     }
     public static void main(String[] args) 
     {
-    	int[] prices = {7,1,5,3,6,4};
-    	System.out.println(maxProfit(prices));
+    	int[] nums1 = {1, 2, 3,5};
+    	int[] nums2 = {4, 5, 6};
+    	System.out.println(findMedianSortedArrays(nums1, nums2));;
     }
 }
