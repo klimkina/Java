@@ -11,48 +11,52 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 class Solution {
-	public static int totalFruit(int[] tree) {
-        int first = -1;
-        int second = -1;
-        int last = -1;
-        int max_first = 0;
-        int max_second = 0;
-        int max = 0;
-        int stretch = 0;
-        for (int i = 0; i < tree.length; i++)
-        {
-            if (first == -1)
-                first = tree[i];
-            else if (tree[i] != first && second == -1)
-                second = tree[i];
-            if (tree[i] == first)
-                max_first++;
-            else if (tree[i] == second)
-                max_second++;
-            else // new value
-            {
-                if (max_first + max_second > max)
-                    max = max_first + max_second;
-                if (last == second)
-                    first = second;
-                max_second = 1;
-                max_first = stretch;
-                second = tree[i];
-            }
-            if (last != tree[i])
-            {
-                stretch = 0;
-            	last = tree[i];
-            }
-            stretch++;
+	public static int superpalindromesInRange(String L, String R) {
+        long l = Long.parseLong(L);
+        long r = Long.parseLong(R);
+        int[] res = new int[1];
+        dfs("", l, r, res);
+        for (int i = 0; i < 10; i++) {
+            String next = "" + i;
+            dfs(next, l, r, res);
         }
-        if (max_first + max_second > max)
-                    max = max_first + max_second;
-        return max;
+        return res[0];
+    }
+    
+    private static void dfs(String s, long l, long r, int[] res) {
+        if (s.length() > 9) {
+            return;
+        }
+        
+        if (s.length() > 0 && s.charAt(0) != 0) {
+            long num = Long.parseLong(s);
+            num *= num;
+            if (num >= l && num <= r && isPalindrome("" + num)) {
+                res[0]++;
+            }
+        }
+        
+        for (int i = 0; i < 10; i++) {
+            String next = "" + i + s + i;
+            dfs(next, l, r, res);
+        }
+    }
+    
+    private static boolean isPalindrome(String s) {
+        int head = 0;
+        int tail = s.length() - 1;
+        while (head < tail) {
+            if (s.charAt(head) != s.charAt(tail)) {
+                return false;
+            }
+            head++;
+            tail--;
+        }
+        return true;
     }
     public static void main(String[] args) 
     {
-    	int[] nums1 = {0, 1, 2,2};
-    	System.out.println(totalFruit(nums1));;
+    	System.out.println(superpalindromesInRange("9558",
+    			"82926"));
     }
 }
