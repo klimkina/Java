@@ -10,7 +10,7 @@ public class TreeCodec {
 	  }
 
     // Encodes a tree to a single string.
-    public static String serialize(TreeNode root) {
+    public String serialize(TreeNode root) {
     	StringBuilder sb = new StringBuilder();
     	if (root != null)
     	{
@@ -43,7 +43,7 @@ public class TreeCodec {
     }
 
     // Decodes your encoded data to tree.
-    public static TreeNode deserialize(String data) {
+    public TreeNode deserialize(String data) {
     	TreeNode root = null;
     	if (!data.isEmpty())
     	{
@@ -86,9 +86,10 @@ public class TreeCodec {
 		root.left = left; root.right = right;
 		left.left = lleft; left.right = lright;
 		right.left= rleft; right.right = rright;
-		String s = serialize(root);
+		TreeCodec obj = new TreeCodec();
+		String s = obj.serialize(root);
 		System.out.println(s);
-		root = deserialize(s);
+		root = obj.deserialize(s);
 	}
 
 }

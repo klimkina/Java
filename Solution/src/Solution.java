@@ -11,27 +11,48 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 class Solution {
-	public static double findMedianSortedArrays(int[] nums1, int[] nums2) {
-        if (nums2 == null || (nums1 != null && nums1.length  > nums2.length))
-        	return findMedianSortedArrays(nums2, nums1);
-        int idx1 = 0; 
-        int idx2 = 0;
-        int m = nums1 == null ? 0 : nums1.length;
-        int n = nums2 == null ? 0 : nums2.length;
-        int l = 0;
-        int h = m;
-        while (l < h)
-        return calcMedian(nums1, nums2, idx1, idx2);
-    }
-    
-    private static double calcMedian (int[] nums1, int[] nums2, int idx1, int idx2)
-    {
-    	return 0;
+	public static int totalFruit(int[] tree) {
+        int first = -1;
+        int second = -1;
+        int last = -1;
+        int max_first = 0;
+        int max_second = 0;
+        int max = 0;
+        int stretch = 0;
+        for (int i = 0; i < tree.length; i++)
+        {
+            if (first == -1)
+                first = tree[i];
+            else if (tree[i] != first && second == -1)
+                second = tree[i];
+            if (tree[i] == first)
+                max_first++;
+            else if (tree[i] == second)
+                max_second++;
+            else // new value
+            {
+                if (max_first + max_second > max)
+                    max = max_first + max_second;
+                if (last == second)
+                    first = second;
+                max_second = 1;
+                max_first = stretch;
+                second = tree[i];
+            }
+            if (last != tree[i])
+            {
+                stretch = 0;
+            	last = tree[i];
+            }
+            stretch++;
+        }
+        if (max_first + max_second > max)
+                    max = max_first + max_second;
+        return max;
     }
     public static void main(String[] args) 
     {
-    	int[] nums1 = {1, 2, 3,5};
-    	int[] nums2 = {4, 5, 6};
-    	System.out.println(findMedianSortedArrays(nums1, nums2));;
+    	int[] nums1 = {0, 1, 2,2};
+    	System.out.println(totalFruit(nums1));;
     }
 }
