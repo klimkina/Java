@@ -11,39 +11,36 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 class Solution {
-	public static String[] reorderLogFiles(String[] logs) {
-        ArrayList<String> let = new ArrayList<>();
-        ArrayList<String> dig = new ArrayList<>();
-        for(int i = 0; i < logs.length; i++)
+	public static int minAreaRect(int[][] points) {
+		Arrays.sort(points, new Comparator<int[]>() { 
+        	public int compare(int[] p1, int[] p2) {
+        		if(p1[0] == p2[0])
+        			return p1[1] - p2[1];
+        		return p1[0] - p2[0];
+    		}
+    	});
+        HashMap<Integer, Set<Integer>> mapY = new HashMap<>();
+        for(int i = 0; i < points.length; i++)
         {
-            int idx = logs[i].indexOf(' ');
-            idx = logs[i].indexOf(' ');
-            char ch = logs[i].charAt(idx+1);
-            if (ch >= '0' && ch <= '9')
-                dig.add(logs[i]);
-            else
-                let.add(logs[i].substring(idx).trim() + ";" + logs[i].substring(0, idx));
+            if(!mapY.containsKey(points[i][1]))
+                mapY.put(points[i][1], new HashSet<>());
+            mapY.get(points[i][1]).add(points[i][0]);
         }
-        Collections.sort(let);
-        String[] res = new String[logs.length];
-        for(int i = 0; i < let.size(); i++)
-        {
-            String[] spl = let.get(i).split(";");
-            res[i] = spl[1] + ' ' + spl[0];
+        int min = Integer.MAX_VALUE;
+        for (int[] p1 : points) {
+            for (int[] p2 : points) {
+                if (p1[0] != p2[0] && p1[1] != p2[1]) { // if dont have the same x or y                    
+	                if (mapY.get(p1[1]).contains(p2[0]) && mapY.get(p2[1]).contains(p1[0])) // find other two points
+	                    min = Math.min(min, Math.abs(p1[0] - p2[0]) * Math.abs(p1[1] - p2[1]));
+                }
+            }
         }
-        int len = let.size();
-        for(int i = 0; i < dig.size(); i++)
-        {
-            res[i + len] = dig.get(i);
-        }
-        return res;
+        return min == Integer.MAX_VALUE ? 0 : min;
     }
 	
     public static void main(String[] args) 
     {
-    	String[] arr = {"a1 9 2 3 1","g1 act car","zo4 4 7","ab1 off key dog","a8 act zoo"};
-    	arr = reorderLogFiles(arr);
-    	for(int i = 0; i < arr.length; i++)
-    		System.out.println(arr[i]);
+    	int[][] arr = {{1,1},{1,3},{3,1},{3,3},{2,2}};
+    	System.out.println(minAreaRect(arr));
     }
 }
