@@ -11,36 +11,103 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 class Solution {
-	public static int minAreaRect(int[][] points) {
-		Arrays.sort(points, new Comparator<int[]>() { 
-        	public int compare(int[] p1, int[] p2) {
-        		if(p1[0] == p2[0])
-        			return p1[1] - p2[1];
-        		return p1[0] - p2[0];
-    		}
-    	});
-        HashMap<Integer, Set<Integer>> mapY = new HashMap<>();
-        for(int i = 0; i < points.length; i++)
+	public static String largestTimeFromDigits(int[] A) {
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for(int i = 0; i < 4; i++)
+            map.put(A[i], map.getOrDefault(A[i], 0) + 1);
+        int[] res = new int[4];
+        int next = -1;
+        if(map.containsKey(2))
+            next = 2;
+        else if (map.containsKey(1))
+            next = 1;
+        else if (map.containsKey(0))
+            next = 0;
+        else
+        	return "";
+        res[0] = next;
+        map.put(next, map.get(next) -1 );
+        if(next == 2)
         {
-            if(!mapY.containsKey(points[i][1]))
-                mapY.put(points[i][1], new HashSet<>());
-            mapY.get(points[i][1]).add(points[i][0]);
+	        if(map.containsKey(3))
+	            next = 3;
+	        else if (map.containsKey(2) && map.get(2) > 0)
+	            next = 2;
+	        else if (map.containsKey(1) && map.get(1) > 0)
+	            next = 1; 
+	        else if (map.containsKey(0) && map.get(0) > 0)
+	            next = 0;
+	        else
+	        	return "";
         }
-        int min = Integer.MAX_VALUE;
-        for (int[] p1 : points) {
-            for (int[] p2 : points) {
-                if (p1[0] != p2[0] && p1[1] != p2[1]) { // if dont have the same x or y                    
-	                if (mapY.get(p1[1]).contains(p2[0]) && mapY.get(p2[1]).contains(p1[0])) // find other two points
-	                    min = Math.min(min, Math.abs(p1[0] - p2[0]) * Math.abs(p1[1] - p2[1]));
-                }
+        else
+        {
+        	next = -1;
+        	for(int i = 0; i < 4; i++)
+                if(map.get(A[i]) > 0 && A[i] > next)
+                    next = A[i]; 
+        }
+        res[1] = next;
+        map.put(next, map.get(next) - 1 );
+        int a = 0;
+        int b = 0;
+        for(int i = 0; i < 4; i++)
+            if(map.get(A[i]) > 0)
+            {
+                a = A[i];
+                map.put(A[i], map.get(A[i]) - 1);
+                break;
             }
+        for(int i = 0; i < 4; i++)
+            if(map.get(A[i]) > 0)
+            {
+                b = A[i];
+                break;
+            }
+        if ((a > b && a < 6) || b > 5)
+        {
+        	if (a > 5)
+        	{
+        		if(res[0] == 2 && res[1] < 2)
+        		{
+        			res[0] = res[1];
+        			res[1] = Math.max(a, b);
+        			res[2] = 2;
+        			res[3] = Math.min(a, b);
+        		}
+        		else
+        			return "";
+        	}
+        	else
+        	{
+	            res[2] = a;
+	            res[3] = b;
+        	}
         }
-        return min == Integer.MAX_VALUE ? 0 : min;
+        else
+        {
+        	if (b > 5)
+        		if(res[0] == 2 && res[1] < 2)
+        		{
+        			res[0] = res[1];
+        			res[1] = Math.max(a, b);
+        			res[2] = 2;
+        			res[3] = Math.min(a, b);
+        		}
+        		else
+        			return "";
+        	else
+        	{
+	            res[2] = b;
+	            res[3] = a;
+        	}
+        }
+        return "" + res[0] + res[1] + ":" + res[2] + res[3];
     }
 	
     public static void main(String[] args) 
     {
-    	int[][] arr = {{1,1},{1,3},{3,1},{3,3},{2,2}};
-    	System.out.println(minAreaRect(arr));
+    	int[] arr = {2,6,6,0};
+    	System.out.println(largestTimeFromDigits(arr));
     }
 }
