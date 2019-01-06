@@ -11,44 +11,46 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 class Solution {
-	public List<Integer> flipMatchVoyage(TreeNode root, int[] voyage) {
+	public static List<Integer> pancakeSort(int[] A) {
+        int max = A.length;
+        int max_ind = A.length - 1;
         List<Integer> res = new ArrayList<>();
-        int flips = flipMatchVoyage(root, voyage, 0, res);
-        if(flips < 0)
+        while(max_ind > 0)
         {
-            res.clear();
-            res.add(-1);
+            int i = 0;
+            while(A[i] != max)
+                i++;
+            if(i < max_ind)
+            {            	
+                if (i > 0)
+                {
+                    res.add(i+1);
+                    for(int k = 0; k < (i+1)/2; k++)
+                    {
+                        int t = A[k];
+                        A[k] = A[i-k];
+                        A[i-k] = t;
+                    }
+                }
+                res.add(max_ind+1);
+                for(int k = 0; k < (max_ind+1)/2; k++)
+                {
+                    int t = A[k];
+                    A[k] = A[max_ind-k];
+                    A[max_ind-k] = t;
+                }
+            }
+            max--;
+            max_ind--;
         }
         return res;
-    }
-    private int flipMatchVoyage(TreeNode root, int[] voyage, int start, List<Integer> res) {
-        
-        if (root == null)
-            return start;
-        if(start >= voyage.length)
-            return - 1;
-        if (voyage[start] != root.val)
-            return -1;
-        start++;
-        if(root.left == null)
-            return flipMatchVoyage(root.right, voyage, start, res);
-        if(root.left.val != voyage[start])
-        {
-            res.add(root.val);
-            TreeNode temp = root.left;
-            root.left = root.right;
-            root.right = temp;
-        }
-        int flip = flipMatchVoyage(root.left, voyage, start, res);
-        if (flip < 0)
-            return flip;
-        return flipMatchVoyage(root.right, voyage, flip, res);
     }
 	
     public static void main(String[] args) 
     {
-    	List<Integer> res = powerfulIntegers(2,3,10);
-    	for(Integer s : res)
-    			System.out.print(s + " ");
+    	int[] A = {3, 2, 4, 1};
+    	List<Integer> res = pancakeSort(A);
+    	for(Integer i : res)
+    		System.out.print(i + " ");
     }
 }
