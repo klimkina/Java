@@ -11,103 +11,40 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 class Solution {
-	public static String largestTimeFromDigits(int[] A) {
-        HashMap<Integer, Integer> map = new HashMap<>();
-        for(int i = 0; i < 4; i++)
-            map.put(A[i], map.getOrDefault(A[i], 0) + 1);
-        int[] res = new int[4];
-        int next = -1;
-        if(map.containsKey(2))
-            next = 2;
-        else if (map.containsKey(1))
-            next = 1;
-        else if (map.containsKey(0))
-            next = 0;
-        else
-        	return "";
-        res[0] = next;
-        map.put(next, map.get(next) -1 );
-        if(next == 2)
+	public static List<Integer> powerfulIntegers(int x, int y, int bound) {
+        Set<Integer> res = new HashSet<>();
+        int first = 1;
+        List<Integer> listY = new ArrayList<>();
+        int second = 1;
+        listY.add(second);
+        second = y*second;
+        if( y > 1)
+	        for(int j = 0; second < bound; j++)
+	        {
+	        	listY.add(second);
+	        	second = y*second;
+	        }
+        for(int i = 0; first < bound; i++)
         {
-	        if(map.containsKey(3))
-	            next = 3;
-	        else if (map.containsKey(2) && map.get(2) > 0)
-	            next = 2;
-	        else if (map.containsKey(1) && map.get(1) > 0)
-	            next = 1; 
-	        else if (map.containsKey(0) && map.get(0) > 0)
-	            next = 0;
-	        else
-	        	return "";
-        }
-        else
-        {
-        	next = -1;
-        	for(int i = 0; i < 4; i++)
-                if(map.get(A[i]) > 0 && A[i] > next)
-                    next = A[i]; 
-        }
-        res[1] = next;
-        map.put(next, map.get(next) - 1 );
-        int a = 0;
-        int b = 0;
-        for(int i = 0; i < 4; i++)
-            if(map.get(A[i]) > 0)
+            for(int powY : listY)
             {
-                a = A[i];
-                map.put(A[i], map.get(A[i]) - 1);
-                break;
+            	int sum = powY + first;
+            	if(sum <= bound)
+            		res.add(sum);
             }
-        for(int i = 0; i < 4; i++)
-            if(map.get(A[i]) > 0)
-            {
-                b = A[i];
-                break;
-            }
-        if ((a > b && a < 6) || b > 5)
-        {
-        	if (a > 5)
-        	{
-        		if(res[0] == 2 && res[1] < 2)
-        		{
-        			res[0] = res[1];
-        			res[1] = Math.max(a, b);
-        			res[2] = 2;
-        			res[3] = Math.min(a, b);
-        		}
-        		else
-        			return "";
-        	}
-        	else
-        	{
-	            res[2] = a;
-	            res[3] = b;
-        	}
+            if(x < 2)
+        		break;
+            first = x * first;
         }
-        else
-        {
-        	if (b > 5)
-        		if(res[0] == 2 && res[1] < 2)
-        		{
-        			res[0] = res[1];
-        			res[1] = Math.max(a, b);
-        			res[2] = 2;
-        			res[3] = Math.min(a, b);
-        		}
-        		else
-        			return "";
-        	else
-        	{
-	            res[2] = b;
-	            res[3] = a;
-        	}
-        }
-        return "" + res[0] + res[1] + ":" + res[2] + res[3];
+        List<Integer> list = new ArrayList<>();
+        list.addAll(res);
+        return list;
     }
 	
     public static void main(String[] args) 
     {
-    	int[] arr = {2,6,6,0};
-    	System.out.println(largestTimeFromDigits(arr));
+    	List<Integer> res = powerfulIntegers(2,3,10);
+    	for(Integer s : res)
+    			System.out.print(s + " ");
     }
 }
