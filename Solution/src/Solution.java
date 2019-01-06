@@ -11,34 +11,38 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 class Solution {
-	public static List<Integer> powerfulIntegers(int x, int y, int bound) {
-        Set<Integer> res = new HashSet<>();
-        int first = 1;
-        List<Integer> listY = new ArrayList<>();
-        int second = 1;
-        listY.add(second);
-        second = y*second;
-        if( y > 1)
-	        for(int j = 0; second < bound; j++)
-	        {
-	        	listY.add(second);
-	        	second = y*second;
-	        }
-        for(int i = 0; first < bound; i++)
+	public List<Integer> flipMatchVoyage(TreeNode root, int[] voyage) {
+        List<Integer> res = new ArrayList<>();
+        int flips = flipMatchVoyage(root, voyage, 0, res);
+        if(flips < 0)
         {
-            for(int powY : listY)
-            {
-            	int sum = powY + first;
-            	if(sum <= bound)
-            		res.add(sum);
-            }
-            if(x < 2)
-        		break;
-            first = x * first;
+            res.clear();
+            res.add(-1);
         }
-        List<Integer> list = new ArrayList<>();
-        list.addAll(res);
-        return list;
+        return res;
+    }
+    private int flipMatchVoyage(TreeNode root, int[] voyage, int start, List<Integer> res) {
+        
+        if (root == null)
+            return start;
+        if(start >= voyage.length)
+            return - 1;
+        if (voyage[start] != root.val)
+            return -1;
+        start++;
+        if(root.left == null)
+            return flipMatchVoyage(root.right, voyage, start, res);
+        if(root.left.val != voyage[start])
+        {
+            res.add(root.val);
+            TreeNode temp = root.left;
+            root.left = root.right;
+            root.right = temp;
+        }
+        int flip = flipMatchVoyage(root.left, voyage, start, res);
+        if (flip < 0)
+            return flip;
+        return flipMatchVoyage(root.right, voyage, flip, res);
     }
 	
     public static void main(String[] args) 
