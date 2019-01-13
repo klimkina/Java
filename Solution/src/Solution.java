@@ -11,46 +11,39 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 class Solution {
-	public static List<Integer> pancakeSort(int[] A) {
-        int max = A.length;
-        int max_ind = A.length - 1;
-        List<Integer> res = new ArrayList<>();
-        while(max_ind > 0)
+	public static int largestPerimeter(int[] A) {
+        int n = A.length;
+        Arrays.sort(A);
+        if (n < 3)
+            return 0;
+        int a = A[n-1];
+        int b = A[n-2];
+        int c = A[n-3];
+        if (check(a,b,c))
+            return (a+b+c);
+        int curr = n-4;
+        while (curr >= 0)
         {
-            int i = 0;
-            while(A[i] != max)
-                i++;
-            if(i < max_ind)
-            {            	
-                if (i > 0)
-                {
-                    res.add(i+1);
-                    for(int k = 0; k < (i+1)/2; k++)
-                    {
-                        int t = A[k];
-                        A[k] = A[i-k];
-                        A[i-k] = t;
-                    }
-                }
-                res.add(max_ind+1);
-                for(int k = 0; k < (max_ind+1)/2; k++)
-                {
-                    int t = A[k];
-                    A[k] = A[max_ind-k];
-                    A[max_ind-k] = t;
-                }
-            }
-            max--;
-            max_ind--;
+            int d = A[curr];
+            int res = 0;
+            if (check(a,b,d))
+                res = a+b+d;
+            if (check(a,d,c) && a+d+c > res)
+                res = a+d+c;
+            if (check(d,b,c) && b+d+c > res)
+                res = b+d+c;
+            curr--;
+            a = b; b = c; c = d;
         }
-        return res;
+        return 0;
+    }
+    private static boolean check(int a, int b, int c) {
+        return (a < b + c) && (b < a + c) && (c < a + b);
     }
 	
     public static void main(String[] args) 
     {
-    	int[] A = {3, 2, 4, 1};
-    	List<Integer> res = pancakeSort(A);
-    	for(Integer i : res)
-    		System.out.print(i + " ");
+    	int[] A = {3, 6,2,3};
+    	System.out.print(largestPerimeter(A));
     }
 }
