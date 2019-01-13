@@ -11,29 +11,28 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 class Solution {
-	public static int[][] kClosest(int[][] points, int K) {
-        Arrays.sort(points, new Comparator<int[]>() {
-    	    public int compare(int[] p1, int[] p2) {
-    	    	Integer sqDist1 = p1[0]*p1[0] + p1[1]*p1[1];
-    	    	Integer sqDist2 = p2[0]*p2[0] + p2[1]*p2[1];
-    	    	
-    	        return sqDist1 - sqDist2;
-    	    }
-    	});
-        int[][] res = new int[K][2];
-        for(int i = 0; i < K; i++)
+	public static int subarraysDivByK(int[] A, int K) {
+        
+		int count = 0;
+        int[] group = new int[K];
+        int sum = 0;
+        for(int i = 0; i < A.length; i++)
         {
-            res[i][0] = points[i][0];
-            res[i][1] = points[i][1];
+            sum += A[i];
+            int rem = sum % K;
+            if (rem < 0)
+                rem += K;
+            group[rem]++;
         }
-        return res;
+        for (int i = 0; i < K; i++)
+            if (group[i] > 0)
+                count += group[i] * (group[i] - 1)/2;
+        return count + group[0];
     }
 	
     public static void main(String[] args) 
     {
-    	int[][] A = {{3,3},{5,-1},{-2,4}};
-    	int[][] res = kClosest(A, 2);
-    	for(int i = 0; i < res.length; i++)
-    		System.out.print(res[i][0] + " " + res[i][1] + "\n");
+    	int[] A = {4,5,0,-2,-3,1};
+    	System.out.print(subarraysDivByK(A, 5));
     }
 }
