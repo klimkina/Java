@@ -32,7 +32,7 @@ public class BaseballGame {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		BaseballGame sol = new BaseballGame();
-		String[] game = {"5","-2","4","C","D","9","+","+"};
+		String[] game = {"2","-2","4","C","D","9","+","+"};
 		System.out.println(sol.calPoints(game));
 
 	}
