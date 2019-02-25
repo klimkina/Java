@@ -1,54 +1,51 @@
 import java.util.List;
+import java.util.Set;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 
 class Solution {
 	
-	public static List<Integer> addToArrayForm(int[] A, int K) {
-        List<Integer> k_list = new ArrayList<>();
-        while (K > 0) {
-            int num = K%10;
-            k_list.add(0, num);
-            K /= 10;
+	public static boolean equationsPossible(String[] equations) {
+        int[] unions = new int[26];
+        for(int i = 0; i < 26; i++)
+        	unions[i] = i;
+        for(String str : equations) {
+        	if (str.charAt(1) == '=')
+        		addUnion(str.charAt(0) - 'a', str.charAt(3) - 'a', unions);
         }
-        int rem = 0;
-        List<Integer> res = new ArrayList<>();
-        int i = k_list.size() - 1;
-        int j = A.length - 1;
-        for(; j >= 0 && (i >= 0 || rem > 0); i--, j--)
-        {
-            int sum = A[j] + (i >= 0 ? k_list.get(i) : 0) + rem;
-            if(sum > 9) {
-                rem = sum/10;
-                sum = sum %10;
-            }
-            else
-                rem = 0;
-            res.add(0, sum);
+        for(String str : equations) {
+        	if (str.charAt(1) == '!')
+        		if(find(str.charAt(0) - 'a', unions) == find(str.charAt(3) - 'a', unions))
+        			return false;
         }
-        
-        while (j >= 0)
-        	res.add(0, A[j--]);
-        while (i >= 0)
-        {
-        	int sum = k_list.get(i--) + rem;
-        	if(sum > 9) {
-                rem = sum/10;
-                sum = sum %10;
-            }
-            else
-                rem = 0;
-        	res.add(0, sum);
-        }
-        if (rem > 0)
-        	res.add(0, rem);
-        return res;
+        return true;
     }
 	
+	private static int find (int a, int[] unions)
+	{
+		while (unions[a] != a) {			
+			unions[a] = unions[unions[a]];
+			a = unions[a];
+		}
+		return a;
+	}
+	private static void addUnion(int a, int b, int[] unions)
+	{
+		if (find(a, unions) == find(b, unions))
+			return;
+		int bid = unions[b];
+		int aid = unions[a];
+		for (int i = 0; i < unions.length; i++)
+			if (unions[i] == bid)
+				unions[i] = aid;
+	}
+	
 	public static void main(final String[] args) {
-		int[] A = {7};
-		System.out.println(addToArrayForm(A, 993));
+		String[] A = {"a==b","b!=c","c==a"};
+		System.out.println(equationsPossible(A));
 	}
 }
