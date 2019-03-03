@@ -13,25 +13,32 @@ import java.util.Iterator;
 
 class Solution {
 	
-	public static int longestOnes(int[] A, int K) {
-		int start = 0;
+	public static int characterReplacement(String s, int k) {
+        if (s.length() < k)
+            return s.length();
+        char[] chars = s.toCharArray();
         int max = 0;
-        if (A.length > 0) {
-            for (int i = 0; i < A.length; i++) {
-                if (A[i] == 0)
-                    K--;
-                
-                while (K < 0)
-                    if (A[start++] == 0)
-                        K++;
-                max = Math.max(max, i - start + 1); 
+        int K = k;
+        for(Character alpha = 'A'; alpha <= 'Z'; alpha++)
+        {
+            int start = 0;
+            k = K;
+            for(int i = 0; i < chars.length; i++)
+            {
+                if (chars[i] != alpha)
+                    k--;
+                while (k < 0)
+                {
+                    if (chars[start++] != alpha)
+                        k++;
+                }
+                max = Math.max(max, i - start + 1);
             }
         }
         return max;
     }
 	
 	public static void main(final String[] args) {
-		int[] A = {0,0,1,1,0,0,1,1,1,0,1,1,0,0,0,1,1,1,1};
-		System.out.println(longestOnes(A, 3));
+		System.out.println(characterReplacement("ABBB", 2));
 	}
 }
