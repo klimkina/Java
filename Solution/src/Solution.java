@@ -13,28 +13,36 @@ import java.util.Iterator;
 
 class Solution {
 	
-	public static int lengthOfLongestSubstringKDistinct(String s, int k) {
-        int i = 0;
-        int max = 0;
-        HashMap<Character, Integer> map = new HashMap<>();
-        char[] chars = s.toCharArray();
-        for (int j = 0; j < chars.length; j++)
+	public static String addBoldTag(String s, String[] dict) {
+        int[] bolds = new int[s.length()+1];
+        for (int i = 0; i < dict.length; i++)
         {
-            if (map.getOrDefault(chars[j], 0) == 0)
-                k--;
-            map.put(chars[j], map.getOrDefault(chars[j], 0) + 1);
-            while(k < 0) {
-                if(map.getOrDefault(chars[i], 0) == 1)
-                    k++;
-                map.put(chars[i], map.getOrDefault(chars[i], 0) - 1);
-                i++;
+            int first = s.indexOf(dict[i], 0);
+            while (first >= 0)
+            {
+                bolds[first]++;
+                bolds[first + dict[i].length()]--;
+                first = s.indexOf(dict[i], first + 1);
             }
-            max = Math.max(max, j - i + 1);        
         }
-        return max;
+        StringBuilder sb = new StringBuilder();
+        int counter = 0;
+        for (int i = 0; i < bolds.length; i++)
+        {
+        	counter += bolds[i];
+            if(bolds[i] > 0 && (counter == 1 || i == 0))
+                sb.append("<b>");
+            else if (counter == 0 && bolds[i] < 0)
+                sb.append("</b>");
+            if (i < bolds.length - 1)
+            	sb.append(s.charAt(i));
+        }
+        return sb.toString();
     }
 	
 	public static void main(final String[] args) {
-		System.out.println(lengthOfLongestSubstringKDistinct("aa", 1));
+		String s = "aaabbcc";
+		String[] dict = {"aaa","aab","bc","aaabbcc"};
+		System.out.println(addBoldTag(s, dict));
 	}
 }
