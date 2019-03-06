@@ -13,36 +13,62 @@ import java.util.Iterator;
 
 class Solution {
 	
-	public static String addBoldTag(String s, String[] dict) {
-        int[] bolds = new int[s.length()+1];
-        for (int i = 0; i < dict.length; i++)
-        {
-            int first = s.indexOf(dict[i], 0);
-            while (first >= 0)
+	public static void gameOfLife(int[][] board) {
+        for (int i = 0; i < board.length; i++)
+            for (int j = 0; j < board[0].length; j++)
             {
-                bolds[first]++;
-                bolds[first + dict[i].length()]--;
-                first = s.indexOf(dict[i], first + 1);
+                int count = countNeib(board, i, j);
+                if (board[i][j] > 0) {
+                    if (count < 2)
+                        board[i][j] = 4;
+                    else if (count > 3)
+                        board[i][j] = 4;
+                } else if (count == 3)
+                    board[i][j] = -1;
             }
-        }
-        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < board.length; i++)
+            for (int j = 0; j < board[0].length; j++)
+            {
+                if (board[i][j] == 4)
+                    board[i][j] = 0;
+                else if (board[i][j] < 0)
+                    board[i][j] = 1;
+            }
+    }
+    
+    private static int countNeib(int[][] board, int x, int y)
+    {
+        int[] dx = {-1, 0, 1};
+        int[] dy = {-1, 0, 1};
         int counter = 0;
-        for (int i = 0; i < bolds.length; i++)
-        {
-        	counter += bolds[i];
-            if(bolds[i] > 0 && (counter == 1 || i == 0))
-                sb.append("<b>");
-            else if (counter == 0 && bolds[i] < 0)
-                sb.append("</b>");
-            if (i < bolds.length - 1)
-            	sb.append(s.charAt(i));
-        }
-        return sb.toString();
+        for (int i = 0; i < 3; i++)
+            for (int j = 0 ; j < 3; j++)
+                if (i != 1 || j != 1)
+                {
+                    int new_x = x + dx[i];
+                    int new_y = y + dy[j];
+                    if (inBounds(board, new_x, new_y) &&
+                       board[new_x][new_y] > 0)
+                        counter++;
+                }
+        return counter;
+    }
+    
+    private static boolean inBounds(int[][] board, int x, int y)
+    {
+        return (x >=0 && x < board.length && y >= 0 && y < board[0].length);
     }
 	
 	public static void main(final String[] args) {
-		String s = "aaabbcc";
-		String[] dict = {"aaa","aab","bc","aaabbcc"};
-		System.out.println(addBoldTag(s, dict));
+		int[][] board = {{0,1,0},
+				  {0,0,1},
+				  {1,1,1},
+				  {0,0,0}};
+		gameOfLife(board);
+		for (int i = 0; i < board.length; i++) {
+			for (int j = 0; j < board[0].length; j++)
+				System.out.print(board[i][j] + " ");
+			System.out.println();
+		}
 	}
 }
