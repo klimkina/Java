@@ -5,70 +5,62 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-
 class Solution {
 	
-	public static void gameOfLife(int[][] board) {
-        for (int i = 0; i < board.length; i++)
-            for (int j = 0; j < board[0].length; j++)
+	public static boolean isNumber(String s) {
+        char[] charr = s.trim().toCharArray();
+        int n = charr.length;
+        if (n == 0)
+            return false;
+        int idx = 0;
+        if (charr[idx] == '+' || charr[idx] == '-')
+            idx++;
+        boolean isDot = false;
+        boolean isDouble = false;
+        while (idx < n && charr[idx] != 'e') // valid double to the left
+        {
+            if (charr[idx] == '.')
             {
-                int count = countNeib(board, i, j);
-                if (board[i][j] > 0) {
-                    if (count < 2)
-                        board[i][j] = 4;
-                    else if (count > 3)
-                        board[i][j] = 4;
-                } else if (count == 3)
-                    board[i][j] = -1;
+                if (isDot)
+                    return false;
+                isDot = true;
+                if (!isDouble && (idx < n-1 && !isNumber(charr[idx+1])))
+                    return false;
             }
-        for (int i = 0; i < board.length; i++)
-            for (int j = 0; j < board[0].length; j++)
+            else if (isNumber(charr[idx]))
+                isDouble = true;
+            else
+                return false;
+            idx++;
+        }
+        boolean isE = true;
+        if (idx < n && charr[idx] == 'e' && isDouble)
+        {
+            if (!isDouble || idx == n-1)
+                return false;
+            if (charr[idx+1] == '-' || charr[idx+1] == '+')
+                idx++;
+            idx++;
+            isE = false;
+            while (idx < n)
             {
-                if (board[i][j] == 4)
-                    board[i][j] = 0;
-                else if (board[i][j] < 0)
-                    board[i][j] = 1;
+                if (isNumber(charr[idx]))
+                    isE = true;
+                else
+                    return false;
+                idx++;
             }
+        }
+        return isDouble && isE;
     }
     
-    private static int countNeib(int[][] board, int x, int y)
+    private static boolean isNumber(char ch)
     {
-        int[] dx = {-1, 0, 1};
-        int[] dy = {-1, 0, 1};
-        int counter = 0;
-        for (int i = 0; i < 3; i++)
-            for (int j = 0 ; j < 3; j++)
-                if (i != 1 || j != 1)
-                {
-                    int new_x = x + dx[i];
-                    int new_y = y + dy[j];
-                    if (inBounds(board, new_x, new_y) &&
-                       board[new_x][new_y] > 0)
-                        counter++;
-                }
-        return counter;
-    }
-    
-    private static boolean inBounds(int[][] board, int x, int y)
-    {
-        return (x >=0 && x < board.length && y >= 0 && y < board[0].length);
+        return ch >= '0' && ch <= '9';
     }
 	
 	public static void main(final String[] args) {
-		int[][] board = {{0,1,0},
-				  {0,0,1},
-				  {1,1,1},
-				  {0,0,0}};
-		gameOfLife(board);
-		for (int i = 0; i < board.length; i++) {
-			for (int j = 0; j < board[0].length; j++)
-				System.out.print(board[i][j] + " ");
-			System.out.println();
-		}
+		System.out.println(isNumber("4e3."));
+		System.out.println(isNumber("+90e3.5"));
 	}
 }
