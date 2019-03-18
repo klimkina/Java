@@ -12,19 +12,18 @@ class Solution {
 	    // Write your code here
 	        long[] cols = new long[colors.size()];
 	        for (int i = 0; i < cols.length; i++)
-	            cols[i] = 1L << colors.get(i);
+	            cols[i] = 1L << colors.get(i); // code colors as powers of 2
 	        long res = 1L;
-	        //res += cols.length;
 	        long[] prefix = new long[cols.length];
 	        prefix[0] = cols[0];
 	        for (int i = 1; i < cols.length; i++)
 	        {
-	            prefix[i] = prefix[i-1] ^ cols[i];
+	            prefix[i] = prefix[i-1] ^ cols[i]; // calc prefixes for each index
 	            if (isBalanced(prefix[i]))
 	            	res++;
 	        }
 	        
-	        for (int i = 0; i < cols.length - 1; i++)
+	        for (int i = 0; i < cols.length - 1; i++) // calc xor for [L..R] by xor'ing prefixes for L and R
 	        	for (int j = i+1; j < cols.length; j++)
 	        		if (isBalanced(prefix[i]^prefix[j]))
 		            	res++;
@@ -33,11 +32,9 @@ class Solution {
 
 	private static boolean isBalanced(long l)
 	{
-		for (long c = 1L; c <= (1L << 50); c = c << 1)
-        {
+		for (long c = 1L; c <= (1L << 50); c = c << 1) // check if only one '1'
             if ((l ^ c) == 0L)
                 return true;
-        }
 		return (l == 0L);
 	}
 	
