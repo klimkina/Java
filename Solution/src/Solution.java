@@ -6,58 +6,51 @@ import java.util.TreeMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 class Solution {
 	
-	private static long[] pow;
-    private static HashMap<Long, Long> map = new HashMap<>();
-    private static HashMap<Long, Long> same = new HashMap<>();
-    
-    public static int strangelyCompatible(List<String> students) {
-    // Write your code here
-        int m = students.get(0).length();
-        pow = new long[m+1];
-        pow[0] = 1;
-        for (int i = 1; i <= m; i++)
-            pow[i] = pow[i-1] *31;
-        for (String s: students)
-            get_hash(s);
-        
-        int res = 0;
-        for (long l : map.values())
-            res += l*(l-1)/2L;
-        for (long l : same.values())
-            res -= (l*(l-1)/2L) * m;
-        return res;
-    }
-    private static void get_hash(String s)
-    {
-        int m = s.length();
-        char[] charr = s.toCharArray();
-        long[] res = new long [m];
-        res[0] = charr[0] - 'a'+1;
-        for (int i = 1; i < charr.length; i++)
-            res[i] = res[i-1] + (charr[i] - 'a'+1) * pow[i];
-        same.put(res[m-1], same.getOrDefault(res[m-1], 0L) +1L);    
-        
-        for(int i = 0; i < m; i++){
-            long h = 0L;
-            if(i == 0){
-                h = res[m - 1] - res[i];
-                h += 27;
-            }else if(i == m - 1){
-                h = res[i - 1];
-                h += 27 * pow[i];
-            }else{
-                h = res[i - 1];
-                h += res[m - 1] - res[i];
-                h += 27 * pow[i];
+	public static String minWindow(String s, String t) {
+		int min_start = -1;
+        int min_len = -1;
+        HashMap<Character, Integer> set = new HashMap<>();
+        char[] charr = t.toCharArray();
+        int counter = charr.length;
+        for (int i = 0; i < charr.length; i++)
+            set.put(charr[i], set.getOrDefault(charr[i], 0)+1);
+        charr = s.toCharArray();
+        int begin=0, end=0;
+        while (end < charr.length)
+        {            
+            if(set.get(charr[end]) != null) {
+                set.put(charr[end], set.get(charr[end]) - 1);
+                if (set.get(charr[end]) >= 0)
+                	counter--;
+                
             }
-            map.put(h, map.getOrDefault(h, 0L) +1L);
+            end++;
+            while (counter == 0)
+            {
+                if (min_len == -1 || end - begin < min_len)
+                {
+                    min_len = end - begin;
+                    min_start = begin;
+                }
+                if (set.get(charr[begin]) != null) {
+                	set.put(charr[begin], set.get(charr[begin]) + 1);
+	                if (set.get(charr[begin]) == 1)
+	                	counter++;
+                }
+            	begin++;                      
+            }   
         }
+        if (min_len == -1)
+            return "";
+        return s.substring(min_start, min_len+min_start);
     }
 	
 	public static void main(final String[] args) {
-		String[] M = {"abc", "abd", "cbd"};
-		System.out.print(strangelyCompatible(Arrays.asList(M)));
+		String s = "ADOBECODEBANC";
+		String t = "ABC";
+		System.out.print(minWindow(s,t));
 	}
 }
