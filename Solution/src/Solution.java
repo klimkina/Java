@@ -13,57 +13,44 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 class Solution {
-	public static class Interval {
-		      int start;
-		      int end;
-		      Interval() { start = 0; end = 0; }
-		      Interval(int s, int e) { start = s; end = e; }
-		  }
-	public static List<Interval> insert(List<Interval> intervals, Interval newInterval) {
-        Interval prev = null;
-        Interval curr = null;
-        int start = newInterval.start;
-        int end = newInterval.end;
-        ListIterator<Interval> iter = intervals.listIterator();
-        while (iter.hasNext())
+	public static int[] sortTransformedArray(int[] nums, int a, int b, int c) {
+		int n = nums.length;
+        int[] res = new int[n];
+        int l = 0;
+        int r = n-1;
+        int pos = (a > 0 ? n-1 : 0);
+        while (l <= r)
         {
-            Interval i = iter.next();        
-            if (i.start > start)
+            int left = func(nums[l], a, b,c);
+            int right = func(nums[r], a, b,c);
+            if (a > 0)
             {
-                curr = i;
-                break;
+                if (left > right)
+                    l++;
+                else
+                    r--;
+                res[pos--] = left > right ? left : right;
             }
-            prev = i;
-        }
-        if (prev != null && prev.end >= start)
-            end = Math.max(prev.end, end);
-        
-        while (curr != null && curr.start <= end)
-        {
-            end = Math.max(end, curr.end);
-            iter.remove();
-            if (iter.hasNext())
-            	curr = iter.next();
             else
-            	curr = null;
+            {
+                if (left < right)
+                    l++;
+                else
+                    r--;
+                res[pos++] = left < right ? left : right;
+            }
         }
-        if (prev == null)
-        	intervals.add(0, new Interval (start, end));
-        else if (prev.end < start)
-        	intervals.add(intervals.indexOf(prev) + 1, new Interval (start, end));
-        else
-        	prev.end = end;
-        return intervals;
+            
+        return res;
+    }
+	private static int func(int x, int a, int b, int c)
+    {
+        return a * x*x + b*x + c;
     }
 	
 	public static void main(final String[] args) {
-		List<Interval> list = new ArrayList<>();
-		list.add(new Interval(2,7));
-		list.add(new Interval(8,8));
-		list.add(new Interval(10,10));
-		list.add(new Interval(12,13));
-		list.add(new Interval(16,19));
-		insert(list, new Interval(9,17));
+		int[] nums = {-4,-2,2,4};
+		nums = sortTransformedArray(nums,-1,3,5);
 		//System.out.print(shortestDistance(grid));
 	}
 }
