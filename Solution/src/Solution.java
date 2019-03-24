@@ -1,56 +1,51 @@
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.Collections;
+import java.util.Comparator;
+
+
+
 class Solution {
-	public static int[] sortTransformedArray(int[] nums, int a, int b, int c) {
-		int n = nums.length;
-        int[] res = new int[n];
-        int l = 0;
-        int r = n-1;
-        int pos = (a > 0 ? n-1 : 0);
-        while (l <= r)
-        {
-            int left = func(nums[l], a, b,c);
-            int right = func(nums[r], a, b,c);
-            if (a > 0)
+	public static class Interval {
+	    int start;
+	    int end;
+	    Interval() { start = 0; end = 0; }
+	    Interval(int s, int e) { start = s; end = e; }
+	}
+	
+	public static List<Interval> merge(List<Interval> intervals) {
+        Collections.sort(intervals, new Comparator<Interval>(){
+            public int compare(Interval a, Interval b)
             {
-                if (left > right)
-                    l++;
+                return a.start - b.start;
+            }
+        });
+        ListIterator<Interval> iter = intervals.listIterator();
+        Interval prev = null;
+        while (iter.hasNext())
+        {
+            Interval curr = iter.next();
+            if (prev != null)
+            {
+                if (prev.end >= curr.start) {
+                    prev.end = Math.max(prev.end, curr.end);
+                    iter.remove();
+                }
                 else
-                    r--;
-                res[pos--] = left > right ? left : right;
+                    prev = curr;
             }
             else
-            {
-                if (left < right)
-                    l++;
-                else
-                    r--;
-                res[pos++] = left < right ? left : right;
-            }
+                prev = curr;
         }
-            
-        return res;
-    }
-	private static int func(int x, int a, int b, int c)
-    {
-        return a * x*x + b*x + c;
+        return intervals;
     }
 	
 	public static void main(final String[] args) {
-		int[] nums = {-4,-2,2,4};
-		nums = sortTransformedArray(nums,-1,3,5);
+		List<Interval> list = new ArrayList<>();
+		list.add(new Interval(2,4));
+		list.add(new Interval(1,3));
+		list = merge(list);
 		//System.out.print(shortestDistance(grid));
 	}
 }
