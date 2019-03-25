@@ -7,46 +7,36 @@ import java.util.Comparator;
 
 
 class Solution {
-	private static class Node {
-        private Node[] next = new Node[2];
-    }
-    private static void add(Node root, char[] charr, int start)
-    {
-        Node node = root;
-        for (int i = start; i < charr.length; i++)
-        {
-            if (node.next[charr[i]-'0'] == null)
-                node.next[charr[i]-'0'] = new Node();
-            node = node.next[charr[i]-'0'];
+	public static  int[] findDiagonalOrder(int[][] matrix) {
+        int n = matrix.length;
+        int m = matrix[0].length;
+        int[] res = new int[m*n];
+        int pos_x = 0;
+        int pos_y = 0;
+        int dir = 1;
+        for (int i = 0; i < res.length; i++) {
+            res[i] = matrix[pos_x][pos_y];
+            if ( dir > 0) { // moving up
+                if      (pos_y == m-1) { pos_x++; dir = -dir;}
+                else if (pos_x == 0)     { pos_y++; dir = -dir;}
+                else            { pos_x-=dir; pos_y+=dir; }
+            } else {                // moving down
+                if      (pos_x == n - 1) { pos_y++; dir = -dir; }
+                else if (pos_y == 0)     { pos_x++; dir = -dir; }
+                else            { pos_x-=dir; pos_y+=dir; }
+            }   
         }
-    }
-    private static boolean contains(Node root, char[] charr)
-    {
-        Node node = root;
-        for (int i = 0; i < charr.length; i++)
-        {
-            if (node.next[charr[i]-'0'] == null)
-                return false;
-            node = node.next[charr[i]-'0'];
-        }
-        return true;
-    }
-    public static boolean queryString(String S, int N) {
-        Node root = new Node();
-        char[] charr = S.toCharArray();
-        for (int i = 0; i < charr.length; i++)
-            add(root, charr, i);
-        for (int i = 1; i <=N; i++)
-        {
-            char[] num = Integer.toBinaryString(i).toCharArray();
-            if (!contains(root, num))
-                return false;
-        }
-        return true;
+        return res;
     }
 	
 	public static void main(final String[] args) {
-		int[] A = {18,12,-18,18,-19,-1,10,10};
-		System.out.print(queryString("110101011011000011011111000000", 15));
+		int[][] matrix = {{1,2,3},
+				{4,5,6},
+				{7,8,9}};
+		
+		int[] res = findDiagonalOrder(matrix);
+		for (int i = 0; i < res.length; i++)
+			System.out.print(res[i] + " ");
+		//System.out.print(queryString("110101011011000011011111000000", 15));
 	}
 }
