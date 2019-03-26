@@ -26,7 +26,7 @@ class Solution {
             		if (nums2[i] >= stack.peek()) stack.pop();
             		else
             		{
-            			last = stack.pop();
+            			last = stack.peek();
             			break;
             		}
             	}
@@ -43,8 +43,8 @@ class Solution {
     }
 	
 	public static void main(final String[] args) {
-		int[] nums1 = {4,1,2};
-		int[] nums2 = {1,3,4,2};
+		int[] nums1 = {1,3,5,2,4};
+		int[] nums2 = {6,5,4,3,2,1,7};
 		
 		int[] res = nextGreaterElement(nums1, nums2);
 		for (int i = 0; i < res.length; i++)
