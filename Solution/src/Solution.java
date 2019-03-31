@@ -10,45 +10,70 @@ import java.util.HashMap;
 
 
 class Solution {
-	public static int[] nextGreaterElement(int[] nums1, int[] nums2) {
-        HashMap<Integer, Integer> map = new HashMap<>();
-        Stack<Integer> stack = new Stack<>();
-        for(int i = nums2.length - 1; i >= 0; i--)
+	public static List<int[]> pacificAtlantic(int[][] matrix) {
+        int n = matrix.length;
+        int m = matrix[0].length;
+        int[][] grid = new int[n][m];
+        for(int i = 1; i < m-1; i++)
         {
-            stack.push(nums2[i]);
-            if (i == nums2.length - 1)
-            	map.put(nums2[i], -1);
-            else
+            grid[0][i] += 1;
+            grid[n-1][i] += 2;
+        }
+        for(int i = 1; i < n-1; i++)
+        {
+            grid[i][0] += 1;
+            grid[i][m-1] += 2;
+        }
+        grid[0][0] = 1;
+        grid[n-1][m-1] = 2;
+        grid[0][m-1] = 3;
+        grid[n-1][0] = 3;
+        for(int i = 0; i < n; i++)
+            for(int j = 0; j < m-i-1; j++)
             {
-            	int last = -1;
-            	while (!stack.isEmpty())
+            	if (grid[i][j] < 3)
             	{
-            		if (nums2[i] >= stack.peek()) stack.pop();
-            		else
-            		{
-            			last = stack.peek();
-            			break;
-            		}
+	                if (j > 0 && matrix[i][j-1] <= matrix[i][j] && grid[i][j-1] > 0) 
+	                    grid[i][j] = calcOcean(grid[i][j-1], grid[i][j]);
+	                if (i > 0 && matrix[i-1][j] <= matrix[i][j] && grid[i-1][j] > 0) 
+	                    grid[i][j] = calcOcean(grid[i-1][j], grid[i][j]); 
+	                if (j < m-1 && matrix[i][j+1] <= matrix[i][j] && grid[i][j+1] > 0) 
+	                    grid[i][j] = calcOcean(grid[i][j+1], grid[i][j]);
             	}
-            	map.put(nums2[i], last);
-    			stack.push(nums2[i]);
             }
-        }
-        int[] res = new int[nums1.length];
-        for (int i = 0; i < nums1.length; i++)
-        {
-            res[i] = map.getOrDefault(nums1[i], -1);
-        }
+        for(int i = n-1; i >= 0; i--)
+            for(int j = 1; j < m-(n-1 -i)-1; j++)
+            {
+            	if (grid[i][j] < 3)
+            	{
+	            	if (j > 0 && matrix[i][j-1] >= matrix[i][j] && grid[i][j-1] > 0) 
+	                    grid[i][j] = calcOcean(grid[i][j-1], grid[i][j]);
+	                if (j < m-1 && matrix[i][j+1] >= matrix[i][j] && grid[i][j+1] > 0) 
+	                    grid[i][j] = calcOcean(grid[i][j+1], grid[i][j]);
+	                if (i < n-1 && matrix[i+1][j] >= matrix[i][j] && grid[i+1][j] > 0) 
+	                    grid[i][j] = calcOcean(grid[i+1][j], grid[i][j]);
+            	}
+            }
+        List<int[]> res = new ArrayList<>();
+        for(int i = 0; i < n; i++)
+            for(int j = 0; j < m; j++)
+                if (grid[i][j] > 2)
+                    res.add(new int[]{i,j});
         return res;
+        
+    }
+    private static int calcOcean(int prev, int curr)
+    {
+        if (curr != prev)
+            curr += prev;
+        return curr;
     }
 	
 	public static void main(final String[] args) {
-		int[] nums1 = {1,3,5,2,4};
-		int[] nums2 = {6,5,4,3,2,1,7};
-		
-		int[] res = nextGreaterElement(nums1, nums2);
-		for (int i = 0; i < res.length; i++)
-			System.out.print(res[i] + " ");
+		int[][] ocean = {{1,2,2,3,5},{3,2,3,4,4},{2,4,5,3,1},{6,7,1,4,5},{5,1,1,2,4}};
+		List<int[]> res = pacificAtlantic(ocean);
+		for (int i = 0; i < res.size(); i++)
+			System.out.print(res.get(i)[0] + " " + res.get(i)[0] + ", ");
 		//System.out.print(queryString("110101011011000011011111000000", 15));
 	}
 }
