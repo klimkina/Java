@@ -11,27 +11,50 @@ import java.util.HashMap;
 
 
 class Solution {
-	public static int longestArithSeqLength(int[] A) {
-		int res = 0;
-        Map<Integer, Integer>[] dp = new HashMap[A.length];
-        for(int i = 0; i < A.length; i++){
-            dp[i] = new HashMap<>();
-        }
-        for(int i = A.length-1; i >= 0; i--){
-            for(int j = i+1; j < A.length; j++){
-                int diff = A[i] - A[j];
-                int len = dp[j].containsKey(diff)? dp[j].get(diff)+1: 2;
-                dp[i].put(diff, Math.max(len, dp[i].getOrDefault(diff, 0)));
-                res = Math.max(res, len);
-            }
-        }
-        return res;
-        
-    }
+	public static class TreeNode {
+		      int val;
+		      TreeNode left;
+		      TreeNode right;
+		      TreeNode(int x) { val = x; }
+		  }
+		 
+		
+	    public static TreeNode recoverFromPreorder(String S) {
+	    	Stack<TreeNode> stack = new Stack<>();
+	    	int pos = 0;
+	    	int n = S.length();
+	    	while (pos < n)
+	    	{
+	    		int lev = 0;
+	    		while(S.charAt(pos) == '-')
+	    		{
+	    			pos++;
+	    			lev++;
+	    		}
+	    		while (!stack.isEmpty() && stack.size() > lev)
+	    			stack.pop();
+	    		StringBuilder sb = new StringBuilder();
+	    		while(pos < n && S.charAt(pos) != '-')
+	    			sb.append(S.charAt(pos++));
+	    		TreeNode node = new TreeNode(Integer.valueOf(sb.toString()));
+	    		if (!stack.isEmpty())
+	    		{
+	    			TreeNode par = stack.peek();
+	    			if (par.left == null)
+	    				par.left = node;
+	    			else
+	    				par.right = node;
+	    		}
+	    		stack.push(node);
+	    	}
+	    	TreeNode res = stack.pop();
+	    	while(!stack.isEmpty())
+	    		res = stack.pop();
+	        return res;
+	    }
 	
 	
 	public static void main(final String[] args) {
-		int[] A = {3,6,9,12};
-		System.out.print(longestArithSeqLength(A));
+		System.out.print(recoverFromPreorder("1-2--3---4-5--6---7"));
 	}
 }
