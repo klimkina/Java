@@ -1,5 +1,5 @@
 class StreamChecker {
-    class Trie
+	class Trie
     {
         boolean word = false;
         Trie[] kids = new Trie[26];
@@ -40,7 +40,6 @@ class StreamChecker {
         {
             Trie node = iter.next();
             node = node.kids[letter-'a'];
-            iter.remove();
             if (node != null)                
             {
                 toAdd.add(node);
@@ -48,7 +47,7 @@ class StreamChecker {
                     res = true;
             }
         }
-        current.addAll(toAdd);
+        current = toAdd;
         return res;
     }
 }
