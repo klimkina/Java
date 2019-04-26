@@ -53,26 +53,17 @@ class AutocompleteSystem {
             {
                 
                 if (node.inputs > 0)
-                {
-                    //System.out.println(node.sentence + " " + node.inputs);
-                    pq.offer(node);
-                }
+                    pq.offer(node);             
                 
-                for (char ch: node.kids.keySet())
-                {
-                    //System.out.println(ch + " " + node.kids.get(ch).inputs);
-                    
+                for (char ch: node.kids.keySet())                    
                     stack.push(node.kids.get(ch));
-                }
+                
             }
         }
         for (int i = 0; i < 3; i++)
             if (!pq.isEmpty())
-            {
-                String str = pq.poll().sentence;
-                //System.out.println(str);
-                res.add(str);
-            }
+                res.add(pq.poll().sentence);
+            
         return res;
     }
     
