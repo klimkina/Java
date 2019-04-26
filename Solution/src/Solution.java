@@ -1,50 +1,51 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.TreeMap;
 
 class Solution {
-	static class Worker
-	{
-		int q;
-		int w;
-		public Worker(int q1, int w1)
-		{
-			q = q1;
-			w = w1;
-		}
-	}
-	public static double mincostToHireWorkers(int[] quality, int[] wage, int K) {
-		int n = quality.length;
-		Worker[] workers = new Worker[n];
-		for (int i = 0; i < n; i++)
-			workers[i] = new Worker(quality[i], wage[i]);
-		Arrays.sort(workers, (a,b) -> ((int)((double)a.w/a.q - (double)b.w/b.q)));
-		
-		int sum = 0;
-		double res = 0;
-		PriorityQueue<Integer> pq = new PriorityQueue<>();
-		for (int i = 0; i < n; i++)
-		{
-			sum += workers[i].q;
-			pq.offer(-workers[i].q);
-			if (i == K-1)
-				res = (double)sum*workers[i].w/workers[i].q;
-			else if (i >= K)
-			{
-				sum += pq.poll();
-				res = Math.min(res, (double)sum*workers[i].w/workers[i].q);
-			}
-		}
+private HashMap<String, Integer> map = new HashMap<>();
+    
+    public int numberOfPatterns(int m, int n) {
+        map.put("1 3", 2); map.put("1 9", 5); map.put("1 7", 4);
+        map.put("3 1", 2); map.put("3 7", 5); map.put("3 9", 6);
+        map.put("7 1", 4); map.put("7 3", 5); map.put("7 9", 8);
+        map.put("9 1", 5); map.put("9 3", 6); map.put("9 7", 8);
+        map.put("2 8", 5); 
+        map.put("4 6", 5); 
+        map.put("8 2", 5); 
+        map.put("6 4", 5); 
+        
+        int res = numberOfPatterns(m, n, new HashSet<>(), 1);
+        res += numberOfPatterns(m, n, new HashSet<>(), 2);
+        res *= 4;
+        res += numberOfPatterns(m, n, new HashSet<>(), 5);
         return res;
     }
-    
+    private int numberOfPatterns(int m, int n, HashSet<Integer> set, int curr)
+    {       
+        set.add(curr);
+        if (set.size() == n)
+            return 1;
+        int res = 0;
+        if (set.size() >= m)
+            res++;
+        for (int i = 1; i <= 9; i++)
+        {
+            if (!set.contains(i))
+                if (map.get(curr + " " + i) == null || set.contains(map.get(curr + " " + i)))
+                { 
+                    res += numberOfPatterns(m, n, set, i);
+                    set.remove(i);
+                }
+            
+        }
+        return res;
+    }
 	
 	public static void main(final String[] args) {
-		int[] qual = {25,68,35,62,52,57,35,83,40,51};
-		int[] wage = {147,97,251,129,438,443,120,366,362,343};
-		int K =	2;
-		System.out.print(mincostToHireWorkers(qual, wage, K));
+		
 	}
 }
