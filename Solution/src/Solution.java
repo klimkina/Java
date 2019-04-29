@@ -11,74 +11,70 @@ import java.util.Set;
 import java.util.TreeMap;
 
 class Solution {
-	public static boolean isEscapePossible(int[][] blocked, int[] source, int[] target) {
-        HashMap<Integer, Set<Integer>> blocked_map = new HashMap<>();
-        for (int i = 0; i < blocked.length; i++)
+	class Trie{
+        String word = "";
+        Trie[] kids = new Trie[26];
+    }
+    private Trie root = new Trie();
+    private void add(String word)
+    {
+        char[] charr = word.toCharArray();
+        Trie node = root;
+        for (int i = 0; i < charr.length; i++)
         {
-            if (blocked_map.get(blocked[i][0]) == null)
-                blocked_map.put(blocked[i][0], new HashSet<Integer>());
-            blocked_map.get(blocked[i][0]).add(blocked[i][1]);
+            if (node.kids[charr[i]-'a'] == null)
+                node.kids[charr[i]-'a'] = new Trie();
+            node = node.kids[charr[i]-'a'];
         }
-        return bfs(blocked_map, source, target) && bfs(blocked_map, target, source);
+        node.word = word;
     }
-    private static boolean bfs(HashMap<Integer, Set<Integer>> blocked, int[] s, int[] t)
+    private Trie find (Trie node, char ch)
     {
-    	HashMap<Integer, Set<Integer>> visited = new HashMap<>();
-    	Queue<int[]> queue = new LinkedList<>();
-        queue.add(s);
-        int steps = 0;
-        Set<Integer> set0 = new HashSet<>();
-        set0.add(s[1]);
-        visited.put(s[0], set0);
-        
-        int[][] dirs = {{-1,0}, {1,0}, {0,1}, {0,-1}};
-        
-        while(!queue.isEmpty()) {
-            Queue<int[]> nextQueue = new LinkedList<>();
-            while(!queue.isEmpty()) {
-                int[] cur = queue.poll();
-                //System.out.println(cur[0] + "," + cur[1]);
-                
-                for(int k = 0; k < dirs.length; ++k) {
-                    int nextx = cur[0] + dirs[k][0];
-                    int nexty = cur[1] + dirs[k][1];
-                    if(inBound(nextx, nexty) && !contains(blocked, nextx, nexty))
-                    {	                    	                    
-	                    if(nextx == t[0] && nexty == t[1]) 
-	                        return true;
-	                    
-	                    if(!contains(visited, nextx, nexty)) {
-                            if (visited.get(nextx) == null)
-                            	visited.put(nextx, new HashSet<>());
-                            visited.get(nextx).add(nexty);
-                        }
-                        nextQueue.add(new int[]{nextx, nexty});	                    
-                    }
-                }        
-            }
-            queue = nextQueue;
-            steps++;
-            if(steps > 20000) {
-                return true;
-            }
-        }
-        return false;
+        return node.kids[ch-'a'];
     }
+    public List<String> findWords(char[][] board, String[] words) {
+        int m = board.length;
+        int n = board[0].length;
+        
+        for (int i = 0; i < words.length; i++)
+            add(words[i]);
+        Set<String> res = new HashSet<>();
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+            {
+                int[][] visited = new int[m][n];
+                dfs(board,i,j,root,visited, res);
+            }
+        return new ArrayList<String>(res);
+    }
+    private void dfs(char[][] board, int i, int j, Trie root, int[][] visited, Set<String> res)
+    {
+        Trie node = find(root, board[i][j]);        
+        if (node != null)
+        {
+            if (!node.word.isEmpty())
+                res.add(node.word);
+            visited[i][j] = 1;
+            int[][] d = {{-1,0},{0,1},{1,0},{0,-1}};
+            for (int k = 0; k < d.length; k++)
+            {
+                int new_i = i+ d[k][0];
+                int new_j = j + d[k][1];
+                if (inBound(board, new_i, new_j) && visited[new_i][new_j] == 0)
+                    dfs(board, new_i, new_j, node, visited, res);
+            }
+            visited[i][j] = 0;
+        }
+    }
+    private boolean inBound(char[][] board, int i, int j)
+    {
+        return i >= 0 && j >= 0 && i < board.length && j < board[0].length;
     
-    private static boolean contains(HashMap<Integer, Set<Integer>> map, int x, int y)
-    {
-        if (map.get(x) != null)
-            return map.get(x).contains(y);
-        return false;
-    }
-    private static boolean inBound(int x, int y)
-    {
-        return x >= 0 && y >= 0 && x < 1000000 && y < 1000000;
     }
 	
 	public static void main(final String[] args) {
-		int[][] blocked = {{0,1},{1,0}};
-		int[] source = {0,0}, target = {0,2};
-		System.out.println(isEscapePossible(blocked, source, target));
+		Solution obj = new Solution();
+		
+		System.out.println();
 	}
 }
