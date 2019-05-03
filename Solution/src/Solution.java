@@ -11,70 +11,90 @@ import java.util.Set;
 import java.util.TreeMap;
 
 class Solution {
-	class Trie{
-        String word = "";
-        Trie[] kids = new Trie[26];
-    }
-    private Trie root = new Trie();
-    private void add(String word)
-    {
-        char[] charr = word.toCharArray();
-        Trie node = root;
-        for (int i = 0; i < charr.length; i++)
+	public int[][] kClosest(int[][] points, int K) {
+        if (points == null || points.length == 0)
+            return points;
+        if (K > points.length)
+            K = points.length;
+        int[][] res = new int[K][2];
+        for(int i = 0; i < K; i++)
         {
-            if (node.kids[charr[i]-'a'] == null)
-                node.kids[charr[i]-'a'] = new Trie();
-            node = node.kids[charr[i]-'a'];
+            res[i] = points[i];
+            swim(res, i, K);
+            print(res, K);
         }
-        node.word = word;
-    }
-    private Trie find (Trie node, char ch)
-    {
-        return node.kids[ch-'a'];
-    }
-    public List<String> findWords(char[][] board, String[] words) {
-        int m = board.length;
-        int n = board[0].length;
+        for (int i = K; i < points.length; i++)
+        {
+            if (dist(res[0]) > dist(points[i]))
+            {
+                res[0] = points[i];
+                sink(points, 0, K);
+                print(res, K);
+            }
+            else
+                System.out.println (dist(points[i]));
+        }
+        return res;
         
-        for (int i = 0; i < words.length; i++)
-            add(words[i]);
-        Set<String> res = new HashSet<>();
-        for (int i = 0; i < m; i++)
-            for (int j = 0; j < n; j++)
-            {
-                int[][] visited = new int[m][n];
-                dfs(board,i,j,root,visited, res);
-            }
-        return new ArrayList<String>(res);
     }
-    private void dfs(char[][] board, int i, int j, Trie root, int[][] visited, Set<String> res)
+    private void sink(int[][] res, int n, int K)
     {
-        Trie node = find(root, board[i][j]);        
-        if (node != null)
+        int dist = dist(res[n]);
+        while (2*n+1 < K)
         {
-            if (!node.word.isEmpty())
-                res.add(node.word);
-            visited[i][j] = 1;
-            int[][] d = {{-1,0},{0,1},{1,0},{0,-1}};
-            for (int k = 0; k < d.length; k++)
-            {
-                int new_i = i+ d[k][0];
-                int new_j = j + d[k][1];
-                if (inBound(board, new_i, new_j) && visited[new_i][new_j] == 0)
-                    dfs(board, new_i, new_j, node, visited, res);
-            }
-            visited[i][j] = 0;
+            int kid = n*2+1;
+            int dist1 = dist(res[kid]);
+            int dist2 = Integer.MIN_VALUE;
+            if (kid +1 < K)
+            	dist2 = dist(res[kid+1]);
+            if(dist1 < dist2)
+                kid++;
+            if (dist > Math.max(dist1, dist2))
+                break;
+            swap(res, n, kid);           
+            n = kid;
         }
     }
-    private boolean inBound(char[][] board, int i, int j)
+    private void swim(int[][] res, int n, int K)
     {
-        return i >= 0 && j >= 0 && i < board.length && j < board[0].length;
-    
+        int dist = dist(res[n]);
+        while (n > 0)
+        {
+            int d = dist(res[(n-1)/2]);
+            if (d < dist)
+            {
+                swap(res, n, (n-1)/2);
+                n = (n-1)/2;
+            }
+            else
+                break;
+        }
     }
-	
+    private void swap(int[][] res, int a, int b)
+    {
+        int[] t = res[a];
+        res[a] = res[b];
+        res[b] = t;
+    }
+    private void print(int[][] res, int K)
+    {
+        System.out.print("[");
+        for (int i = 0; i < K; i++)
+            System.out.print("[" + res[i][0] + "," +res[i][1] +"]");        
+        System.out.println("]");
+        for (int i = 0; i < K; i++)
+            System.out.print(dist(res[i]) + " ");            
+        
+        System.out.println();
+    }
+    private int dist(int[] point)
+    {
+        return point[0]*point[0] + point[1]*point[1];
+    }
 	public static void main(final String[] args) {
 		Solution obj = new Solution();
-		
-		System.out.println();
+		int[][] points = {{68,97},{34,-84},{60,100},{2,31},{-27,-38},{-73,-74},{-55,-39},{62,91},{62,92},{-57,-67}};
+		int[][] closest = obj.kClosest(points,  5);
+		obj.print(closest, 5);
 	}
 }
