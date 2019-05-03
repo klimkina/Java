@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 class Solution {
+	HashMap<String, Integer> dist_map = new HashMap<>();
 	public int[][] kClosest(int[][] points, int K) {
         if (points == null || points.length == 0)
             return points;
@@ -21,18 +22,14 @@ class Solution {
         {
             res[i] = points[i];
             swim(res, i, K);
-            print(res, K);
         }
         for (int i = K; i < points.length; i++)
         {
             if (dist(res[0]) > dist(points[i]))
             {
                 res[0] = points[i];
-                sink(points, 0, K);
-                print(res, K);
+                sink(res, 0, K);
             }
-            else
-                System.out.println (dist(points[i]));
         }
         return res;
         
@@ -42,10 +39,10 @@ class Solution {
         int dist = dist(res[n]);
         while (2*n+1 < K)
         {
-            int kid = n*2+1;
-            int dist1 = dist(res[kid]);
+            int kid = n*2+1; //left child
+            int dist1 = dist(res[kid]); //right child if exist
             int dist2 = Integer.MIN_VALUE;
-            if (kid +1 < K)
+            if (kid + 1 < K)
             	dist2 = dist(res[kid+1]);
             if(dist1 < dist2)
                 kid++;
@@ -60,7 +57,7 @@ class Solution {
         int dist = dist(res[n]);
         while (n > 0)
         {
-            int d = dist(res[(n-1)/2]);
+            int d = dist(res[(n-1)/2]); //parent
             if (d < dist)
             {
                 swap(res, n, (n-1)/2);
@@ -76,6 +73,12 @@ class Solution {
         res[a] = res[b];
         res[b] = t;
     }
+    
+    private int dist(int[] point)
+    {
+    	return point[0]*point[0] + point[1]*point[1];
+    }
+    
     private void print(int[][] res, int K)
     {
         System.out.print("[");
@@ -87,10 +90,7 @@ class Solution {
         
         System.out.println();
     }
-    private int dist(int[] point)
-    {
-        return point[0]*point[0] + point[1]*point[1];
-    }
+    
 	public static void main(final String[] args) {
 		Solution obj = new Solution();
 		int[][] points = {{68,97},{34,-84},{60,100},{2,31},{-27,-38},{-73,-74},{-55,-39},{62,91},{62,92},{-57,-67}};
