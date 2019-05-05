@@ -11,28 +11,35 @@ import java.util.Set;
 import java.util.TreeMap;
 
 /*
-Given N, consider a convex N-sided polygon with vertices labelled A[0], A[i], ..., A[N-1] in clockwise order.
+On an infinite number line, the position of the i-th stone is given by stones[i].  Call a stone an endpoint stone if it has the smallest or largest position.
 
-Suppose you triangulate the polygon into N-2 triangles.  For each triangle, the value of that triangle is the product of the labels of the vertices, and the total score of the triangulation is the sum of these values over all N-2 triangles in the triangulation.
+Each turn, you pick up an endpoint stone and move it to an unoccupied position so that it is no longer an endpoint stone.
 
-Return the smallest possible total score that you can achieve with some triangulation of the polygon.
+In particular, if the stones are at say, stones = [1,2,5], you cannot move the endpoint stone at position 5, since moving it to any position (such as 0, or 3) will still keep that stone as an endpoint stone.
+
+The game ends when you cannot make any more moves, ie. the stones are in consecutive positions.
+
+When the game ends, what is the minimum and maximum number of moves that you could have made?  Return the answer as an length 2 array: answer = [minimum_moves, maximum_moves]
  */
 
 class Solution {
-	public int minScoreTriangulation(int[] A) {
-        int res = 0;
-        int n = A.length;
-        int[][] dp = new int[n][n];
-        for (int i = 2; i < n; i++)
-            for (int j = 0; j + i < n; j++)
-            {
-                int m = j + i;
-                dp[j][m] = Integer.MAX_VALUE;
-                for (int k = j +1; k < m; k++)
-                    dp[j][m] = Math.min(dp[j][m], dp[j][k] + dp[k][m] + A[j]*A[k]*A[m]);
-            }
-        
-        return dp[0][n-1];
+	public int[] numMovesStonesII(int[] stones) {
+        Arrays.sort(stones);
+        int n = stones.length;
+        int[] res = new int[2];
+        res[1] = Math.max(stones[n-1] - stones[1] - n + 2, stones[n-2] - stones[0] - n + 2);
+        res[0] = res[1];
+        int start = 0;
+        for (int i = 0; i < n; i++)
+        {
+            while (stones[i] >= stones[start] + n)
+                start++;
+            if (i - start == n - 2 && stones[i] - stones[start] == n - 2)
+                res[0] = Math.min(res[0], 2);
+            else
+                res[0] = Math.min(res[0], n - (i - start + 1));    
+        }
+        return res;
     }
     
 	public static void main(final String[] args) {
