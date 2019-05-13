@@ -1,51 +1,138 @@
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.Set;
-import java.util.TreeMap;
-
-/*
-On an infinite number line, the position of the i-th stone is given by stones[i].  Call a stone an endpoint stone if it has the smallest or largest position.
-
-Each turn, you pick up an endpoint stone and move it to an unoccupied position so that it is no longer an endpoint stone.
-
-In particular, if the stones are at say, stones = [1,2,5], you cannot move the endpoint stone at position 5, since moving it to any position (such as 0, or 3) will still keep that stone as an endpoint stone.
-
-The game ends when you cannot make any more moves, ie. the stones are in consecutive positions.
-
-When the game ends, what is the minimum and maximum number of moves that you could have made?  Return the answer as an length 2 array: answer = [minimum_moves, maximum_moves]
- */
 
 class Solution {
-	public int[] numMovesStonesII(int[] stones) {
-        Arrays.sort(stones);
-        int n = stones.length;
-        int[] res = new int[2];
-        res[1] = Math.max(stones[n-1] - stones[1] - n + 2, stones[n-2] - stones[0] - n + 2);
-        res[0] = res[1];
-        int start = 0;
+    public class Suffix implements Comparable<Suffix>
+    {
+        int index = 0;
+        int[] rank = new int[2];
+        @Override
+        public int compareTo(Suffix other)
+        {
+            if (rank[0] == other.rank[0])
+                return rank[1] - other.rank[1];
+            return rank[0] - other.rank[0];
+        }
+    }
+    private int[] buildSuffixArray(String s, int n)
+    {
+        // A structure to store suffixes and their indexes
+        Suffix[] suffixes = new Suffix[n];
+        // Store suffixes and their indexes in an array of structures. 
+        // The structure is needed to sort the suffixes alphabatically 
+        // and maintain their old indexes while sorting 
         for (int i = 0; i < n; i++)
         {
-            while (stones[i] >= stones[start] + n)
-                start++;
-            if (i - start == n - 2 && stones[i] - stones[start] == n - 2)
-                res[0] = Math.min(res[0], 2);
-            else
-                res[0] = Math.min(res[0], n - (i - start + 1));    
+            suffixes[i] = new Suffix();
+            suffixes[i].index = i;
+            suffixes[i].rank[0] = s.charAt(i) - 'a';
+            suffixes[i].rank[1] = i < n-1 ? s.charAt(i+1) - 'a' : -1;
         }
-        return res;
+        // Sort the suffixes using the comparison function defined in the Suffix class.
+        Arrays.sort(suffixes);
+        int[] ind = new int[n]; // This array is needed to get the index in suffixes[] 
+                                // from original index.  This mapping is needed to get  next suffix.
+        // At his point, all suffixes are sorted according to first 
+        // 2 characters.  Let us sort suffixes according to first 4 
+        // characters, then first 8 and so on 
+        for (int k = 4; k < 2*n; k*=2)
+        {
+            // Assigning rank and index values to first suffix
+            int rank = 0;
+            int prev_rank = suffixes[0].rank[0];
+            ind[suffixes[0].index] = 0;
+            // Assigning rank to suffixes
+            for (int i = 1; i < n; i++)
+            {
+                // If first rank and next ranks are same as that of previous 
+                // suffix in array, assign the same new rank to this suffix 
+                if (suffixes[i].rank[0] == prev_rank 
+                    && suffixes[i].rank[1] == suffixes[i-1].rank[1])
+                {
+                    prev_rank = suffixes[i].rank[0];
+                    suffixes[i].rank[0] = rank;
+                }
+                else // Otherwise increment rank and assign 
+                {
+                    prev_rank = suffixes[i].rank[0];
+                    suffixes[i].rank[0] = ++rank;
+                }
+                ind[suffixes[i].index] = i;
+            }
+            // Assign next rank to every suffix
+            for (int i = 0; i < n; i++) { 
+				int nextindex = suffixes[i].index + k/2; 
+				suffixes[i].rank[1] = (nextindex < n)? 
+									suffixes[ind[nextindex]].rank[0]: -1; 
+			} 
+            // Sort the suffixes according to first k characters
+            Arrays.sort(suffixes);
+        }
+        // Store indexes of all sorted suffixes in the suffix array
+        int[] ret = new int[n];
+        for (int i = 0; i < n; i++) 
+            ret[i] = suffixes[i].index;
+        return ret;
     }
+    int[] kasai(String s, int[] suffixArr) { 
+		int n = suffixArr.length; 
+	
+		// To store LCP array 
+		int[] lcp = new int[n]; 
+        // An auxiliary array to store inverse of suffix array 
+        // elements. For example if suffixArr[0] is 5, the 
+        // invSuff[5] would store 0.  This is used to get next 
+        // suffix string from suffix array. 
+		int[] invSuff = new int[n]; 
+	
+        // Fill values in invSuff[]
+		for (int i=0; i < n; i++) 
+			invSuff[suffixArr[i]] = i; 
+		// Initialize length of previous LCP
+		int k = 0;
+        // Process all suffixes one by one starting from 
+        // first suffix in s 
+		for (int i=0; i<n; i++) { 
+            /* If the current suffix is at n-1, then we don’t 
+            have next substring to consider. So lcp is not 
+            defined for this substring, we put zero. */
+			if (invSuff[i] == n-1) { 
+				k = 0; 
+				continue; 
+			} 
+            /* j contains index of the next substring to 
+            be considered  to compare with the present 
+            substring, i.e., next string in suffix array */
+			int j = suffixArr[invSuff[i]+1];
+            // Directly start matching from k'th index as 
+            // at-least k-1 characters will match 
+			while (i+k < n && j+k < n && s.charAt(i+k) ==  s.charAt(j+k)) 
+				k++; 
+	
+			lcp[invSuff[i]] = k;// lcp for the present suffix. 
+  
+            // Deleting the starting character from the string. 
+			if (k>0) 
+				k--; 
+		} 
+		return lcp; 
+	} 
     
-	public static void main(final String[] args) {
-		Solution obj = new Solution();
-		int[][] points = {{68,97},{34,-84},{60,100},{2,31},{-27,-38},{-73,-74},{-55,-39},{62,91},{62,92},{-57,-67}};
-		int[][] closest = obj.kClosest(points,  5);
-		obj.print(closest, 5);
-	}
+    public String longestDupSubstring(String S) {
+        int[] suffixArr = buildSuffixArray(S, S.length()); 
+        int n = suffixArr.length;
+        int[] lcp = kasai(S, suffixArr); 
+
+        int ans=0;
+        int start=0;
+
+        for(int i = 0; i < n; i++){
+            if (lcp[i] > ans){
+                ans = lcp[i];
+                start = suffixArr[i];
+            }     
+        }
+
+        if (ans == 0)return "";
+        return S.substring(start, start + ans);
+    }
 }
