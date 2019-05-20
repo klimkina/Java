@@ -1,51 +1,99 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 /*
-We have a collection of rocks, each rock has a positive integer weight.
+Given two words (beginWord and endWord), and a dictionary's word list, find the length of shortest transformation sequence from beginWord to endWord, such that:
 
-Each turn, we choose any two rocks and smash them together.  Suppose the stones have weights x and y with x <= y.  The result of this smash is:
-
- * If x == y, both stones are totally destroyed;
- * If x != y, the stone of weight x is totally destroyed, and the stone of weight y has new weight y-x.
-At the end, there is at most 1 stone left.  Return the smallest possible weight of this stone (the weight is 0 if there are no stones left.)
- */
+Only one letter can be changed at a time.
+Each transformed word must exist in the word list. Note that beginWord is not a transformed word.
+*/
 class Solution {
-	public int lastStoneWeightII(int[] stones) {
-        return last(stones, stones.length);
-    }
-    private int last(int[] arr, int last)
+	class Trie
     {
-        if (last == 0)
-            return 0;
-        if (last == 1)
-            return arr[0];
-        if (last == 2)
-            return Math.abs(arr[0] - arr[1]);
-        int res = Integer.MAX_VALUE;
-        for (int i = 0; i < last-1; i++)
+        Trie[] kids = new Trie[26];
+    }
+    private Trie root = new Trie();
+    private void add(String s)
+    {
+        Trie node = root;
+        char[] charr = s.toCharArray();
+        for (int i = 0; i < charr.length; i++)
         {
-            //print(arr, last);
-            int t = arr[i];
-            if (arr[i] == arr[last-1])
+            if (node.kids[charr[i] - 'a'] == null)
+                node.kids[charr[i] - 'a'] = new Trie();
+            node = node.kids[charr[i] - 'a'];
+        }
+    }
+    private boolean find(String s)
+    {
+        Trie node = root;
+        char[] charr = s.toCharArray();
+        for (int i = 0; i < charr.length; i++)
+        {
+            if (node.kids[charr[i] - 'a'] == null)
+                return false;
+            node = node.kids[charr[i] - 'a'];
+        }
+        return true;
+    }
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        if (beginWord == null || endWord == null || !wordList.contains(endWord))
+            return 0;
+        if (beginWord.equals(endWord))
+            return 0;
+        for(String s: wordList)
+            add(s);
+        HashSet<String> visited = new HashSet<>();
+        HashSet<String> q = new HashSet<>();
+        q.add(beginWord);
+        HashSet<String> q2 = new HashSet<>();
+        q2.add(endWord);
+        visited.add(beginWord);
+        visited.add(endWord);
+        int steps = 1;
+        while (!q.isEmpty()&&!q2.isEmpty())
+        {
+            HashSet<String> qu = new HashSet<>();
+            for (String w : q)
             {
-                arr[i] = arr[last-2];
-                res = Math.min(res, last(arr, last-2));
+                char[] word = w.toCharArray();               
+                
+                for (int l = 0; l < word.length; l++)
+                {
+                    char old = word[l];
+                    for (char ch = 'a'; ch <= 'z'; ch++)
+                    {
+                        word[l] = ch;
+                        String t = String.valueOf(word);
+                        if (q2.contains(t))
+                            return steps +1;
+                        if (!visited.contains(t) && find(t))
+                        {
+                            qu.add(t);
+                            visited.add(t);
+                        }
+                    }
+                    word[l] = old;
+                }
+            }
+            steps++;  
+            if (qu.size() > q2.size())
+            {
+                q = q2;
+                q2 = qu;
             }
             else
-            {
-                arr[i] = Math.abs(arr[i] - arr[last-1]);
-                res = Math.min(res, last(arr, last-1));
-            }
-            arr[i] = t;
-            if (res < 2)
-                return res;
+                q = qu;
         }
-        return res;
-    }    
-
+        return 0;
+    }
 	public static void main(String[] args) {   	
-    	
+
+		String begin = "hit";
+		String end = "cog";
+		String[] dict = {"hot","dot","dog","lot","log","cog"};
+		int res = ladderLength(begin, end, dict);
 	}
 }
