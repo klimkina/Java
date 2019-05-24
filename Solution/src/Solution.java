@@ -17,7 +17,7 @@ class Solution {
         char[] parr = p.toCharArray();
         matches[0][0] = true;
         for (int i = 0; i < m; i++)
-            if (parr[i] == '*' && matches[0][i-1])
+            if (parr[i] == '*' && i > 0 && matches[0][i-1])
                 matches[0][i+1] = true;
         
         for (int i = 0; i < n; i++ )
@@ -27,10 +27,10 @@ class Solution {
                     matches[i+1][j+1] = matches[i][j];
                 else if (parr[j] == '*')
                 {
-                    if (parr[j-1] != charr[i] && parr[j-1] != '.') //empty
+                    if (j > 0 && parr[j-1] != charr[i] && parr[j-1] != '.') //empty
                         matches[i+1][j+1] = matches[i+1][j-1];
                     else
-                        matches[i+1][j+1] = matches[i][j+1] || matches[i+1][j] || matches[i+1][j-1];
+                        matches[i+1][j+1] = matches[i][j+1] || matches[i+1][j] || (j > 0 && matches[i+1][j-1]);
                 }
                 else
                     matches[i+1][j+1] = false;
@@ -39,6 +39,6 @@ class Solution {
     }
 	public static void main(String[] args) {   	
 		Solution obj = new Solution();
-		System.out.println(obj.isMatch("aaa", "aaaa"));
+		System.out.println(obj.isMatch("aaa", "*aaa"));
 	}
 }
