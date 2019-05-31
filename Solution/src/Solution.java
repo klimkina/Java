@@ -7,78 +7,44 @@ import java.util.Set;
 
 
 class Solution {
-	public List<String> removeComments(String[] source) {
-		 List<String> res = new ArrayList<>();
-	        if (source == null || source.length == 0)
-	            return res;
-	        boolean block = false;
-	        int i = 0;
-	        String str = source[i];
-	        String prev = "";
-	        while (i < source.length-1 || !str.isEmpty())
-	        {
-	            if (block) // look for closing
-	            {
-	                int start = str.indexOf("*/");
-	                if (start >= 0)
-	                {
-	                    str = prev + str.substring(start+2, str.length());
-	                    block = false;
-	                    prev = "";
-	                }
-	                else
-	                    str = source[++i];
-	            }
-	            else // look for // or /*
-	            {
-	                int start1 = str.indexOf("//");
-	                int start2 = str.indexOf("/*");
-	                if (start1 >= 0 && (start1 < start2 || start2 < 0))
-	                {
-	                    str = str.substring(0, start1);
-	                    if (!str.isEmpty())
-	                        res.add(str);
-	                    if (i < source.length-1)
-	                        str = source[++i];
-	                    else
-	                        str = "";
-	                }
-	                else if (start1 < 0 && start2 < 0)
-	                {
-	                    if (!str.isEmpty())
-	                        res.add(str);
-	                    if (i < source.length-1)
-	                        str = source[++i];
-	                    else
-	                        str = "";
-	                }
-	                else
-	                {
-	                    int end = str.indexOf("*/", start2 + 2);
-	                    if (end >= 0)
-	                        str = str.substring(0, start2) + str.substring(end +2, str.length());
-	                    else
-	                    {
-	                        prev = str.substring(0, start2);
-	                        //if (!str.isEmpty())
-	                        //    res.add(str);
-	                        if (i < source.length-1)
-	                            str = source[++i];
-	                        else
-	                            str = "";
-	                        block = true;
-	                    }
-	                }
-	            }
-	        }
-	        return res;
+	public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        if (nums1 == null || nums2 == null)
+            throw new IllegalArgumentException("The arrays are empty.");
+        if (nums1.length > nums2.length)
+            return findMedianSortedArrays(nums2, nums1);
+        int m = nums1.length;
+        int n = nums2.length;
+        int lo = 0;
+        int hi = m;
+        int count = (m + n + 1)/2;
+        int mid1 = 0;
+        int mid2 = 0;
+        while (lo <= hi)
+        {
+            mid1 = lo + (hi-lo)/2;
+            mid2 = count - mid1;
+            int max1 = mid1 == 0 ? Integer.MIN_VALUE : nums1[mid1-1];
+            int max2 = mid2 == 0 ? Integer.MIN_VALUE : nums2[mid2-1];
+            int min1 = mid1 == m ? Integer.MAX_VALUE : nums1[mid1];
+            int min2 = mid2 == n ? Integer.MAX_VALUE : nums2[mid2];
+            if (max1 > min2)
+                hi = mid1-1;
+            else if (max2 > min1)
+                lo = mid1+1;
+            else
+            {
+                int res = Math.max(max1, max2);
+                if ((m + n) % 2 > 0)
+                    return res;
+                return  (double) (res + Math.min(min1, min2))/2;
+            }
+        }
+        throw new IllegalArgumentException();
     }
 	public static void main(String[] args) {   	
 		Solution obj = new Solution();
-		String[] source = {"/*Test program */", "int main()", "{ ", "  // variable declaration ", "int a, b, c;", "/* This is a test", "   multiline  ", "   comment for ", "   testing */", "a = b + c;", "}"};
-		List<String> res = obj.removeComments(source);
-		for (String s : res)
-			System.out.println(s);
-		
+		int[] nums1 = {1,3};
+		int[] nums2 = {2};
+		System.out.println(obj.findMedianSortedArrays(nums1, nums2));
 	}
 }
