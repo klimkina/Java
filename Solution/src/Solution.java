@@ -7,36 +7,54 @@ import java.util.Set;
 
 
 class Solution {
-	public int numSubmatrixSumTarget(int[][] matrix, int target) {
-        if (matrix == null || matrix.length == 0)
+	public int minAreaRect(int[][] points) {
+        if (points == null || points.length == 0)
             return 0;
-        
-        int n = matrix.length, m = matrix[0].length;
-        int[][] cum = new int[n+1][m+1];
-        for(int i = 0;i < n;i++){
-            for(int j = 0;j < m;j++){
-                cum[i+1][j+1] = cum[i+1][j] + cum[i][j+1] - cum[i][j] + matrix[i][j];
-            }
+        Arrays.sort(points, (a,b)-> a[0] == b[0] ? a[1]-b[1] :a[0]-b[0]);
+        HashMap<Integer, Set<Integer>> mapY = new HashMap<>();
+        for (int i = 0; i < points.length; i++)
+        {
+            if (!mapY.containsKey(points[i][1]))
+                mapY.put(points[i][1], new HashSet<>());
+            mapY.get(points[i][1]).add(points[i][0]);
         }
-
-        int ans = 0;
-        for(int i = 0;i < n;i++){
-            for(int j = i;j < n;j++){
-                Map<Integer, Integer> map = new HashMap<>();
-                for(int k = 0;k <= m;k++){
-                    int v = cum[j+1][k] - cum[i][k];
-                    if(map.containsKey(v - target)){
-                        ans += map.get(v-target);
+        int max = Integer.MAX_VALUE;
+        int lo = 0;
+        int hi = points.length-1;
+        while(lo < hi)
+        {
+            int llX = points[lo][0];
+            int llY = points[lo][1];
+            if (mapY.get(llY).size() > 1)            
+            {
+                int i = lo+1;
+                while(i < points.length)
+                    if (points[i][0] == llX)
+                        i++;
+                    else
+                        break;
+                i--;
+                if (i > lo)
+                {
+                    for (int k = i; k > lo; k--)
+                    {
+                        Set<Integer> upset = mapY.get(points[k][1]);
+                        Set<Integer> loset = mapY.get(llY);
+                        loset.retainAll(upset);
+                        for (int l : loset)
+                    		if (l > llX && points[k][1] > llY)
+                    		    max = Math.min(max, (l-llX)*(points[k][1] - llY));
                     }
-                    map.put(v, map.getOrDefault(v, 0)+1);
-                }
+                }                
             }
+            lo++;
         }
-        return ans;
-    }
+        return max == Integer.MAX_VALUE ? 0 : max;
+	}
+    
 	public static void main(String[] args) {   	
 		Solution obj = new Solution();
-		int[][] nums1 = {{0,1,0},{1,1,1},{0,1,0}};
-		System.out.println(obj.numSubmatrixSumTarget(nums1, 0));
+		int[][] nums1 = {{1,2},{3,2},{1,3},{3,3},{3,0},{1,4},{4,2},{4,0}};
+		System.out.println(obj.minAreaRect(nums1));
 	}
 }

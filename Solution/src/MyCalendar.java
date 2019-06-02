@@ -2,87 +2,39 @@ import java.util.HashMap;
 import java.util.TreeMap;
 
 public class MyCalendar {
-	TreeMap<Integer, Integer> myCal;
-	TreeMap<Integer, Integer> myCal2;
-	public MyCalendar() {
-		myCal = new TreeMap<>(); 
-		myCal2 = new TreeMap<>();
+	TreeMap<Integer, Integer> cal1 = new TreeMap<>();
+    TreeMap<Integer, Integer> cal2 = new TreeMap<>();
+    public MyCalendar() {
+        
     }
     
     public boolean book(int start, int end) {
-    	Integer prev_start = myCal.floorKey(start);
-    	Integer prev_end = 0;
-    	if(prev_start != null)
-    		prev_end = myCal.get(prev_start);
-    	Integer next_start = myCal.higherKey(start);
-    	if((prev_start != null && prev_end != null && prev_end > start) || (next_start != null && next_start < end)) {
-    		if (prev_start != null && prev_end != null && prev_end > start)//need to add start to prev_end
-    			if(!checkBook2(start, Math.min(end, prev_end)))
-    				return false;
-    		if((next_start != null && next_start < end)) //need to add next_start to end
-    			if(!checkBook2(Math.max(start, next_start), end))
-    				return false;
-    		if (prev_start != null && prev_end != null && prev_end > start) {//need to add start to prev_end
-    			book2(start, Math.min(end, prev_end));
-    			if(end > prev_end) {
-    				myCal.put(prev_start, end);
-    			}
-    		}
-    		if((next_start != null && next_start < end)) {//need to add next_start to end
-    			book2(Math.max(start, next_start), end);
-    			if(start < next_start) {
-    				Integer next_end = myCal.get(next_start);
-        			myCal.remove(next_start);
-        			myCal.put(start, next_end);
-    			}
-    		}
-    		if((prev_start != null && prev_end != null && prev_end > start) && (next_start != null && next_start < end)) {
-    			//prev_end to next_start
-    			Integer next_end = myCal.get(next_start);
-    			myCal.remove(next_start);
-    			myCal.put(prev_start, next_end);
-    		}
-    		return true;
-    	}
-    	if(prev_start != null && prev_end != null && prev_end == start)
-    		myCal.put(prev_start, end);
-    	else if (next_start != null && next_start == end) {
-    		Integer next_end = myCal.get(next_start);
-    		myCal.remove(next_start);
-    		myCal.put(start, next_end);
-    	}
-    	else
-    		myCal.put(start,  end);
+        if (intersect(cal2, start, end))
+            return false;
+        add(cal1, start, end);
         return true;
     }
-    public boolean checkBook2(int start, int end) {
-    	Integer prev_start = myCal2.floorKey(start);
-    	Integer prev_end = 0;
-    	if(prev_start != null)
-    		prev_end = myCal2.get(prev_start);
-    	Integer next_start = myCal2.higherKey(start);
-    	if((prev_start != null && prev_end != null && prev_end > start) || (next_start != null && next_start < end))
-    		return false;
-        return true;
+    private boolean intersect(TreeMap<Integer, Integer> cal, int start, int end)
+    {
+        Integer u = cal.lowerKey(end);
+        if (u != null && (cal.get(u) > start))
+            return true;
+        return false;
     }
-    public boolean book2(int start, int end) {
-    	Integer prev_start = myCal2.floorKey(start);
-    	Integer prev_end = 0;
-    	if(prev_start != null)
-    		prev_end = myCal2.get(prev_start);
-    	Integer next_start = myCal2.higherKey(start);
-    	if((prev_start != null && prev_end != null && prev_end > start) || (next_start != null && next_start < end))
-    		return false;
-    	if(prev_start != null && prev_end != null && prev_end == start)
-    		myCal2.put(prev_start, end);
-    	else if (next_start != null && next_start == end) {
-    		Integer next_end = myCal2.get(next_start);
-    		myCal2.remove(next_start);
-    		myCal2.put(start, next_end);
-    	}
-    	else
-    		myCal2.put(start,  end);
-        return true;
+    private void add(TreeMap<Integer, Integer> cal, int start, int end)
+    {
+        Integer u = cal.lowerKey(end);
+        while(u != null && cal.get(u) > start)
+        {
+            cal2.put(Math.max(start, u), Math.min(end,cal.get(u)));
+            cal1.put(u, Math.max(end,cal.get(u)));
+            end = u;
+            if (end > start)
+                u = cal.lowerKey(end);
+            else
+                return;
+        }
+        cal1.put(start, end);        
     }
 
 	public static void main(String[] args) {
