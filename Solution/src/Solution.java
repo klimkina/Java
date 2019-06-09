@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,57 +8,58 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.Stack;
+import java.util.TreeMap;
 
 
 class Solution {
-	public static class TreeNode {
-		      int val;
-		      TreeNode left;
-		      TreeNode right;
-		      TreeNode(int x) { val = x; }
-		 }
-	public void flatten(TreeNode root) {
-        TreeNode curr = root;
-        TreeNode pre;
-        while (curr != null)
+	public String smallestSubsequence(String text) {
+		TreeMap<Character, Integer> map = new TreeMap<>();
+        TreeMap<Integer, Character> reverse = new TreeMap<>();
+        char[] charr = text.toCharArray();
+        for (int i = 0; i < charr.length; i++)
+            map.put(charr[i], i);
+        for (char ch: map.keySet())
+            reverse.put(map.get(ch), ch);
+        StringBuilder sb = new StringBuilder();
+        int left = 0;
+        while(!map.isEmpty())
         {
-            if (curr.left == null)
-                curr = curr.right;
+            int right = reverse.firstEntry().getKey();
+            char ch = reverse.get(right); 
+            if (!map.containsKey(ch)) // already used this
+                reverse.remove(right);
             else
             {
-                pre = curr.left;
-                
-                while (pre.right != null && pre.right != curr)
-                    pre = pre.right;
-                if (pre.right == null)
+                char min = ch; // if we can find smaller letter before
+                int min_pos = right; //min pos of this letter
+                int i = left;
+                left = right + 1;
+                for (; i < right; i++)
                 {
-                    pre.right = curr;                
-                    curr = curr.left;
+                    char c = text.charAt(i);
+                    if (map.containsKey(c) && c < min)
+                    {
+                        min = c;
+                        left = i + 1;
+                    }
+                    else if (c == ch && i < min_pos)
+                        min_pos = i;
                 }
+                if (min < ch) //found smaller letter
+                	ch = min;
                 else
-                {
-                    pre.right = curr.right;
-                    curr.right = curr.left;
-                    curr.left = null;
-                    curr = pre.right;
-                }
+                	left = min_pos+1; //found smaller pos
+                if (reverse.containsKey(left-1))
+                    reverse.remove(left-1);
+                map.remove(ch);
+                sb.append(ch);
             }
         }
-	}
+        return sb.toString();
+    }
     
 	public static void main(String[] args) {   	
 		Solution obj = new Solution();
-		TreeNode root = new TreeNode(1);
-		TreeNode left1 = new TreeNode(2);
-		TreeNode right1 = new TreeNode(5);
-		TreeNode left21 = new TreeNode(3);
-		TreeNode right21 = new TreeNode(4);
-		TreeNode right22 = new TreeNode(6);
-		root.right = left1;
-		//root.right = right1;
-		//right1.right = right22;
-		left1.left = left21;
-		//left1.right = right21;
-		obj.flatten(root);
+		System.out.println(obj.smallestSubsequence("bdfecedcbfcfeaaffdbaeeabadbbbddddcafdfeeeebfcdabcfaadecddccdefcabedbebbdcbdfefeffcbbeaefaeefeeceadea"));
 	}
 }
