@@ -12,50 +12,56 @@ import java.util.TreeMap;
 
 
 class Solution {
-	public int numTilePossibilities(String tiles) {
-        char[] charr = tiles.toCharArray();
-        Arrays.sort(charr);
-        HashSet<String> used = new HashSet<>(); // strings with already calculated permutations
-        return calcPerm(String.valueOf(charr), used);
-    }
-    private int calcPerm(String s, HashSet<String> used)
-    {
-        if (s.length() < 1 || used.contains(s))
-            return 0; 
-        used.add(s);
-        if (s.length() == 1)
-            return 1;
-        int res = perms(s);
-        for (int i = 0; i < s.length(); i++)
-            if(i == 0 || s.charAt(i) != s.charAt(i-1))//all original substrings of s
-                res += calcPerm(s.substring(0, i) + s.substring(i +1, s.length()), used);
-        return res;
-    }
-    private int perms(String s) //number of permutations of a string n!/m1!m2!...mk!
-    {
-        int res = fac(s.length());
-        int len = 1;
-        for (int i = 1; i < s.length(); i++)
-            if (s.charAt(i) == s.charAt(i-1))
-                len++;
-            else
-            {
-                res /= fac(len); // divide for repeated characters
-                len = 1;
-            }
-        res /= fac(len);
-        return res;
-    }
-    private int fac(int n)
-    {
-        int res = 1;
-        for (int i = 2; i <=n; i++)
-            res *=i;
-        return res;
+	public static class ListNode {
+		      int val;
+		      ListNode next;
+		      ListNode(int x) { val = x; }
+		 }
+	public ListNode reverseKGroup(ListNode head, int k) {
+	        ListNode dummy = new ListNode(0);
+	        dummy.next = head;
+	        ListNode prev = dummy;
+	        ListNode node = head;
+	        while(node != null && node.next != null)
+	        {
+	            int left = k;
+	            ListNode start = node;
+	            ListNode prev_start = prev;
+	            ListNode t = node;
+	            int i = 0;
+	            for (; i < k; i++)
+	                if (t == null)
+	                    break;
+	                else
+	                    t = t.next;
+	            if (i < k)
+	                break;
+	            while(node != null && left > 0)
+	            {
+	                ListNode next = node.next;
+	                node.next = prev;
+	                prev = node;
+	                node = next;
+	                left--;                
+	            }
+	            prev_start.next = prev;
+	            prev = start;
+	            start.next = node;
+	        }
+	        return dummy.next;
     }
     
 	public static void main(String[] args) {   	
 		Solution obj = new Solution();
-		System.out.println(obj.smallestSubsequence("bdfecedcbfcfeaaffdbaeeabadbbbddddcafdfeeeebfcdabcfaadecddccdefcabedbebbdcbdfefeffcbbeaefaeefeeceadea"));
+		ListNode head = new ListNode(1);
+		ListNode n1 = new ListNode(2);
+		ListNode n2 = new ListNode(3);
+		ListNode n3 = new ListNode(4);
+		ListNode n4 = new ListNode(5);
+		head.next = n1;
+		n1.next = n2;
+		n2.next = n3;
+		n3.next = n4;
+		obj.reverseKGroup(head, 3);
 	}
 }
