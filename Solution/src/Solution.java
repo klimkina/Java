@@ -12,56 +12,116 @@ import java.util.TreeMap;
 
 
 class Solution {
-	public static class ListNode {
-		      int val;
-		      ListNode next;
-		      ListNode(int x) { val = x; }
-		 }
-	public ListNode reverseKGroup(ListNode head, int k) {
-	        ListNode dummy = new ListNode(0);
-	        dummy.next = head;
-	        ListNode prev = dummy;
-	        ListNode node = head;
-	        while(node != null && node.next != null)
-	        {
-	            int left = k;
-	            ListNode start = node;
-	            ListNode prev_start = prev;
-	            ListNode t = node;
-	            int i = 0;
-	            for (; i < k; i++)
-	                if (t == null)
-	                    break;
-	                else
-	                    t = t.next;
-	            if (i < k)
-	                break;
-	            while(node != null && left > 0)
+	public int[][] candyCrush(int[][] board) {
+        while(crush(board))
+            compress(board);
+        return board;
+    }
+    private boolean crush(int[][] board) {
+        int m = board.length;
+        int n = board[0].length;
+        int[][] next = new int[m][n];
+        boolean res = false;
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+                next[i][j] = board[i][j];
+        for(int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+            	if (board[i][j] != 0)
 	            {
-	                ListNode next = node.next;
-	                node.next = prev;
-	                prev = node;
-	                node = next;
-	                left--;                
+	                if (checkHor(board, i, j))
+	                {
+	                    res = true;
+	                    next[i][j] = 0;
+	                    int nx = j-1;
+	                    while (nx >= 0)
+	                        if (board[i][nx] == board[i][j])
+	                            next[i][nx--] = 0;
+	                        else
+	                            break;
+	                    nx = j+1;
+	                    while (nx < board[0].length)
+	                        if (board[i][nx] == board[i][j])
+	                            next[i][nx++] = 0;
+	                        else
+	                            break;
+	                }
+	                if (checkVert(board, i, j))
+	                {
+	                    res = true;
+	                    int nx = i-1;
+	                    while (nx >= 0)
+	                        if (board[nx][j] == board[i][j])
+	                            next[nx--][j] = 0;
+	                        else
+	                            break;
+	                    nx = i+1;
+	                    while (nx < board.length)
+	                        if (board[nx][j] == board[i][j])
+	                            next[nx++][j] = 0;
+	                        else
+	                            break;
+	                }
 	            }
-	            prev_start.next = prev;
-	            prev = start;
-	            start.next = node;
-	        }
-	        return dummy.next;
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+                board[i][j] = next[i][j];
+        return res;
+    }
+    private boolean checkHor(int[][] board, int row, int col)
+    {
+        int count = 1;
+        int next = col-1;
+        while (next >= 0)
+            if (board[row][next--] == board[row][col])
+                count++;
+            else
+                break;
+        next = col+1;
+        while (next < board[0].length)
+            if (board[row][next++] == board[row][col])
+                count++;
+            else
+                break;
+        return count >= 3;
+    }
+    private boolean checkVert(int[][] board, int row, int col)
+    {
+        int count = 1;
+        int next = row-1;
+        while (next >= 0)
+            if (board[next--][col] == board[row][col])
+                count++;
+            else
+                break;
+        next = row+1;
+        while (next < board.length)
+            if (board[next++][col] == board[row][col])
+                count++;
+            else
+                break;
+        return count >= 3;
+    }
+    private void compress(int[][] board) {
+        int m = board.length;
+        int n = board[0].length;
+        for(int i = 0; i < n; i++)
+        {
+            int low = m-1;
+            int curr = m-1;
+            while(curr >= 0)
+                if (board[curr][i] != 0)
+                    board[low--][i] = board[curr--][i];
+                else
+                    curr--;
+            while (low >= 0)
+                board[low--][i] = 0;
+        }
     }
     
 	public static void main(String[] args) {   	
 		Solution obj = new Solution();
-		ListNode head = new ListNode(1);
-		ListNode n1 = new ListNode(2);
-		ListNode n2 = new ListNode(3);
-		ListNode n3 = new ListNode(4);
-		ListNode n4 = new ListNode(5);
-		head.next = n1;
-		n1.next = n2;
-		n2.next = n3;
-		n3.next = n4;
-		obj.reverseKGroup(head, 3);
+		int[][] board = {{110,5,112,113,114},{210,211,5,213,214},{310,311,3,313,314},{410,411,412,5,414},{5,1,512,3,3},{610,4,1,613,614},{710,1,2,713,714},{810,1,2,1,1},{1,1,2,2,2},{4,1,4,4,1014}};
+		obj.candyCrush(board);
 	}
 }
