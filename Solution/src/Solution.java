@@ -12,69 +12,35 @@ import java.util.TreeMap;
 
 
 class Solution {
-	class Node {
-	    public int val;
-	    public Node prev;
-	    public Node next;
-	    public Node child;
-
-	    public Node() {}
-
-	    public Node(int _val,Node _prev,Node _next,Node _child) {
-	        val = _val;
-	        prev = _prev;
-	        next = _next;
-	        child = _child;
-	    }
-	};
-	public Node flatten(Node head) {
-        Node node = head;
-        node = flat(node);
-        //printNext(head);
-        //printPrev(node);
-        return head;
+	public List<List<Integer>> subsets(int[] nums) {
+        return subsets(nums, 0);
     }
-    public Node flat(Node head) {
-        while (head != null)
-        {
-            if (head.child != null)
-            {
-                Node next = head.next;
-                head.next = head.child;
-                head.child.prev = head;
-                head.child = null;
-                head = flat(head.next);
-                head.next = next;
-                if (next != null)
-                    next.prev = head;
-            }
-            if (head.next == null)
-                return head;
-            else
-                head = head.next;
-        }
-        return head;
-    }
-    private void printNext(Node head)
+    private List<List<Integer>> subsets(int[] nums, int start)
     {
-        while (head != null)
+    	List<List<Integer>> res = new ArrayList<>();
+        if (start == nums.length)
+            res.add(new ArrayList<>());
+        else
         {
-            System.out.print(head.val + "->");
-            head = head.next;
+	        int i = nums[start];
+	        List<List<Integer>> sub = subsets(nums, start+1);
+	        for (List<Integer> l : sub)
+	        {
+	        	List<Integer> t = new ArrayList<>();
+	        	t.addAll(l);
+	            l.add(i);
+	            res.add(t);
+	            res.add(l);
+	        }
         }
-        System.out.println();
-    }
-    private void printPrev(Node head)
-    {
-        while (head != null)
-        {
-            System.out.print(head.val + "->");
-            head = head.prev;
-        }
+        
+        return res;
     }
     
 	public static void main(String[] args) {   	
 		Solution obj = new Solution();
+		int[] nums = {1,2,3};
+		obj.subsets(nums);
 		//System.out.println(obj.frequencySort("tree"));
 	}
 }
