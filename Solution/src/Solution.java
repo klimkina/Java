@@ -4,52 +4,46 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 
 class Solution {
-	public TreeNode deleteNode(TreeNode root, int key) {
-        if (root != null)
-            if (root.val == key)
-            {
-                if (root.left == null)
-                    root = root.right;
-                else if (root.right == null)
-                    root = root.left;
-                else
-                {
-                    TreeNode curr = root.left;
-                    if (curr.right == null)
-                        root.left = curr.left;
-                    else
-                    {
-                        TreeNode prev = curr;
-                        while(curr.right != null)
-                        {
-                            prev = curr;
-                            curr = curr.right;
-                        }
-                        prev.right = curr.left;
-                    }
-                    root.val = curr.val;
-                }
+	public int shortestWay(String source, String target) {
+		int m = source.length(), n = target.length();
+        Map<Character, TreeSet<Integer>> map = new HashMap<>();
+        for(int i = 0; i < m;i++) {
+            char c = source.charAt(i);
+            if(!map.containsKey(c)) map.put(c,new TreeSet<>());
+            map.get(c).add(i);
+        }
+        int curr = -1, res = 0;
+        for(int i = 0; i < n;i++) {
+            TreeSet<Integer> ts = map.get(target.charAt(i));
+            if(ts == null) return -1;
+            Integer temp = ts.higher(curr);
+            if(temp == null) {
+                res++;
+                curr = ts.first();
+            } else {
+                curr = temp;    
             }
-            else
-            {
-                root.left = deleteNode(root.left, key);
-                root.right = deleteNode(root.right, key);
-            }
-        return root;
+        }
+        return res+1;
     }
     
 	public static void main(String[] args) {   	
-		Solution obj = new Solution(new ListNode(0));
-		int[] nums = {1,2,3};
-		//System.out.println(obj.frequencySort("tree"));
+		Solution obj = new Solution();
+		String source = "xyz", target = "xzyxz";
+		System.out.println(obj.shortestWay(source, target));
+		
 	}
 }
