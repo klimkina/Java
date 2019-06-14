@@ -13,38 +13,39 @@ import java.util.TreeMap;
 
 
 class Solution {
-	public class ListNode {
-		      int val;
-		      ListNode next;
-		      ListNode(int x) { val = x; }
-		 }
-	    /** @param head The linked list's head.
-	        Note that the head is guaranteed to be not null, so it contains at least one node. */
-	    ListNode head;
-	    Random rand = new Random(); 
-	    public Solution(ListNode head) {
-	        this.head = head;
-	    }
-	    
-	    /** Returns a random node's value. */
-	    public int getRandom() {
-	        ListNode node = head;
-	        // Initialize result as first node 
-	        int result = node.val;   
-	        for (int n = 1; node != null; n++) { 
-	  
-	            // change result with probability 1/n 
-	            if (rand.nextInt(n) == 0) { 
-	                result = node.val; 
-	            } 
-	  
-	            // Move to next node 
-	            node = node.next; 
-	        } 
-	        return result;
-	    }
-	}
-  
+	public TreeNode deleteNode(TreeNode root, int key) {
+        if (root != null)
+            if (root.val == key)
+            {
+                if (root.left == null)
+                    root = root.right;
+                else if (root.right == null)
+                    root = root.left;
+                else
+                {
+                    TreeNode curr = root.left;
+                    if (curr.right == null)
+                        root.left = curr.left;
+                    else
+                    {
+                        TreeNode prev = curr;
+                        while(curr.right != null)
+                        {
+                            prev = curr;
+                            curr = curr.right;
+                        }
+                        prev.right = curr.left;
+                    }
+                    root.val = curr.val;
+                }
+            }
+            else
+            {
+                root.left = deleteNode(root.left, key);
+                root.right = deleteNode(root.right, key);
+            }
+        return root;
+    }
     
 	public static void main(String[] args) {   	
 		Solution obj = new Solution(new ListNode(0));
