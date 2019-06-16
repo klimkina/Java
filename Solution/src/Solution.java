@@ -19,60 +19,34 @@ import java.util.TreeSet;
 
 class Solution {
 	public int largestValsFromLabels(int[] values, int[] labels, int num_wanted, int use_limit) {
-        Map<Integer, TreeMap<Integer, Integer>> map = new HashMap<>();
-        HashMap<Integer, Integer> prevs = new HashMap<>();
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a,b)->b[0]-a[0]);
+        HashMap<Integer, Integer> used = new HashMap<>();
         for(int i = 0; i < values.length; i++)
         {
-            TreeMap tree;
-            if (map.containsKey(labels[i]))
-            {
-                tree = map.get(labels[i]);
-                int k = 0;
-                if(tree.get(values[i]) != null)
-                    k = (int)tree.get(values[i]);
-                tree.put(values[i], k +1);
-            }
-            else
-            {
-                tree = new TreeMap<>();
-                map.put(labels[i], tree);
-                tree.put(values[i], 1);
-                prevs.put(labels[i], Integer.MAX_VALUE);
-            }
+            pq.offer(new int[]{values[i],labels[i]});
+            
         }
-        HashMap<Integer, Integer> used = new HashMap<>();
-        
         int sum = 0;
-        for (int i = 0; i < num_wanted; i++)
+        int i = 0;
+        while (i < num_wanted && !pq.isEmpty())
         {
-            int max = Integer.MIN_VALUE;
-            int max_label = -1;
-            for(int j : map.keySet())
-                if(used.getOrDefault(j,  0) < use_limit)
-                {
-                    Integer t = (Integer)map.get(j).floorKey(prevs.get(j));
-                    if (t != null && t > max)
-                    {
-                        max = t;
-                        max_label = j;
-                    }
-                }
-            if (map.get(max_label).get(max) == 1)
-                map.get(max_label).remove(max);
-            else
-            	map.get(max_label).put(max, map.get(max_label).get(max) - 1);
-            prevs.put(max_label, max);
-            sum += max;
-            used.put(max_label, used.getOrDefault(max_label, 0)+1);
+            int[] max = pq.poll();
+            if (used.getOrDefault(max[1], 0) < use_limit)
+            {
+                sum += max[0];
+                used.put(max[1], used.getOrDefault(max[1], 0) + 1);
+                i++;
+            }
         }
         return sum;
     }
     
 	public static void main(String[] args) {   	
 		Solution obj = new Solution();
+		String str1 = "abac", str2 = "cab";
 		int[] values = {0,6,7,5,7}, labels = {2,0,2,0,2};
 		int num_wanted = 3, use_limit = 4;
-		System.out.println(obj.largestValsFromLabels(values, labels, num_wanted, use_limit));
+		System.out.println(obj.shortestCommonSupersequence(str1, str2));
 		
 	}
 }
