@@ -18,27 +18,35 @@ import java.util.TreeSet;
 
 
 class Solution {
-	public int largestValsFromLabels(int[] values, int[] labels, int num_wanted, int use_limit) {
-        PriorityQueue<int[]> pq = new PriorityQueue<>((a,b)->b[0]-a[0]);
-        HashMap<Integer, Integer> used = new HashMap<>();
-        for(int i = 0; i < values.length; i++)
+	public String shortestCommonSupersequence(String str1, String str2) {
+        int m = str1.length();
+        int n = str2.length();
+        String[][] dp = new String[m+1][n+1];
+        for(int i = 0; i <= n; i++)
+            dp[0][i] = "";
+        for(int i = 0; i <= m; i++)
+            dp[i][0] = "";
+        for(int i = 0; i < m; i++)
+            for(int j = 0; j < n; j++)
+                if(str1.charAt(i) == str2.charAt(j))
+                    dp[i+1][j+1] = dp[i][j] + (str1.charAt(i));
+                else
+                    dp[i+1][j+1] = dp[i+1][j].length() > dp[i][j+1].length() ? dp[i+1][j] : dp[i][j+1];
+        StringBuilder sb = new StringBuilder();
+        int p1 = 0, p2 = 0;
+        for(char ch: dp[m][n].toCharArray())
         {
-            pq.offer(new int[]{values[i],labels[i]});
-            
+            while(p1 < str1.length() && str1.charAt(p1) != ch)
+                sb.append(str1.charAt(p1++));
+            while(p2 < str2.length() && str2.charAt(p2) != ch)
+                sb.append(str2.charAt(p2++));
+            sb.append(ch);
+            p1++;
+            p2++;
         }
-        int sum = 0;
-        int i = 0;
-        while (i < num_wanted && !pq.isEmpty())
-        {
-            int[] max = pq.poll();
-            if (used.getOrDefault(max[1], 0) < use_limit)
-            {
-                sum += max[0];
-                used.put(max[1], used.getOrDefault(max[1], 0) + 1);
-                i++;
-            }
-        }
-        return sum;
+        sb.append(str1.substring(p1));
+        sb.append(str2.substring(p2));
+        return sb.toString();
     }
     
 	public static void main(String[] args) {   	
