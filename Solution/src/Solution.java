@@ -18,43 +18,33 @@ import java.util.TreeSet;
 
 
 class Solution {
-	public String shortestCommonSupersequence(String str1, String str2) {
-        int m = str1.length();
-        int n = str2.length();
-        String[][] dp = new String[m+1][n+1];
-        for(int i = 0; i <= n; i++)
-            dp[0][i] = "";
-        for(int i = 0; i <= m; i++)
-            dp[i][0] = "";
-        for(int i = 0; i < m; i++)
-            for(int j = 0; j < n; j++)
-                if(str1.charAt(i) == str2.charAt(j))
-                    dp[i+1][j+1] = dp[i][j] + (str1.charAt(i));
-                else
-                    dp[i+1][j+1] = dp[i+1][j].length() > dp[i][j+1].length() ? dp[i+1][j] : dp[i][j+1];
-        StringBuilder sb = new StringBuilder();
-        int p1 = 0, p2 = 0;
-        for(char ch: dp[m][n].toCharArray())
+	HashMap<Integer, Integer> map = new HashMap<>();
+    public int minHeightShelves(int[][] books, int shelf_width) {
+        return minHeightShelves(books, shelf_width, 0);
+    }
+    private int minHeightShelves(int[][] books, int shelf_width, int pos) {
+        if (pos >= books.length)
+            return 0;
+        if (map.containsKey(pos))
+            return map.get(pos);
+        int currW = 0;
+        int maxH = 0;
+        int minTotalH = Integer.MAX_VALUE;
+        int i = pos;
+        while (i < books.length && currW + books[i][0] <= shelf_width)
         {
-            while(p1 < str1.length() && str1.charAt(p1) != ch)
-                sb.append(str1.charAt(p1++));
-            while(p2 < str2.length() && str2.charAt(p2) != ch)
-                sb.append(str2.charAt(p2++));
-            sb.append(ch);
-            p1++;
-            p2++;
+            currW = currW + books[i][0];
+            maxH = Math.max(maxH, books[i][1]);
+            minTotalH = Math.min(minTotalH, maxH + minHeightShelves(books, shelf_width, i+1));
+            i++;
         }
-        sb.append(str1.substring(p1));
-        sb.append(str2.substring(p2));
-        return sb.toString();
+        map.put(pos, minTotalH);
+        return minTotalH;
     }
     
 	public static void main(String[] args) {   	
 		Solution obj = new Solution();
-		String str1 = "abac", str2 = "cab";
-		int[] values = {0,6,7,5,7}, labels = {2,0,2,0,2};
-		int num_wanted = 3, use_limit = 4;
-		System.out.println(obj.shortestCommonSupersequence(str1, str2));
-		
+		int[][] books = {{9,9},{5,4},{3,1},{1,5},{7,3}};
+		System.out.println(obj.minHeightShelves(books, 10));
 	}
 }
