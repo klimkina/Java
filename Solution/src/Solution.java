@@ -18,51 +18,67 @@ import java.util.TreeSet;
 
 
 class Solution {
-	public class ListNode {
+	public static class ListNode {
 		      int val;
 		      ListNode next;
 		      ListNode(int x) { val = x; }
 		  }
-	public void reorderList(ListNode head) {
-        if (head != null)
+	public ListNode insertionSortList(ListNode head) {
+        if (head == null)
+            return null;
+        ListNode curr = head.next;
+        ListNode prev = head;
+        prev.next = null;
+        //reverse while insert
+        while (curr != null)
         {
-            ListNode slow = head;
-            ListNode fast = head;
-            //find mid
-            while (fast != null && fast.next != null)
+            //System.out.print(curr.val + " ");
+            ListNode node = curr.next;
+            ListNode next = prev;
+            ListNode t = prev;
+            boolean moved = false;
+            while (next != null && next.val > curr.val)
             {
-                slow = slow.next;
-                fast = fast.next;
-                if (fast.next != null)
-                    fast = fast.next;
+                t = next;
+                next = next.next;
+                moved = true;
             }
-            ListNode prev = null;            
-            //reverse end
-            while (slow != null)
-            {
-                ListNode node = slow.next;
-                slow.next = prev;
-                prev = slow;
-                slow = node;
-                
-            }
-            ListNode left = head;
-            ListNode right = prev;
-            while (left != null && right != null && right.next != null)
-            {
-                //System.out.println(left.val + " " + right.val);
-                ListNode node = right.next;
-                right.next = left.next;
-                left.next = right;
-                left = right.next;
-                right = node;
-            }
+            curr.next = next;
+            if (moved)
+            	t.next = curr;  
+            if (curr.val >= prev.val)
+            	prev = curr;
+            curr = node;
         }
+        //System.out.println();
+        curr = prev;
+        prev = null;
+        // reverse back
+        while (curr.next != null)
+        {
+            ListNode next = curr.next;
+            curr.next = prev;
+            //if (prev != null)
+            //    prev.next = curr;
+            prev = curr;
+            curr = next;
+            System.out.println(prev.val);
+        }
+        curr.next = prev;
+        return curr;
     }
     
 	public static void main(String[] args) {   	
 		Solution obj = new Solution();
-		int[][] books = {{9,9},{5,4},{3,1},{1,5},{7,3}};
-		//System.out.println(obj.minHeightShelves(books, 10));
+		ListNode node1 = new ListNode(1);
+		ListNode node2 = new ListNode(1);
+		ListNode node3 = new ListNode(3);
+		ListNode node4 = new ListNode(4);
+		ListNode node5 = new ListNode(0);
+		node1.next = node2;
+		node2.next = node3;
+		node3.next = node4;
+		node4.next = node5;
+		System.out.println(obj.insertionSortList(node1).val);
 	}
 }
