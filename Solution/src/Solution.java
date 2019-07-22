@@ -16,56 +16,30 @@ import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+/*
+Given an array arr of positive integers, consider all binary trees such that:
 
+Each node has either 0 or 2 children;
+The values of arr correspond to the values of each leaf in an in-order traversal of the tree.  (Recall that a node is a leaf if and only if it has 0 children.)
+The value of each non-leaf node is equal to the product of the largest leaf value in its left and right subtree respectively.
+Among all possible binary trees considered, return the smallest possible sum of the values of each non-leaf node.  It is guaranteed this sum fits into a 32-bit integer.
+ */
 class Solution {
-	public static class ListNode {
-		      int val;
-		      ListNode next;
-		      ListNode(int x) { val = x; }
-		  }
-	public ListNode insertionSortList(ListNode head) {
-        if (head == null)
-            return null;
-        ListNode curr = head.next;
-        ListNode prev = head;
-        prev.next = null;
-        //reverse while insert
-        while (curr != null)
-        {
-            //System.out.print(curr.val + " ");
-            ListNode node = curr.next;
-            ListNode next = prev;
-            ListNode t = prev;
-            boolean moved = false;
-            while (next != null && next.val > curr.val)
-            {
-                t = next;
-                next = next.next;
-                moved = true;
+	public int mctFromLeafValues(int[] A) {
+        int res = 0, n = A.length;
+        Stack<Integer> stack = new Stack<>();
+        stack.push(Integer.MAX_VALUE);
+        for (int a : A) {
+            while (stack.peek() <= a) {
+                int mid = stack.pop();
+                res += mid * Math.min(stack.peek(), a);
             }
-            curr.next = next;
-            if (moved)
-            	t.next = curr;  
-            if (curr.val >= prev.val)
-            	prev = curr;
-            curr = node;
+            stack.push(a);
         }
-        //System.out.println();
-        curr = prev;
-        prev = null;
-        // reverse back
-        while (curr.next != null)
-        {
-            ListNode next = curr.next;
-            curr.next = prev;
-            //if (prev != null)
-            //    prev.next = curr;
-            prev = curr;
-            curr = next;
-            System.out.println(prev.val);
+        while (stack.size() > 2) {
+            res += stack.pop() * stack.peek();
         }
-        curr.next = prev;
-        return curr;
+        return res;
     }
     
 	public static void main(String[] args) {   	
