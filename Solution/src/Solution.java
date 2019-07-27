@@ -18,45 +18,61 @@ import java.util.TreeSet;
 
 
 class Solution {
-	public int minimumCost(int N, int[][] conections) {
-        HashMap<Integer, HashMap<Integer, Integer>> graph = new HashMap<>();
-        for (int i = 0; i < conections.length; i++)
+	public int minimumSemesters(int N, int[][] relations) {
+        HashMap<Integer, Set<Integer>> graph = new HashMap<>();
+        HashMap<Integer, Set<Integer>> di_graph = new HashMap<>();
+        for (int[] rel : relations)
         {
-            int[] conn = conections[i];
-            if (!graph.containsKey(conn[0]))
-                graph.put(conn[0], new HashMap<>());
-            graph.get(conn[0]).put(conn[1], conn[2]);
-            if (!graph.containsKey(conn[1]))
-                graph.put(conn[1], new HashMap<>());
-            graph.get(conn[1]).put(conn[0], conn[2]);
+            if (!graph.containsKey(rel[1]))
+                graph.put(rel[1], new HashSet<>());
+            graph.get(rel[1]).add(rel[0]);
+            if (!di_graph.containsKey(rel[0]))
+                di_graph.put(rel[0], new HashSet<>());
+            di_graph.get(rel[0]).add(rel[1]);
         }
-        Set<Integer> min_cut = new HashSet<>();
-        min_cut.add(1);
-        int res = 0;
-        while (min_cut.size() < N)
+        int start = -1;
+        Queue<Integer> q = new LinkedList<>();
+        for(int i = 1; i <= N; i++)
+            if (!di_graph.containsKey(i))
+                q.offer(i);
+        if (q.isEmpty())
+            return -1;
+        int rank = 0;
+        HashSet<Integer> passed = new HashSet<>();
+        while (!q.isEmpty())
         {
-            int min_v = 0;
-            int min_w = Integer.MAX_VALUE;
-            for(int w : min_cut)
+            int sz = q.size();
+            for(int i = 0; i < sz; i++)
+                System.out.print(q.get(i) + " ");
+            System.out.println();
+            for(int i = 0; i < sz; i++)
             {
-                for(int adj : graph.get(w).keySet())
+                int next = q.poll();
+                boolean pre = true;
+                if (di_graph.containsKey(next))                    
                 {
-                    if (!min_cut.contains(adj))
-                    {
-                        if (graph.get(w).get(adj) < min_w)
+                    for(int p : di_graph.get(next))
+                        if (!passed.contains(p))
                         {
-                            min_w = graph.get(w).get(adj);
-                            min_v = adj;
+                            pre = false;
+                            break;
                         }
-                    }
+                    
                 }
+                if (pre)
+                {
+                    passed.add(next);
+                    if (graph.containsKey(next))
+                        for(int w : graph.get(next))
+                            if (!passed.contains(w))
+                                q.offer(w);
+                }
+                else
+                    q.offer(next);
             }
-            if (min_w == Integer.MAX_VALUE)
-                return -1;
-            min_cut.add(min_v);
-            res += min_w;
+            rank++;
         }
-        return res;
+        return passed.size() == N ? rank : -1;
     }
     
 	public static void main(String[] args) {   	
