@@ -16,63 +16,68 @@ import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+/*
+There are N cities numbered from 1 to N.
 
+You are given connections, where each connections[i] = [city1, city2, cost] represents the cost to connect city1 and city2 together.  (A connection is bidirectional: connecting city1 and city2 is the same as connecting city2 and city1.)
+
+Return the minimum cost so that for every pair of cities, there exists a path of connections (possibly of length 1) that connects those two cities together.  The cost is the sum of the connection costs used. If the task is impossible, return -1.
+*/
 class Solution {
-	public int minimumSemesters(int N, int[][] relations) {
-        HashMap<Integer, Set<Integer>> graph = new HashMap<>();
-        HashMap<Integer, Set<Integer>> di_graph = new HashMap<>();
-        for (int[] rel : relations)
+	public int minimumCost(int N, int[][] conections) {
+        int res = 0;
+        
+        int[] union = new int[N+1];
+        int[] size = new int[N+1];
+        for(int i = 1;  i <= N; i++)
         {
-            if (!graph.containsKey(rel[1]))
-                graph.put(rel[1], new HashSet<>());
-            graph.get(rel[1]).add(rel[0]);
-            if (!di_graph.containsKey(rel[0]))
-                di_graph.put(rel[0], new HashSet<>());
-            di_graph.get(rel[0]).add(rel[1]);
+            union[i] = i;
+            size[i] = 1;
         }
-        int start = -1;
-        Queue<Integer> q = new LinkedList<>();
-        for(int i = 1; i <= N; i++)
-            if (!di_graph.containsKey(i))
-                q.offer(i);
-        if (q.isEmpty())
-            return -1;
-        int rank = 0;
-        HashSet<Integer> passed = new HashSet<>();
-        while (!q.isEmpty())
+        int edges = 0;
+        Arrays.sort(conections, (a,b)->(a[2]-b[2]));
+        for(int[] conn : conections)
         {
-            int sz = q.size();
-            for(int i = 0; i < sz; i++)
-                System.out.print(q.get(i) + " ");
-            System.out.println();
-            for(int i = 0; i < sz; i++)
+            
+            if (add(union, size, conn[0], conn[1]))
             {
-                int next = q.poll();
-                boolean pre = true;
-                if (di_graph.containsKey(next))                    
-                {
-                    for(int p : di_graph.get(next))
-                        if (!passed.contains(p))
-                        {
-                            pre = false;
-                            break;
-                        }
-                    
-                }
-                if (pre)
-                {
-                    passed.add(next);
-                    if (graph.containsKey(next))
-                        for(int w : graph.get(next))
-                            if (!passed.contains(w))
-                                q.offer(w);
-                }
-                else
-                    q.offer(next);
+                res += conn[2];
+                edges++;
             }
-            rank++;
+            if (edges == N-1)
+                return res;
         }
-        return passed.size() == N ? rank : -1;
+        
+        return -1;
+    }
+    private int parent(int[] union, int kid)
+    {
+        while(union[kid] != kid)
+        {
+            kid = union[kid];
+            union[kid] = union[union[kid]];
+        }
+        return kid;
+    }
+    private boolean add(int[] union, int[] size, int kid1, int kid2)
+    {
+        int par1 = parent(union, kid1);
+        int par2 = parent(union, kid2);
+        if (par1 != par2)
+        {
+            if(size[par1] > size[par2])
+            {
+                size[par1] += size[par2];
+                union[par2] = par1;
+            }
+            else
+            {
+                size[par2] += size[par1];
+                union[par1] = par2;
+            }
+            return true;
+        }
+        return false;
     }
     
 	public static void main(String[] args) {   	
