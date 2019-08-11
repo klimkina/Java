@@ -16,73 +16,75 @@ import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-/*
-There are N cities numbered from 1 to N.
-
-You are given connections, where each connections[i] = [city1, city2, cost] represents the cost to connect city1 and city2 together.  (A connection is bidirectional: connecting city1 and city2 is the same as connecting city2 and city1.)
-
-Return the minimum cost so that for every pair of cities, there exists a path of connections (possibly of length 1) that connects those two cities together.  The cost is the sum of the connection costs used. If the task is impossible, return -1.
-*/
+//Given a string text, we are allowed to swap two of the characters in the string. Find the length of the longest substring with repeated characters.
 class Solution {
-	public int minimumCost(int N, int[][] conections) {
-        int res = 0;
-        
-        int[] union = new int[N+1];
-        int[] size = new int[N+1];
-        for(int i = 1;  i <= N; i++)
+	public int maxRepOpt1(String text) {
+        HashMap<Character, Integer> firsts = new HashMap<>();
+        HashMap<Character, Integer> lasts = new HashMap<>();
+        int[] counts = new int[26];
+        int n = text.length();
+        for(int i = 0; i < n; i++)
         {
-            union[i] = i;
-            size[i] = 1;
+            char ch = text.charAt(i);
+            counts[ch-'a']++;
+            lasts.put(ch, i);
+            if (!firsts.containsKey(ch))
+                firsts.put(ch, i);
         }
-        int edges = 0;
-        Arrays.sort(conections, (a,b)->(a[2]-b[2]));
-        for(int[] conn : conections)
+        int start = 0;
+        int max = 0;
+        int skipped = -1;
+        for(char ch:firsts.keySet())
         {
-            
-            if (add(union, size, conn[0], conn[1]))
+            start = firsts.get(ch);
+            skipped = -1;
+            for (int i = start+1; i < n; i++)
             {
-                res += conn[2];
-                edges++;
+                if (text.charAt(i) == ch)
+                    continue;
+                if (skipped < 0)
+                {
+                    skipped = i;
+                    if (i - start+1 > max)
+                    {
+                        if (counts[ch-'a'] > i - start)
+                            max = i -start+1;
+                        else
+                            max = i - start ;
+                    }
+                }
+                else
+                {
+
+                    if (counts[ch-'a'] >= i - start)
+                    {
+                        max = Math.max(max,i -start);
+                    }
+                    else
+                    {
+                        max = Math.max(max,i - start - 1);
+
+                    }
+                    if (text.charAt(skipped+1) == ch)
+                        start = skipped+1;
+                    else
+                        start = i;
+                    skipped = i;
+                }
             }
-            if (edges == N-1)
-                return res;
-        }
-        
-        return -1;
-    }
-    private int parent(int[] union, int kid)
-    {
-        while(union[kid] != kid)
-        {
-            kid = union[kid];
-            union[kid] = union[union[kid]];
-        }
-        return kid;
-    }
-    private boolean add(int[] union, int[] size, int kid1, int kid2)
-    {
-        int par1 = parent(union, kid1);
-        int par2 = parent(union, kid2);
-        if (par1 != par2)
-        {
-            if(size[par1] > size[par2])
+            if (text.length() - start > max)
             {
-                size[par1] += size[par2];
-                union[par2] = par1;
+                if (counts[ch-'a'] >= text.length() - start)
+                    max = text.length() -start;
+                else
+                    max = text.length() - start - 1;
             }
-            else
-            {
-                size[par2] += size[par1];
-                union[par1] = par2;
-            }
-            return true;
         }
-        return false;
+        return max;
     }
     
 	public static void main(String[] args) {   	
 		Solution obj = new Solution();
-		int[][] arr = {{}};
-		System.out.println(obj.minimumCost(5120, arr));
+		System.out.println(obj.maxRepOpt1("ababa"));
 	}
 }
