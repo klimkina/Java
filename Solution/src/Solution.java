@@ -16,75 +16,79 @@ import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-//Given a string text, we are allowed to swap two of the characters in the string. Find the length of the longest substring with repeated characters.
+// You are given a string, s, and a list of words, words, that are all of the same length. Find all starting indices of substring(s) in s that is a concatenation of each word in words exactly once and without any intervening characters.
 class Solution {
-	public int maxRepOpt1(String text) {
-        HashMap<Character, Integer> firsts = new HashMap<>();
-        HashMap<Character, Integer> lasts = new HashMap<>();
-        int[] counts = new int[26];
-        int n = text.length();
-        for(int i = 0; i < n; i++)
+	public static class Trie
+    {
+        int val = 0;
+        String str = "";
+        Trie[] kids = new Trie[26];
+    }
+    Trie root = new Trie();
+    private void add(String word)
+    {
+        Trie node = root;
+        for (int i = 0; i < word.length(); i++)
         {
-            char ch = text.charAt(i);
-            counts[ch-'a']++;
-            lasts.put(ch, i);
-            if (!firsts.containsKey(ch))
-                firsts.put(ch, i);
+            if (node.kids[word.charAt(i) - 'a'] == null)
+                node.kids[word.charAt(i) - 'a'] = new Trie();
+            node  = node.kids[word.charAt(i) - 'a'];
         }
-        int start = 0;
-        int max = 0;
-        int skipped = -1;
-        for(char ch:firsts.keySet())
+        node.val++;
+        node.str = word;
+    }
+    private Trie find(Trie node, char ch)
+    {
+        return node.kids[ch - 'a'];
+    }
+    public List<Integer> findSubstring(String s, String[] words) 
+    {
+        List<Integer> res = new ArrayList<>();
+        int n = words.length;
+        if (n == 0)
+        	return res;
+        for (int i = 0; i < n; i++)
+            add(words[i]);
+        int len = words[0].length();
+        int str_len = s.length();
+        for (int j = 0; j <= str_len - len*n; j++)
         {
-            start = firsts.get(ch);
-            skipped = -1;
-            for (int i = start+1; i < n; i++)
+            boolean found = true;
+            Trie node = root;
+            HashMap<String, Integer> map = new HashMap<>();
+            for (int i = j; i < j + len*n; i++)
             {
-                if (text.charAt(i) == ch)
-                    continue;
-                if (skipped < 0)
+                char ch = s.charAt(i);
+                node = find(node, ch);
+                if(node != null)
                 {
-                    skipped = i;
-                    if (i - start+1 > max)
+                    if(node.val > 0)
                     {
-                        if (counts[ch-'a'] > i - start)
-                            max = i -start+1;
-                        else
-                            max = i - start ;
+                        int count = map.getOrDefault(node.str, 0);
+                        if (count == node.val)
+                        {
+                            found = false;
+                    break;
+                        }
+                        map.put(node.str, count +1);
+                        node = root;
                     }
                 }
                 else
                 {
-
-                    if (counts[ch-'a'] >= i - start)
-                    {
-                        max = Math.max(max,i -start);
-                    }
-                    else
-                    {
-                        max = Math.max(max,i - start - 1);
-
-                    }
-                    if (text.charAt(skipped+1) == ch)
-                        start = skipped+1;
-                    else
-                        start = i;
-                    skipped = i;
+                    found = false;
+                    break;
                 }
             }
-            if (text.length() - start > max)
-            {
-                if (counts[ch-'a'] >= text.length() - start)
-                    max = text.length() -start;
-                else
-                    max = text.length() - start - 1;
-            }
+            if (found)
+                res.add(j);
         }
-        return max;
+        return res;
     }
     
 	public static void main(String[] args) {   	
 		Solution obj = new Solution();
-		System.out.println(obj.maxRepOpt1("ababa"));
+		String[] words = {};
+		System.out.println(obj.findSubstring("", words));
 	}
 }
