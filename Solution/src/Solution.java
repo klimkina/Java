@@ -55,7 +55,7 @@ class Solution {
         for (int i = 0; i < queries.length; i++)
         {
             Word w = new Word(queries[i]);
-            Iterator<Map.Entry<Integer, Integer>> it = freq.entrySet().iterator();
+            Iterator<Map.Entry<Integer, Integer>> it = freq.tailMap(w.freq, false).entrySet().iterator();
             while(it.hasNext())
             {
                 Map.Entry<Integer, Integer> entry = it.next();
