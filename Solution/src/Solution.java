@@ -16,79 +16,60 @@ import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-// You are given a string, s, and a list of words, words, that are all of the same length. Find all starting indices of substring(s) in s that is a concatenation of each word in words exactly once and without any intervening characters.
+// Let's define a function f(s) over a non-empty string s, which calculates the frequency of the smallest character in s. For example, if s = "dcce" then f(s) = 2 because the smallest character is "c" and its frequency is 2.
+
+// Now, given string arrays queries and words, return an integer array answer, where each answer[i] is the number of words such that f(queries[i]) < f(W), where W is a word in words.
 class Solution {
-	public static class Trie
+	class Word implements Comparable<Word>
     {
-        int val = 0;
-        String str = "";
-        Trie[] kids = new Trie[26];
-    }
-    Trie root = new Trie();
-    private void add(String word)
-    {
-        Trie node = root;
-        for (int i = 0; i < word.length(); i++)
+        int freq = 0;
+        Word(String s)
         {
-            if (node.kids[word.charAt(i) - 'a'] == null)
-                node.kids[word.charAt(i) - 'a'] = new Trie();
-            node  = node.kids[word.charAt(i) - 'a'];
+            int[] count = new int[26];
+            for (char ch: s.toCharArray())
+                count[ch - 'a']++;
+            for (int i = 0; i < 26; i++)
+                if (count[i] > 0)
+                {
+                    freq = count[i];
+                    break;
+                }
         }
-        node.val++;
-        node.str = word;
+        @Override
+        public int compareTo(Word other){
+            // compareTo should return < 0 if this is supposed to be
+            // less than other, > 0 if this is supposed to be greater than 
+            // other and 0 if they are supposed to be equal
+            return this.freq - other.freq;
+        }
     }
-    private Trie find(Trie node, char ch)
-    {
-        return node.kids[ch - 'a'];
-    }
-    public List<Integer> findSubstring(String s, String[] words) 
-    {
-        List<Integer> res = new ArrayList<>();
-        int n = words.length;
-        if (n == 0)
-        	return res;
-        for (int i = 0; i < n; i++)
-            add(words[i]);
-        int len = words[0].length();
-        int str_len = s.length();
-        for (int j = 0; j <= str_len - len*n; j++)
+    
+    public int[] numSmallerByFrequency(String[] queries, String[] words) {
+        TreeMap<Integer, Integer> freq = new TreeMap<>();
+        for (String s: words)
         {
-            boolean found = true;
-            Trie node = root;
-            HashMap<String, Integer> map = new HashMap<>();
-            for (int i = j; i < j + len*n; i++)
+            Word w = new Word(s);
+            freq.put(w.freq, freq.getOrDefault(w.freq, 0) + 1);
+        }
+        int[] res = new int[queries.length];
+        for (int i = 0; i < queries.length; i++)
+        {
+            Word w = new Word(queries[i]);
+            Iterator<Map.Entry<Integer, Integer>> it = freq.entrySet().iterator();
+            while(it.hasNext())
             {
-                char ch = s.charAt(i);
-                node = find(node, ch);
-                if(node != null)
-                {
-                    if(node.val > 0)
-                    {
-                        int count = map.getOrDefault(node.str, 0);
-                        if (count == node.val)
-                        {
-                            found = false;
-                    break;
-                        }
-                        map.put(node.str, count +1);
-                        node = root;
-                    }
-                }
-                else
-                {
-                    found = false;
-                    break;
-                }
+                Map.Entry<Integer, Integer> entry = it.next();
+                if (entry.getKey() > w.freq)
+                    res[i] += entry.getValue();
             }
-            if (found)
-                res.add(j);
         }
         return res;
     }
     
 	public static void main(String[] args) {   	
 		Solution obj = new Solution();
-		String[] words = {};
-		System.out.println(obj.findSubstring("", words));
+		String[] queries = {"bbb","cc"};
+		String[] words = {"a","aa","aaa","aaaa", "bb"};
+		System.out.println(obj.numSmallerByFrequency(queries, words));
 	}
 }
