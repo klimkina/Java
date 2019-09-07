@@ -16,52 +16,38 @@ import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-// Let's define a function f(s) over a non-empty string s, which calculates the frequency of the smallest character in s. For example, if s = "dcce" then f(s) = 2 because the smallest character is "c" and its frequency is 2.
+// Consider a matrix M with dimensions width * height, such that every cell has value 0 or 1, and any square sub-matrix of M of size sideLength * sideLength has at most maxOnes ones.
 
-// Now, given string arrays queries and words, return an integer array answer, where each answer[i] is the number of words such that f(queries[i]) < f(W), where W is a word in words.
+// Return the maximum possible number of ones that the matrix M can have.
 class Solution {
-	class Word implements Comparable<Word>
+	class Point implements Comparable<Point>
     {
-        int freq = 0;
-        Word(String s)
+        int x;
+        int y;
+        int count;
+        public Point(int x, int y, int width, int height, int sideLength)
         {
-            int[] count = new int[26];
-            for (char ch: s.toCharArray())
-                count[ch - 'a']++;
-            for (int i = 0; i < 26; i++)
-                if (count[i] > 0)
-                {
-                    freq = count[i];
-                    break;
-                }
+            this.x = x;
+            this.y = y;
+            count = (width/sideLength)*(height/sideLength) + (x < width% sideLength ? 1 : 0)*(height/sideLength) +
+                (y < height % sideLength ? 1 : 0)*(width/sideLength) + (x < width% sideLength &&  y < height % sideLength ? 1 : 0);
         }
         @Override
-        public int compareTo(Word other){
-            // compareTo should return < 0 if this is supposed to be
-            // less than other, > 0 if this is supposed to be greater than 
-            // other and 0 if they are supposed to be equal
-            return this.freq - other.freq;
+        public int compareTo(Point other)
+        {
+            return - this.count + other.count;
         }
     }
-    
-    public int[] numSmallerByFrequency(String[] queries, String[] words) {
-        TreeMap<Integer, Integer> freq = new TreeMap<>();
-        for (String s: words)
+    public int maximumNumberOfOnes(int width, int height, int sideLength, int maxOnes) {
+        PriorityQueue<Point> pq = new PriorityQueue<>();
+        for (int x = 0; x < sideLength; x++)
+            for (int y = 0; y < sideLength; y++)
+                pq.offer(new Point(x, y, width, height, sideLength));
+        int res = 0;
+        for (int i = 0; i < maxOnes; i++)
         {
-            Word w = new Word(s);
-            freq.put(w.freq, freq.getOrDefault(w.freq, 0) + 1);
-        }
-        int[] res = new int[queries.length];
-        for (int i = 0; i < queries.length; i++)
-        {
-            Word w = new Word(queries[i]);
-            Iterator<Map.Entry<Integer, Integer>> it = freq.tailMap(w.freq, false).entrySet().iterator();
-            while(it.hasNext())
-            {
-                Map.Entry<Integer, Integer> entry = it.next();
-                if (entry.getKey() > w.freq)
-                    res[i] += entry.getValue();
-            }
+            Point p = pq.poll();
+            res += p.count;
         }
         return res;
     }
