@@ -16,46 +16,53 @@ import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-// Consider a matrix M with dimensions width * height, such that every cell has value 0 or 1, and any square sub-matrix of M of size sideLength * sideLength has at most maxOnes ones.
+// Given two integer arrays arr1 and arr2, return the minimum number of operations (possibly zero) needed to make arr1 strictly increasing.
 
-// Return the maximum possible number of ones that the matrix M can have.
+// In one operation, you can choose two indices 0 <= i < arr1.length and 0 <= j < arr2.length and do the assignment arr1[i] = arr2[j].
+
+// If there is no way to make arr1 strictly increasing, return -1.
 class Solution {
-	class Point implements Comparable<Point>
-    {
-        int x;
-        int y;
-        int count;
-        public Point(int x, int y, int width, int height, int sideLength)
+	public int makeArrayIncreasing(int[] arr1, int[] arr2) {
+        TreeMap<Integer, Integer> tree = new TreeMap<>();
+        for (int i : arr2)
+            tree.put(i, tree.getOrDefault(i, 0) + 1);
+        Arrays.sort(arr2);
+        int n = arr1.length;
+        
+        HashMap<Integer, Integer> ends = new HashMap<>();
+        ends.put(arr1[0], 0);
+        if (arr2[0] < arr1[0])
+            ends.put(arr2[0], 1);
+        
+        for (int i = 1; i < n; i++)
         {
-            this.x = x;
-            this.y = y;
-            count = (width/sideLength)*(height/sideLength) + (x < width% sideLength ? 1 : 0)*(height/sideLength) +
-                (y < height % sideLength ? 1 : 0)*(width/sideLength) + (x < width% sideLength &&  y < height % sideLength ? 1 : 0);
+            HashMap<Integer, Integer> ends2 = new HashMap<>();
+            for (int k : ends.keySet())
+            {
+                if (arr1[i] > k &&(!ends2.containsKey(arr1[i]) || ends2.get(arr1[i]) > ends.get(k)))
+                    ends2.put(arr1[i], ends.get(k));
+                Integer next = tree.higherKey(k);
+                if (next != null)
+                {
+                    if (!ends2.containsKey(next) || ends2.get(next) > ends.get(k))
+                        ends2.put(next, ends.get(k) + 1);
+                }
+            }
+            if (ends2.isEmpty())
+                return -1;
+            ends = ends2;
         }
-        @Override
-        public int compareTo(Point other)
-        {
-            return - this.count + other.count;
-        }
-    }
-    public int maximumNumberOfOnes(int width, int height, int sideLength, int maxOnes) {
-        PriorityQueue<Point> pq = new PriorityQueue<>();
-        for (int x = 0; x < sideLength; x++)
-            for (int y = 0; y < sideLength; y++)
-                pq.offer(new Point(x, y, width, height, sideLength));
-        int res = 0;
-        for (int i = 0; i < maxOnes; i++)
-        {
-            Point p = pq.poll();
-            res += p.count;
-        }
-        return res;
+        int min = arr2.length + 1;
+        for (int k : ends.keySet())
+            if (ends.get(k) < min)
+                min = ends.get(k);
+        return min;
     }
     
 	public static void main(String[] args) {   	
 		Solution obj = new Solution();
-		String[] queries = {"bbb","cc"};
-		String[] words = {"a","aa","aaa","aaaa", "bb"};
-		System.out.println(obj.numSmallerByFrequency(queries, words));
+		int[] arr1 = {1,5,3,6,7};
+		int[] arr2 = {3,1,4};
+		System.out.println(obj.makeArrayIncreasing(arr1, arr2));
 	}
 }
