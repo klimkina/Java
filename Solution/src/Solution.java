@@ -22,47 +22,41 @@ import java.util.TreeSet;
 
 // If there is no way to make arr1 strictly increasing, return -1.
 class Solution {
-	public int makeArrayIncreasing(int[] arr1, int[] arr2) {
-        TreeMap<Integer, Integer> tree = new TreeMap<>();
-        for (int i : arr2)
-            tree.put(i, tree.getOrDefault(i, 0) + 1);
-        Arrays.sort(arr2);
-        int n = arr1.length;
+	public List<Integer> classifySignals(List<Integer> freq_standard, List<Integer> freq_signals) {
+	    // Write your code here
+		List<Integer> res = new ArrayList<>();
+		if (freq_standard.isEmpty() || freq_signals.isEmpty())
+			return res;
+		TreeMap<Integer, Integer> tree = new TreeMap<>();
+        for(int i =0; i < freq_standard.size(); i++)
+            tree.put(freq_standard.get(i), i + 1);
         
-        HashMap<Integer, Integer> ends = new HashMap<>();
-        ends.put(arr1[0], 0);
-        if (arr2[0] < arr1[0])
-            ends.put(arr2[0], 1);
-        
-        for (int i = 1; i < n; i++)
+        for (int f : freq_signals)
         {
-            HashMap<Integer, Integer> ends2 = new HashMap<>();
-            for (int k : ends.keySet())
+            Integer low = tree.floorKey(f);
+            Integer high = tree.ceilingKey(f);
+            if (low == null)
+                res.add(tree.get(high));
+            else if (high == null)
+                res.add(tree.get(low));
+            else
             {
-                if (arr1[i] > k &&(!ends2.containsKey(arr1[i]) || ends2.get(arr1[i]) > ends.get(k)))
-                    ends2.put(arr1[i], ends.get(k));
-                Integer next = tree.higherKey(k);
-                if (next != null)
-                {
-                    if (!ends2.containsKey(next) || ends2.get(next) > ends.get(k))
-                        ends2.put(next, ends.get(k) + 1);
-                }
+                if (high - f <= f - low)
+                    res.add(tree.get(high));
+                else
+                    res.add(tree.get(low));
             }
-            if (ends2.isEmpty())
-                return -1;
-            ends = ends2;
         }
-        int min = arr2.length + 1;
-        for (int k : ends.keySet())
-            if (ends.get(k) < min)
-                min = ends.get(k);
-        return min;
+        return res;
     }
+
     
 	public static void main(String[] args) {   	
 		Solution obj = new Solution();
-		int[] arr1 = {1,5,3,6,7};
-		int[] arr2 = {3,1,4};
-		System.out.println(obj.makeArrayIncreasing(arr1, arr2));
+		Integer[] arr1 = {7, 1 ,12, 9 ,15};
+		Integer[] arr2 = {2, 9, 2000, 13, 4};
+		List<Integer> res = obj.classifySignals(Arrays.asList(arr1),Arrays.asList(arr2));
+		for (int i: res)
+			System.out.print(i + " ");
 	}
 }
