@@ -22,48 +22,38 @@ import java.util.TreeSet;
 
 // If there is no way to make arr1 strictly increasing, return -1.
 class Solution {
-	public String validate(List<List<Integer>> data) {
+	public int countPowerfulSubarrays(List<Integer> arr) {
 	    // Write your code here
-			
-			Set<Integer> rows[] = new HashSet[9];
-			Set<Integer> cols[] = new HashSet[9];
-			Set<Integer> squares[] = new HashSet[9];
-			for (int i = 0; i < 9; i++)
-			{
-				rows[i] = new HashSet<>();
-				cols[i] = new HashSet<>();
-				squares[i] = new HashSet<>();
-						
-			}
-			for (List<Integer> l : data)
-			{
-				int r = l.get(0)-1;
-				int c = l.get(1)-1;
-				int v = l.get(2);
-				int sq = 3*(r/3) + c/3;
-				if (rows[r].contains(v) || cols[c].contains(v) || squares[sq].contains(v))
-					return "WRONG INPUT";
-				rows[r].add(v);
-				cols[c].add(v);
-				squares[sq].add(v);
-			}
-			return "OK";
-	    }
-
+		int[] masks = new int[32];
+        int mask = 1;
+        for (int i = 0; i < 32; i++)
+        {
+            masks[i] = mask;
+            mask <<= 1;
+        }
+            
+        HashMap<Integer, Integer> map = new HashMap<>();
+        int count = 0;
+        int cumm = 0;
+        map.put(0,  1);
+        for (int i : arr)
+        {
+            cumm ^= i;
+            for (int j = 0; j < 32; j++)
+            {
+                int res = masks[j]^cumm;
+                if (map.containsKey(res))
+                    count += map.get(res);
+            }
+            map.put(cumm, map.getOrDefault(cumm, 0) + 1);
+        }
+        return count;
+	}	
     
 	public static void main(String[] args) {   	
 		Solution obj = new Solution();
-		List<Integer> arr1 = Arrays.asList(3,1,3);
-		List<Integer> arr2 = Arrays.asList(2, 8,3);
-		List<Integer> arr3 = Arrays.asList(1,4,3);
-		List<Integer> arr4 = Arrays.asList(7,2,3);
-		List<Integer> arr5 = Arrays.asList(6,3,3);
-		List<Integer> arr6 = Arrays.asList(5,5,3);
-		List<Integer> arr7 = Arrays.asList(4,7, 3);
-		List<Integer> arr8 = Arrays.asList(8,6,3);
-		List<Integer> arr9 = Arrays.asList(9,9,3);
+		Integer[] arr = {1,2,3,4,5};
 		
-		List<List<Integer>> arr = Arrays.asList(arr1, arr2, arr3, arr4,arr5,arr6,arr7,arr8,arr9);
-		System.out.println(obj.validate(arr));
+		System.out.println(obj.countPowerfulSubarrays(Arrays.asList(arr)));
 	}
 }
