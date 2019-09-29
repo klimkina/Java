@@ -22,38 +22,71 @@ import java.util.TreeSet;
 
 // If there is no way to make arr1 strictly increasing, return -1.
 class Solution {
-	public int countPowerfulSubarrays(List<Integer> arr) {
+	private class Sound implements Comparable<Sound>
+	{
+		Integer strength;
+		Integer dist;
+		public Sound(int s, int d)
+		{
+			strength = s;
+			dist = d;
+		}
+		@Override
+	    public int compareTo(Sound other){
+			return -this.strength + other.strength;
+		}
+	}
+	
+	public long minSound(List<Integer> strengths, List<Integer> threshold_dist) {
 	    // Write your code here
-		int[] masks = new int[32];
-        int mask = 1;
-        for (int i = 0; i < 32; i++)
-        {
-            masks[i] = mask;
-            mask <<= 1;
-        }
-            
-        HashMap<Integer, Integer> map = new HashMap<>();
-        int count = 0;
-        int cumm = 0;
-        map.put(0,  1);
-        for (int i : arr)
-        {
-            cumm ^= i;
-            for (int j = 0; j < 32; j++)
-            {
-                int res = masks[j]^cumm;
-                if (map.containsKey(res))
-                    count += map.get(res);
-            }
-            map.put(cumm, map.getOrDefault(cumm, 0) + 1);
-        }
-        return count;
+		int res = 0;
+		PriorityQueue<Sound> pq = new PriorityQueue<>();
+		int n = strengths.size();
+		for (int i = 0; i < strengths.size(); i++)
+		{
+			int s = strengths.get(i);
+			int t = threshold_dist.get(i);
+			if (t < 1)
+				continue;
+			if (t > strengths.size())
+			{
+				res += s;
+				n--;
+			}
+			else
+				pq.offer(new Sound(s, t));
+		}
+		int[] dists = new int[n];
+		int start = 0;
+		while (!pq.isEmpty())
+		{
+			Sound s = pq.poll();
+			if (!found(s, dists))
+			{
+				res += s.strength;
+				while(dists[start] == 1)
+					start++;
+				dists[start++] = 1;
+			}
+		}
+		
+		return res;
 	}	
-    
+    private boolean found(Sound s, int[] dists)
+    {
+    	int idx = s.dist-1;
+    	while (idx < dists.length && dists[idx] > 0)
+    		idx++;
+    	if (idx >= dists.length)
+    		return false;
+    	dists[idx] = 1;
+    	return true;
+    }
 	public static void main(String[] args) {   	
 		Solution obj = new Solution();
-		Integer[] arr = {1,2,3,4,5};
+		Integer[] str = {2, 3, 2, 2, 5};
+		Integer[] thr = {2, 3, 4, 5, 5};
 		
-		System.out.println(obj.countPowerfulSubarrays(Arrays.asList(arr)));
+		System.out.println(obj.minSound(Arrays.asList(str), Arrays.asList(thr)));
 	}
 }
