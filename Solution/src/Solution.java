@@ -17,50 +17,52 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 class Solution {
-	public String removeDuplicates(String s, int k) {
-        int n = s.length();
-        int[] pos = new int[n+1];
-        for (int i = 0; i <= n; i++)
-            pos[i] = i;
-        boolean removed = true;
-        while (removed)
+	private class Sound implements Comparable<Sound>
+	{
+		Integer strength;
+		Integer dist;
+		public Sound(int s, int d)
+		{
+			strength = s;
+			dist = d;
+		}
+		@Override
+	    public int compareTo(Sound other){
+			return -this.strength + other.strength;
+		}
+	}
+	
+	public long minSound(List<Integer> strengths, List<Integer> threshold_dist) {
+	    // Write your code here
+		int res = 0;
+        PriorityQueue<Sound> pq = new PriorityQueue<>();
+        int n = strengths.size();
+        for (int i = 0; i < n; i++)
         {
-            removed = false;
-            int start = pos[0];
-            int prev = 0;
-            while (start < n)
+            int s = strengths.get(i);
+            int t = threshold_dist.get(i);
+            
+            pq.offer(new Sound(s, t));
+        }
+        TreeSet<Integer> dists = new TreeSet<>();
+        for (int i = 0; i < strengths.size(); i++)
+            dists.add(i);
+        int start = 0;
+        while (!pq.isEmpty())
+        {
+            Sound s = pq.poll();
+            Integer low = dists.ceiling(s.dist);
+            if (low == null)
             {
-                char ch = s.charAt(pos[start]);
-                int count = 1;
-                while (start < n && count < k)
-                {
-                    start = pos[start+1];
-                    if (s.charAt(start) != ch)
-                    {
-                        count = 1;
-                        ch = s.charAt(start);
-                        prev = start;
-                    }
-                    else
-                        count++;
-                }
-                if (count == k)
-                {
-                    pos[prev] = pos[start+1];
-                    removed = true;
-                    start = pos[start+1];
-                }
+                res += s.strength;
+                dists.pollFirst();
             }
+            else
+                dists.remove(low);
         }
-        StringBuilder sb = new StringBuilder();
-        int start = pos[0];
-        while (start < n)
-        {
-            sb.append(s.charAt(start));
-            start = pos[start+1];
-        }
-        return sb.toString();
-    }
+        
+        return res;
+	}
 
 	public static void main(String[] args) {   	
 		Solution obj = new Solution();
