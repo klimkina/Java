@@ -22,71 +22,91 @@ import java.util.TreeSet;
 
 // If there is no way to make arr1 strictly increasing, return -1.
 class Solution {
-	private class Sound implements Comparable<Sound>
-	{
-		Integer strength;
-		Integer dist;
-		public Sound(int s, int d)
-		{
-			strength = s;
-			dist = d;
-		}
-		@Override
-	    public int compareTo(Sound other){
-			return -this.strength + other.strength;
-		}
-	}
-	
-	public long minSound(List<Integer> strengths, List<Integer> threshold_dist) {
-	    // Write your code here
-		int res = 0;
-		PriorityQueue<Sound> pq = new PriorityQueue<>();
-		int n = strengths.size();
-		for (int i = 0; i < strengths.size(); i++)
-		{
-			int s = strengths.get(i);
-			int t = threshold_dist.get(i);
-			if (t < 1)
-				continue;
-			if (t > strengths.size())
-			{
-				res += s;
-				n--;
-			}
-			else
-				pq.offer(new Sound(s, t));
-		}
-		int[] dists = new int[n];
-		int start = 0;
-		while (!pq.isEmpty())
-		{
-			Sound s = pq.poll();
-			if (!found(s, dists))
-			{
-				res += s.strength;
-				while(dists[start] == 1)
-					start++;
-				dists[start++] = 1;
-			}
-		}
-		
-		return res;
-	}	
-    private boolean found(Sound s, int[] dists)
-    {
-    	int idx = s.dist-1;
-    	while (idx < dists.length && dists[idx] > 0)
-    		idx++;
-    	if (idx >= dists.length)
-    		return false;
-    	dists[idx] = 1;
-    	return true;
+	HashMap<String, Integer> map = new HashMap<>();
+    HashSet<String> visited = new HashSet<>();
+    public int minimumMoves(int[][] grid) {
+        if (grid.length == 0)
+            return -1;
+        int n = grid.length;
+        map.put((n-1) + " " + (n-1) + " " + 1, 0);
+        visited.add((n-1) + " " + (n-1) + " " + 1);
+        return minimumMoves(grid, 0, 1, 1);
     }
+    private int minimumMoves(int[][] grid, int row, int col, int isHor) {
+        int n = grid.length;
+        if (row == n-1 && col == n-1 && isHor > 0)
+            return 0;
+        String key = row + " " + col + " " + isHor;
+        if (map.containsKey(key))
+            return map.get(key);
+        visited.add(key);
+        int min = Integer.MAX_VALUE;
+        int res = -1;
+        if (isHor > 0)
+        {
+            if (col < n-1 && grid[row][col+1] == 0)
+                res = minimumMoves(grid, row, col+1, 1); //right
+            if (res >= 0)
+                min = Math.min(min, res + 1);
+            if (row < n-1 && grid[row+1][col-1] == 0 && grid[row+1][col] == 0)
+                   // && !visited.contains((row+1) + " " + (col) + " " + 1)) //down
+            {
+                 res = minimumMoves(grid, row+1, col, 1);
+                 if (res >= 0)
+                     min = Math.min(min, res + 1);   
+            }
+            if (row < n-1 && grid[row+1][col-1] == 0 && grid[row+1][col] == 0)
+               //&& !visited.contains((row+1) + " " + (col-1) + " " + 0))//rotate
+            {
+                res = minimumMoves(grid, row+1, col-1, 0);
+                if (res >= 0)
+                    min = Math.min(min, res + 1);   
+            }
+        }
+        else
+        {
+            if (row < n-1 && grid[row+1][col] == 0) // down
+                res = minimumMoves(grid, row+1, col, 0);
+            if (res >= 0)
+                min = Math.min(min, res + 1);
+            if (col < n-1 && grid[row-1][col+1] == 0 && grid[row][col+1] == 0)
+                  //  && !visited.contains((row-1) + " " + (col+1) + " " + 0))//right
+                 {
+                     res = minimumMoves(grid, row, col+1, 0);
+                     if (res >= 0)
+                         min = Math.min(min, res + 1);   
+                 }
+            if (col < n-1 && grid[row-1][col+1] == 0 && grid[row][col+1] == 0
+               && !visited.contains((row-1) + " " + (col+1) + " " + 1))//rotate
+            {
+                res = minimumMoves(grid, row-1, col+1, 1);
+                if (res >= 0)
+                    min = Math.min(min, res + 1);   
+            }
+        }
+        if (min == Integer.MAX_VALUE)
+            min = -1;
+        map.put(key, min);
+        return min;
+    }
+
 	public static void main(String[] args) {   	
 		Solution obj = new Solution();
-		Integer[] str = {2, 3, 2, 2, 5};
-		Integer[] thr = {2, 3, 4, 5, 5};
-		
-		System.out.println(obj.minSound(Arrays.asList(str), Arrays.asList(thr)));
+		int[][] grid = {{0,0,0,0,0,0,0,1,0,0,1,0,0,0,0},
+		                  {1,0,0,0,0,1,0,0,0,0,0,0,1,0,0},
+		                  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+		                  {0,0,1,0,1,0,0,0,0,1,0,0,1,0,0},
+		                  {0,0,0,0,0,0,0,1,0,0,0,0,0,1,0},
+		                  {1,0,0,0,1,0,0,0,0,0,0,0,1,0,1},
+		                  {1,0,0,0,0,0,0,0,0,0,0,1,0,1,0},
+		                  {0,0,0,0,0,0,0,0,0,0,0,0,1,0,0},
+		                  {1,0,0,0,0,0,1,0,0,0,0,0,1,1,0},
+		                  {0,0,0,0,0,0,0,0,0,0,0,0,1,1,0},
+		                  {0,1,0,0,1,0,1,0,0,0,1,0,1,1,0},
+		                  {0,1,0,1,1,0,0,0,0,0,1,0,0,0,0},
+		                  {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+		                  {0,0,0,0,1,1,1,0,0,0,1,0,1,0,0},
+		                  {0,0,0,0,0,1,0,0,1,0,0,1,0,0,0}};
+		System.out.println(obj.minimumMoves(grid));
 	}
 }
