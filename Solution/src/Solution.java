@@ -24,59 +24,31 @@ Return the maximum score of any valid set of words formed by using the given let
 It is not necessary to use all characters in letters and each letter can only be used once. Score of letters 'a', 'b', 'c', ... ,'z' is given by score[0], score[1], ... , score[25] respectively.
  */
 class Solution {
-	public int maxScoreWords(String[] words, char[] letters, int[] score) {
-        int n = words.length;
-        int[] word_scores = new int[n];
-        int[][] word_letters = new int[n][26];
-        int[] let_count = new int[26];
-        for(int i = 0; i < letters.length; i++)
-            let_count[letters[i] - 'a']++; 
-        for(int j = 0; j < n; j++)
-            for(int i = 0; i < words[j].length(); i++)
-                word_letters[j][words[j].charAt(i) - 'a']++; 
-        for(int j = 0; j < n; j++)
-        {
-            for(int i = 0; i < 26; i++)
-            {
-                if (word_letters[j][i] > let_count[i])
-                {
-                    word_scores[j] = 0;
-                    break;
+	public int maxSideLength(int[][] mat, int threshold) {
+        int m = mat.length;
+        if (m == 0)
+            return 0;
+        int n = mat[0].length;
+        int[][] sums = new int[m+1][n+1];
+        for(int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+                sums[i+1][j+1] = sums[i+1][j] + sums[i][j+1] - sums[i][j] + mat[i][j];
+        
+        for(int k = Math.min(m, n); k > 0; k--) {
+            for(int i = 1; i+k <= m; i++) {
+                for(int j = 1; j+k <= n; j++) {
+                    if(sums[i+k][j+k] - sums[i-1][j+k] - sums[i+k][j-1] + sums[i-1][j-1] <= threshold) {
+                        return k+1;
+                    }
                 }
-                word_scores[j] += score[i]* word_letters[j][i];
             }
         }
-        return maxScoreWords(word_letters, let_count, word_scores, 0);
-    }
-    private int maxScoreWords(int[][] word_letters, int[] let_count, int[] word_scores, int start) {
-        if (start >= word_scores.length)
-            return 0;
-        if(word_scores[start] == 0 || getScore(let_count, word_letters[start]) == 0)
-            return maxScoreWords(word_letters, let_count, word_scores, start + 1);
-        
-        for(int i = 0; i < 26; i++)
-            let_count[i] -= word_letters[start][i];
-        int res2 = maxScoreWords(word_letters, let_count, word_scores, start + 1) + word_scores[start];
-        for(int i = 0; i < 26; i++)
-            let_count[i] += word_letters[start][i];
-        int res1 = maxScoreWords(word_letters, let_count, word_scores, start + 1);
-        return Math.max(res1, res2);
-    }
-    private int getScore(int[] let_count, int[] word_count)
-    {
-    	for(int i = 0; i < 26; i++)
-        {
-            if (word_count[i] > let_count[i])
-            	return 0;
-        }
-    	return 1;
+        return 0;
     }
     
 	public static void main(String[] args) {   	
 		Solution obj = new Solution();
-		String[] words = {"dog","cat","dad","good"};
-		char[] letters = {'a','a','c','d','d','d','g','o','o'};
-		int[] score = {1,0,9,5,0,0,3,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0};
-		System.out.println(obj.maxScoreWords(words, letters, score));
+		int[][] mat = {{1,1,3,2,4,3,2},{1,1,3,2,4,3,2},{1,1,3,2,4,3,2}};
+		System.out.println(obj.maxSideLength(mat, 4));
 	}
 }
