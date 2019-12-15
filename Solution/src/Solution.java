@@ -24,31 +24,58 @@ Return the maximum score of any valid set of words formed by using the given let
 It is not necessary to use all characters in letters and each letter can only be used once. Score of letters 'a', 'b', 'c', ... ,'z' is given by score[0], score[1], ... , score[25] respectively.
  */
 class Solution {
-	public int maxSideLength(int[][] mat, int threshold) {
-        int m = mat.length;
-        if (m == 0)
+	public int shortestPath(int[][] grid, int k) {
+        if(grid.length == 0)
             return 0;
-        int n = mat[0].length;
-        int[][] sums = new int[m+1][n+1];
-        for(int i = 0; i < m; i++)
-            for (int j = 0; j < n; j++)
-                sums[i+1][j+1] = sums[i+1][j] + sums[i][j+1] - sums[i][j] + mat[i][j];
-        
-        for(int k = Math.min(m, n); k > 0; k--) {
-            for(int i = 1; i+k <= m; i++) {
-                for(int j = 1; j+k <= n; j++) {
-                    if(sums[i+k][j+k] - sums[i-1][j+k] - sums[i+k][j-1] + sums[i-1][j-1] <= threshold) {
-                        return k+1;
-                    }
-                }
+        Map<String, Integer> map = new HashMap<>();
+        boolean visited[][] = new boolean[grid.length][grid[0].length];
+        if(grid[0][0] == 1)
+            k= k-1;
+        int min = dfs(grid, 0, 0, k, map, visited);
+        return  min == Integer.MAX_VALUE ? -1 : min;
+    }
+    
+    private int dfs(int[][] grid, int row, int col, int k, Map<String, Integer> map, boolean visited[][]) {
+        if(k < 0)
+            return Integer.MAX_VALUE;
+        if(row == grid.length-1 && col == grid[0].length-1) {
+            return 0;
+        }
+        String key = row + "_" + col + "_" + k;
+        if(map.containsKey(key)) {
+            return map.get(key);
+        }
+        visited[row][col] = true;
+        int min = Integer.MAX_VALUE;
+        int[][] dirs = {{-1,0},{0,1},{1,0},{0,-1}};
+        for(int d = 0; d < 4; d++) {
+            int next_row = row + dirs[d][0];
+            int next_col = col + dirs[d][1];
+            if(inBounds(grid, next_row, next_col, visited)) {
+                int temp = Integer.MAX_VALUE;
+                if(grid[next_row][next_col] == 0 || k > 0) 
+                        temp = dfs(grid, next_row, next_col, k-grid[next_row][next_col], map, visited);
+                
+                if(temp != Integer.MAX_VALUE) 
+                    min = Math.min(min, temp+1);
             }
         }
-        return 0;
+        map.put(key, min);
+        visited[row][col] = false;
+        return min;
+    }
+    
+    boolean inBounds(int grid[][], int i, int j, boolean[][] visited) {
+        return i >= 0 && j >= 0 && i < grid.length && j < grid[0].length && !visited[i][j];
     }
     
 	public static void main(String[] args) {   	
 		Solution obj = new Solution();
-		int[][] mat = {{1,1,3,2,4,3,2},{1,1,3,2,4,3,2},{1,1,3,2,4,3,2}};
-		System.out.println(obj.maxSideLength(mat, 4));
+		int[][] mat = {{0,0,0},
+		                 {1,1,0},
+		                 {0,0,0},
+		                 {0,1,1},
+		                 {0,0,0}};
+		System.out.println(obj.shortestPath(mat, 1));
 	}
 }
